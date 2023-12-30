@@ -1,21 +1,30 @@
 import { withAuth } from 'next-auth/middleware';
+import { NextResponse } from 'next/server';
 
 export default withAuth(
-  async function middleware(req, res, next) {
-    if (req.nextUrl.pathname.startsWith('/admin') && !req.token) {
-      return NextResponse.redirect(new URL('/admin/sign-in', req.url));
+  async function middleware(req) {
+    if (req.nextUrl.pathname.startsWith('/admin' && !req.nextauth?.token?.role === 'admin')) {
+      return NextResponse.redirect(new URL('/admin/sign-in', request.url))
+    }else if(!req.nextUrl.pathname.includes('/admin') && req.nextauth?.token?.role == 'admin'){
+      return NextResponse.redirect(new URL('/admin/dashboard', request.url))
     }
-    // return next();
   },
   {
     callbacks: {
       authorized: ({ token, req }) => {
         if (req.nextUrl.pathname.startsWith('/admin')) {
           return token?.role === 'admin';
-        } else if (req.nextUrl.pathname === '/profile') {
-          return token?.role === 'user';
-        }
+        } else{
+          return token?.role === 'user' || token?.role === undefined;
+        } 
+
         return false;
+      },
+      redirect: ({ baseUrl, req }) => {
+        if (req.nextUrl.pathname.startsWith('/admin')) {
+          return '/admin/sign-in';
+        }
+        return baseUrl;
       },
     },
   }

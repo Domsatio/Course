@@ -6,13 +6,23 @@ import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import db from '@/libs/prisma';
 import bcrypt from 'bcrypt';
 import { existingUser } from '@/controllers/userController';
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 export const authOptions = {
-  adapter: PrismaAdapter(db),
+  // adapter: PrismaAdapter(db),
+  debug: process.env.NODE_ENV === 'development',
+  adapter: PrismaAdapter(prisma),
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      name: 'Google',
+      clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+      clientSecret: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET,
+      // providerAccountId: '107516670871160551260',
+      httpOptions: {
+        timeout: 60000,
+      },
       profile(profile) {
         return {
           id: profile.sub,
@@ -46,27 +56,58 @@ export const authOptions = {
       },
     }),
   ],
-  // pages: {
-  //   signIn: async (req) => {
-  //     // Check if the path starts with /admin
-  //     if (req.url.startsWith('/admin')) {
-  //       return '/admin/sign-in';
-  //     }
-  //     // Default signIn page
-  //     return '/sign-in';
-  //   },
-  // },
+  pages: {
+    //  signIn: '/sign-in',
+  },
   session: {
     strategy: 'jwt',
     maxAge: 30 * 24 * 60 * 60,
   },
+  secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
-    async jwt({token, user}) {
-      return {...token, ...user}
+    // async signIn({ account, profile}) {
+    //   if (account.provider === 'google') {
+    //     console.log(profile);
+    //     console.log(account);
+    //     if(!profile?.email){
+    //       throw new Error("No profile");
+    //     }
+    //     await prisma.user.upsert({
+    //       where: { email: profile.email },
+    //       update: { 
+    //         name: profile.name,
+    //         image: profile.image,
+    //         role: 'user',
+    //        },
+    //       create: {
+    //         email: profile.email,
+    //         name: profile.name,
+    //         image: profile.image,
+    //         role: 'user',
+    //       },
+    //     })
+    //     return true
+    //   }
+
+    //   if (account.provider === 'credentials') {
+    //     return true
+    //   }
+
+    //   return false
+    // },
+    async jwt({ token, user }) {
+      return { ...token, ...user }
     },
-    async session({session, token}) {
+    async session({ session, token }) {
       session.user.role = token.role;
       return session
+    },
+    async redirect({ url, baseUrl }) {
+      // Allows relative callback URLs
+      if (url.startsWith("/admin")) return `${baseUrl}/admin/dashboard`
+      // Allows callback URLs on the same origin
+      else if (new URL(url).origin === baseUrl) return url
+      return baseUrl
     },
   },
 }
