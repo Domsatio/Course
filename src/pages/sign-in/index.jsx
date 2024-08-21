@@ -1,4 +1,5 @@
 'use client';
+import { useEffect } from "react";
 import {
   Input,
   Checkbox,
@@ -18,9 +19,11 @@ export default function SignIn() {
   const router = useRouter();
   const { data: session } = useSession();
 
-  if (session) {
-    router.push("/");
-  }
+  useEffect(() => {
+    if (session?.user) {
+      router.push("/");
+    }
+  }, [session, router]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

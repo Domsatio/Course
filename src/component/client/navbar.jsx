@@ -58,8 +58,11 @@ const profileMenuItems = [
 function ProfileMenu() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const router = useRouter();
+  const { data: session } = useSession();
  
   const closeMenu = () => setIsMenuOpen(false);
+
+  const profilePicture = 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80';
 
   const handleSignOut = () => {
     const isSuccesSignOut =  signOut();
@@ -77,9 +80,9 @@ function ProfileMenu() {
           <Avatar
             variant="circular"
             size="md"
-            alt="tania andrew"
+            alt={session?.user?.name}
             className="border border-gray-900 "
-            src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80"
+            src={session?.user?.image? session?.user?.image : profilePicture}
           />
           {/* <ChevronDownIcon
             strokeWidth={2.5}
@@ -203,22 +206,30 @@ function NavListMenu() {
 // nav list component
 const navListItems = [
   {
-    label: "Account",
+    label: "Home",
     icon: UserCircleIcon,
   },
   {
-    label: "Blocks",
+    label: "Club",
+    icon: UserCircleIcon,
+  },
+  {
+    label: "Materi",
+    icon: UserCircleIcon,
+  },
+  {
+    label: "Store",
     icon: CubeTransparentIcon,
   },
   {
-    label: "Docs",
+    label: "About Us",
     icon: CodeBracketSquareIcon,
   },
 ];
  
 function NavList() {
   return (
-    <ul className="mt-2 mb-4 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center">
+    <ul className="mt-2 mb-4 flex flex-col gap-2 border-black lg:mb-0 lg:mt-0 lg:flex-row lg:items-center">
       <NavListMenu />
       {navListItems.map(({ label, icon }, key) => (
         <Typography
@@ -230,7 +241,7 @@ function NavList() {
           className="font-medium text-blue-gray-500"
         >
           <MenuItem className="flex items-center gap-2 lg:rounded-full">
-            {React.createElement(icon, { className: "h-[18px] w-[18px]" })}{" "}
+            {/* {React.createElement(icon, { className: "h-[18px] w-[18px]" })}{" "} */}
             <span className="text-gray-900"> {label}</span>
           </MenuItem>
         </Typography>
@@ -286,16 +297,16 @@ export default function ComplexNavbar() {
       }, [currentPosition]);
  
   return (
-    <Navbar className={`fixed mx-auto left-0 right-0 max-w-screen-xl lg:h-20 p-2 lg:pl-6 rounded-none lg:rounded-full transition-all duration-300 z-50 ${isScrollingUp || currentPosition < 68 ? 'top-0' : 'top-[-100px]'}`}>
-      <div className="relative h-full mx-auto flex items-center justify-between text-blue-gray-900">
+    <Navbar className={`fixed mx-auto left-0 right-0 max-w-full lg:h-20 p-2 lg:pl-6 rounded-none transition-all duration-300 z-50 ${isScrollingUp || currentPosition < 68 ? 'top-0' : 'top-[-100px]'}`}>
+      <div className="relative h-full mx-auto flex items-center justify-between lg:justify-evenly text-blue-gray-900">
         <Typography
           as="a"
           href="/"
           className="mr-4 ml-2 cursor-pointer py-1.5 font-medium"
         >
-          Material Tailwind
+          DomClub
         </Typography>
-        <div className="hidden lg:block">
+        <div className="hidden min-w-min lg:border-black lg:block ">
           <NavList />
         </div>
         <IconButton

@@ -1,13 +1,35 @@
-import React from 'react';
-import { useRouter } from 'next/navigation';
+'use client'
+import React, {useEffect} from 'react';
+import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
-export default function Layout({children}) {
-  const router  = useRouter();
-    if(router.pathname === '/login' || router.pathname === '/register') 
-        return null
+import AdminNavbar from '@/component/admin/navbar';
+
+export default function LayoutAdmin({children}) {
+  const router = useRouter();
+  const { pathname } = router;
+  const { data: session } = useSession();
+
+  useEffect(() => {
+    if (session && session.user?.role !== 'admin') {
+      router.push('/admin/sign-in');
+    }
+  }, [session, router]);
+
+  const noNavPaths = ['/admin/sign-in', '/404'];
+
+  // const isAdminRoute = pathname.includes('/admin');
+  const isAuthRoute = noNavPaths.includes(pathname);
+
+  if (isAuthRoute) {
+    return <>{children}</>;
+  }
+
   return (
-    <div className="min-h-screen bg-blue-gray-50/50">
+    <div className='min-h-screen'>
+      <AdminNavbar />
+      <div className='p-5'>
         {children}
+      </div>
     </div>
-  )
+  );
 }

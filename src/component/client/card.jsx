@@ -8,9 +8,9 @@ import {
 } from "@material-tailwind/react";
 
 
-export default function CardItem({key}) {
+export default function CardItem() {
     return (
-        <Card className="max-w-[24rem] overflow-hidden" key={key}>
+        <Card className="max-w-[24rem] overflow-hidden">
             <CardHeader
                 floated={false}
                 shadow={false}

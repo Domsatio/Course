@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "@material-tailwind/react";
 import LayoutClient from "@/layout/client";
+import LayoutAdmin from "@/layout/admin";
 
 export default function App({
   Component,
@@ -17,7 +18,9 @@ export default function App({
     return (
       <SessionProvider session={session}>
         <ThemeProvider>
-          <Component {...pageProps} />
+          <LayoutAdmin>
+            <Component {...pageProps} />
+          </LayoutAdmin>
         </ThemeProvider>
       </SessionProvider>
     );
