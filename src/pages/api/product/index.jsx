@@ -1,7 +1,7 @@
 import { createProduct, updateProduct, deleteProduct } from "@/controllers/productController";
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "../auth/[...nextauth]";
-import withAuth from "@/middleware/auth";
+import withAuth from "@/middlewares/auth";
 
 async function handler(req, res) {
     // const session = await getServerSession({ req, ...authOptions })

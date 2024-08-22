@@ -1,11 +1,10 @@
 
 import "@/styles/globals.css";
 import { useRouter } from "next/router";
-// import type { AppProps } from "next/app";
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "@material-tailwind/react";
-import LayoutClient from "@/layout/client";
-import LayoutAdmin from "@/layout/admin";
+import LayoutClient from "@/layouts/client";
+import LayoutAdmin from "@/layouts/admin";
 
 export default function App({
   Component,

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import TableData from "@/component/TableData";
-import { DATA_PRODUCTS } from "@/helper/dummyData";
-import { ProductProps } from "@/helper/typeProps";
+import TableData from "@/components/TableData";
+import { DATA_PRODUCTS } from "@/helpers/dummyData";
+import { ProductProps } from "@/helpers/typeProps";
 import { PencilIcon } from "@heroicons/react/24/solid";
 
 import {
@@ -77,8 +77,8 @@ export default function index() {
                     status === "paid"
                       ? "green"
                       : status === "pending"
-                      ? "amber"
-                      : "red"
+                        ? "amber"
+                        : "red"
                   }
                 />
               </div>

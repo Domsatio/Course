@@ -24,8 +24,8 @@ import {
   MenuList,
   MenuItem,
 } from "@material-tailwind/react";
-import { ProductProps, TableDataProps } from "@/helper/typeProps";
-import { DATA_PRODUCTS } from "@/helper/dummyData";
+import { ProductProps, TableDataProps } from "@/helpers/typeProps";
+import { DATA_PRODUCTS } from "@/helpers/dummyData";
 import { log } from "console";
 
 const TABLE_HEAD = ["Transaction", "Amount", "Date", "Status", "Account", ""];
@@ -53,15 +53,15 @@ export default function TableData({
   const [limit, setlimit] = React.useState<number>(5);
   const [totalPages, setTotalPages] = React.useState(0);
 
-  
+
   useEffect(() => {
-    if(dummyData){
+    if (dummyData) {
       const data = filterDataDummy(dummyData, activePage, limit);
-      if(onSuccess){
+      if (onSuccess) {
         onSuccess(data);
       }
       setTotalPages(Math.ceil(dummyData.length / limit));
-    }else{
+    } else {
       getDataTable();
     }
   }, [limit, data, activePage]);
