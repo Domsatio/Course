@@ -17,36 +17,28 @@ import {
     XMarkIcon,
     LifebuoyIcon,
   } from "@heroicons/react/24/outline";
+  import { MenuItemProps } from "./typeProps";
 
-  interface menuItemProps {
-    isheader?: boolean;
-    isPage?: boolean;
-    href?: string;
-    label: string;
-    icon?: any;
-    children?: menuItemProps[];
-  }
-  
-  
-const routeList: menuItemProps[] = [
+const routeList: MenuItemProps[] = [
     {
       isheader: true,
       label: "Dashboard",
+      href: "/dashboard",
       icon: PresentationChartBarIcon,
       children: [
         {
           isPage: true,
-          href: "/admin/dashboard",
+          href: "/analytics",
           label: "Analytics",
         },
         {
           isPage: true,
-          href: "/admin/dashboard",
+          href: "/reporting",
           label: "Reporting",
         },
         {
           isPage: true,
-          href: "/admin/dashboard",
+          href: "/projects",
           label: "Projects",
         },
       ],
@@ -54,31 +46,33 @@ const routeList: menuItemProps[] = [
     {
       isheader: true,
       label: "Ecommerce",
+      href: "/ecommerce",
       icon: ShoppingBagIcon,
       children: [
         {
           isPage: true,
-          href: "/admin/ecommerce/orders",
+          href: "/orders",
           label: "Orders",
         },
         {
           isPage: true,
-          href: "/admin/ecommerce/products",
+          href: "/products",
           label: "Products",
         },
         {
           isheader: true,
           label: "Finance",
+          href: "/finance",
           icon: CurrencyDollarIcon,
           children: [
             {
               isPage: true,
-              href: "/admin/ecommerce/finance/sales",
+              href: "/sales",
               label: "Sales",
             },
             {
               isPage: true,
-              href: "/admin/ecommerce/finance/expenses",
+              href: "/expenses",
               label: "Expenses",
             },
           ],
@@ -86,16 +80,17 @@ const routeList: menuItemProps[] = [
         {
           isheader: true,
           label: "users",
+          href: "/users",
           icon: UserCircleIcon,
           children: [
             {
               isPage: true,
-              href: "/admin/ecommerce/users",
+              href: "/setting",
               label: "Users",
             },
             {
               isPage: true,
-              href: "/admin/ecommerce/users/roles",
+              href: "/roles",
               label: "Roles",
             },
           ],
@@ -105,4 +100,4 @@ const routeList: menuItemProps[] = [
   ];
 
 export { routeList };
-export type { menuItemProps };
+

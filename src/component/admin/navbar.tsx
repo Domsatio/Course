@@ -3,7 +3,7 @@ import React from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/router";
 import { routeList } from "@/helper/routesList";
-import { menuItemProps } from "@/helper/routesList";
+import { MenuItemProps, ProfileMenuItemProps, RouteItemsProps } from "@/helper/typeProps";
 import {
   Navbar,
   IconButton,
@@ -47,13 +47,7 @@ import {
   LifebuoyIcon,
 } from "@heroicons/react/24/outline";
 
-interface profileMenuItemProps {
-  label: string;
-  icon: any;
-  href?: string;
-}
-
-const profileMenuItems: profileMenuItemProps[] = [
+const profileMenuItems: ProfileMenuItemProps[] = [
   {
     label: "My Profile",
     icon: UserCircleIcon,
@@ -160,11 +154,6 @@ function ProfileMenu() {
   );
 }
 
-interface RouteItemsProps {
-  routeList?: menuItemProps[];
-  padding?: number;
-}
-
 export default function AdminNavbar() {
   const [openAlert, setOpenAlert] = React.useState(true);
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
@@ -180,6 +169,7 @@ export default function AdminNavbar() {
   
   const RouteItems: React.FC<RouteItemsProps> = ({
     routeList = [],
+    parentRoute = "",
     padding = 0,
   }) => {
     const [open, setOpen] = React.useState("");
@@ -188,8 +178,9 @@ export default function AdminNavbar() {
     };
     return (
       <div className={`ps-${padding}`}>
-        {routeList?.map(({ isheader=false, isPage, href, label, icon, children }: menuItemProps) => {
-          const childrenPadding = padding + 3;
+        {routeList?.map(({ isheader=false, href='', label, icon, children }: MenuItemProps) => {
+          const childrenPadding = padding + 2;
+          const currentRoute = parentRoute + href;
           if (isheader) {
             return (
               <Accordion
@@ -222,7 +213,7 @@ export default function AdminNavbar() {
                 <AccordionBody className="py-1">
                   <List className="p-0">
                     <>
-                      <RouteItems routeList={children} padding={childrenPadding} />
+                      <RouteItems routeList={children} padding={childrenPadding} parentRoute={currentRoute} />
                     </>
                   </List>
                 </AccordionBody>
@@ -230,7 +221,7 @@ export default function AdminNavbar() {
             );
           } else {
             return (
-              <ListItem key={label} onClick={() => onClickMenuItem(href ?? '')}>
+              <ListItem key={label} onClick={() => onClickMenuItem(currentRoute ?? '')}>
                 {/* <ListItemPrefix>
                   <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
                 </ListItemPrefix> */}
@@ -278,7 +269,7 @@ export default function AdminNavbar() {
             />
           </div>
           <List>
-            <RouteItems routeList={routeList} padding={0} />
+            <RouteItems routeList={routeList} padding={0} parentRoute="/admin"/>
             <hr className="my-2 border-blue-gray-50" />
             <ListItem>
               <ListItemPrefix>
