@@ -2,7 +2,8 @@
 import React from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/router";
-import Link from "next/link";
+import { routeList } from "@/helper/routesList";
+import { menuItemProps } from "@/helper/routesList";
 import {
   Navbar,
   IconButton,
@@ -34,6 +35,7 @@ import {
   InboxIcon,
   PowerIcon,
   InboxArrowDownIcon,
+  CurrencyDollarIcon
 } from "@heroicons/react/24/solid";
 import {
   ChevronRightIcon,
@@ -158,74 +160,89 @@ function ProfileMenu() {
   );
 }
 
-interface menuItemProps {
-  isheader?: boolean;
-  isPage?: boolean;
-  href?: string;
-  label: string;
-  icon?: any;
-  children?: menuItemProps[];
+interface RouteItemsProps {
+  routeList?: menuItemProps[];
+  padding?: number;
 }
 
-const menuItems: menuItemProps[] = [
-  {
-    isheader: true,
-    label: "Dashboard",
-    icon: PresentationChartBarIcon,
-    children: [
-      {
-        isPage: true,
-        href: "/admin/dashboard",
-        label: "Analytics",
-      },
-      {
-        isPage: true,
-        href: "/admin/dashboard",
-        label: "Reporting",
-      },
-      {
-        isPage: true,
-        href: "/admin/dashboard",
-        label: "Projects",
-      },
-    ],
-  },
-  {
-    isheader: true,
-    label: "Ecommerce",
-    icon: ShoppingBagIcon,
-    children: [
-      {
-        isPage: true,
-        href: "/admin/orders",
-        label: "Orders",
-      },
-      {
-        isPage: true,
-        href: "/admin/products",
-        label: "Products",
-      },
-    ],
-  },
-];
-
 export default function AdminNavbar() {
-  const [open, setOpen] = React.useState(0);
   const [openAlert, setOpenAlert] = React.useState(true);
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
   const router = useRouter();
-
-  const handleOpen = (value: React.SetStateAction<number>) => {
-    setOpen(open === value ? 0 : value);
-  };
-
+  
   const openDrawer = () => setIsDrawerOpen(true);
   const closeDrawer = () => setIsDrawerOpen(false);
-
+  
   const onClickMenuItem = (href: string) => {
-    router.push(href);
     closeDrawer();
+    router.push(href);  
+  }
+  
+  const RouteItems: React.FC<RouteItemsProps> = ({
+    routeList = [],
+    padding = 0,
+  }) => {
+    const [open, setOpen] = React.useState("");
+    const handleOpen = (value: React.SetStateAction<string>) => {
+      setOpen(open === value ? 'nothing' : value);
+    };
+    return (
+      <div className={`ps-${padding}`}>
+        {routeList?.map(({ isheader=false, isPage, href, label, icon, children }: menuItemProps) => {
+          const childrenPadding = padding + 3;
+          if (isheader) {
+            return (
+              <Accordion
+                key={label}
+                open={open === label}
+                icon={
+                  <ChevronDownIcon
+                    strokeWidth={2.5}
+                    className={`mx-auto h-4 w-4 transition-transform ${
+                      open === label ? "rotate-180" : ""
+                    }`}
+                  />
+                }
+              >
+                <ListItem className="p-0" selected={open === label}>
+                  <AccordionHeader
+                    onClick={() => handleOpen(label)}
+                    className="border-b-0 p-3"
+                  >
+                    <ListItemPrefix>
+                      {React.createElement(icon, {
+                        className: "h-5 w-5",
+                      })}
+                    </ListItemPrefix>
+                    <Typography color="blue-gray" className="mr-auto font-normal">
+                      {label}
+                    </Typography>
+                  </AccordionHeader>
+                </ListItem>
+                <AccordionBody className="py-1">
+                  <List className="p-0">
+                    <>
+                      <RouteItems routeList={children} padding={childrenPadding} />
+                    </>
+                  </List>
+                </AccordionBody>
+              </Accordion>
+            );
+          } else {
+            return (
+              <ListItem key={label} onClick={() => onClickMenuItem(href ?? '')}>
+                {/* <ListItemPrefix>
+                  <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
+                </ListItemPrefix> */}
+                {label}
+              </ListItem>
+            );
+          }
+        })}
+      </div>
+    );
   };
+
   return (
     <>
       <Navbar className="flex items-center justify-betwee mx-auto max-w-full px-4 py-2 lg:px-8 lg:py-4">
@@ -261,138 +278,7 @@ export default function AdminNavbar() {
             />
           </div>
           <List>
-            <Accordion
-              open={open === 1}
-              icon={
-                <ChevronDownIcon
-                  strokeWidth={2.5}
-                  className={`mx-auto h-4 w-4 transition-transform ${
-                    open === 1 ? "rotate-180" : ""
-                  }`}
-                />
-              }
-            >
-              <ListItem className="p-0" selected={open === 1}>
-                <AccordionHeader
-                  onClick={() => handleOpen(1)}
-                  className="border-b-0 p-3"
-                >
-                  <ListItemPrefix>
-                    <PresentationChartBarIcon className="h-5 w-5" />
-                  </ListItemPrefix>
-                  <Typography color="blue-gray" className="mr-auto font-normal">
-                    Dashboard
-                  </Typography>
-                </AccordionHeader>
-              </ListItem>
-              <AccordionBody className="py-1">
-                <List className="p-0">
-                  <ListItem>
-                    <ListItemPrefix>
-                      <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
-                    </ListItemPrefix>
-                    Analytics
-                  </ListItem>
-                  <ListItem>
-                    <ListItemPrefix>
-                      <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
-                    </ListItemPrefix>
-                    Reporting
-                  </ListItem>
-                  <ListItem>
-                    <ListItemPrefix>
-                      <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
-                    </ListItemPrefix>
-                    Projects
-                  </ListItem>
-                </List>
-              </AccordionBody>
-            </Accordion>
-            <Accordion
-              open={open === 2}
-              icon={
-                <ChevronDownIcon
-                  strokeWidth={2.5}
-                  className={`mx-auto h-4 w-4 transition-transform ${
-                    open === 2 ? "rotate-180" : ""
-                  }`}
-                />
-              }
-            >
-              <ListItem className="p-0" selected={open === 2}>
-                <AccordionHeader
-                  onClick={() => handleOpen(2)}
-                  className="border-b-0 p-3"
-                >
-                  <ListItemPrefix>
-                    <ShoppingBagIcon className="h-5 w-5" />
-                  </ListItemPrefix>
-                  <Typography color="blue-gray" className="mr-auto font-normal">
-                    E-Commerce
-                  </Typography>
-                </AccordionHeader>
-              </ListItem>
-              <AccordionBody className="py-1">
-                <List className="p-0">
-                  <ListItem>
-                    {/* <ListItemPrefix>
-                      <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
-                    </ListItemPrefix> */}
-                    Orders
-                  </ListItem>
-                  <ListItem>
-                    {/* <ListItemPrefix>
-                      <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
-                    </ListItemPrefix> */}
-                    Products
-                  </ListItem>
-                  <Accordion
-                    open={open === 3}
-                    icon={
-                      <ChevronDownIcon
-                        strokeWidth={2.5}
-                        className={`mx-auto h-4 w-4 transition-transform ${
-                          open === 3 ? "rotate-180" : ""
-                        }`}
-                      />
-                    }
-                  >
-                    <ListItem className="p-0" selected={open === 3}>
-                      <AccordionHeader
-                        onClick={() => handleOpen(3)}
-                        className="border-b-0 p-3"
-                      >
-                        <ListItemPrefix>
-                          <ShoppingBagIcon className="h-5 w-5" />
-                        </ListItemPrefix>
-                        <Typography
-                          color="blue-gray"
-                          className="mr-auto font-normal"
-                        >
-                          E-Commerce
-                        </Typography>
-                      </AccordionHeader>
-                    </ListItem>
-                    <AccordionBody className="py-1">
-                      <List className="p-0">
-                        <ListItem>
-                          {/* <ListItemPrefix>
-                      <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
-                    </ListItemPrefix> */}
-                          Orders
-                        </ListItem>
-                        <ListItem>
-                          {/* <ListItemPrefix>
-                      <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
-                    </ListItemPrefix> */}
-                          Products
-                        </ListItem>
-                      </List>
-                    </AccordionBody>
-                  </Accordion>
-                </List>
-              </AccordionBody>
-            </Accordion>
+            <RouteItems routeList={routeList} padding={0} />
             <hr className="my-2 border-blue-gray-50" />
             <ListItem>
               <ListItemPrefix>
