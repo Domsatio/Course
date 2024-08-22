@@ -11,25 +11,17 @@ export default function App({
   Component,
   pageProps: { session, ...pageProps },
 }) {
-  const router = useRouter();
-  if (
-    router.pathname.includes("/admin")
-  )
-    return (
-      <SessionProvider session={session}>
-        <ThemeProvider>
-          <LayoutAdmin>
-            <Component {...pageProps} />
-          </LayoutAdmin>
-        </ThemeProvider>
-      </SessionProvider>
-    );
+  const { pathname } = useRouter();
+  const isAdminRoute = pathname.includes("/admin");
+
+  const Layout = isAdminRoute ? LayoutAdmin : LayoutClient;
+
   return (
     <SessionProvider session={session}>
       <ThemeProvider>
-        <LayoutClient>
+        <Layout>
           <Component {...pageProps} />
-        </LayoutClient>
+        </Layout>
       </ThemeProvider>
     </SessionProvider>
   );
