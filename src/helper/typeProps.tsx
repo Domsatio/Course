@@ -1,5 +1,33 @@
 import React from "react";
 
+type FormInputTypeProps =
+  | 'input'
+  | 'select'
+  | 'multicheckbox'
+  | 'datalist'
+  | 'textarea'
+  | 'label'
+  | 'component'
+  | 'csv'
+  | 'date'
+
+  interface InputListProps {
+    className?: string
+    name: string
+    protect?: string[]
+    type: FormInputTypeProps
+    hide?: boolean
+    removeOnSubmit?: boolean
+    disabled?: boolean
+    lockData?: boolean
+    validator: any
+    value?: string | number
+    listData?: {
+      title: string
+      value: number | string
+    }[]
+  }
+
 interface MenuItemProps {
   isheader?: boolean;
   isPage?: boolean;
@@ -21,14 +49,29 @@ interface RouteItemsProps {
   padding?: number;
 }
 
+interface FilterProps {
+  name: string;
+  type: "text" | "number" | "date" | "select";
+  placeholder?: string;
+  options?: string[];
+  value: string | number;
+  onChange: (e: any) => void;
+  className?: string;
+  disabled?: boolean;
+  required?: boolean;
+  label?: string;
+  error?: string;
+}
+
 interface TableDataProps {
     title: string;
     description?: string;
     urlData?: string;
-    tableProperties?: [];
     tableHeader: any;
     dummyData?: any;
     onSuccess?: (e: any) => void;
+    isActionAdd?: boolean;
+    filter?: any;
     children?: React.ReactNode;
 }
 
@@ -65,13 +108,29 @@ interface OrderProps {
   account?: string;
   createdAt: string;
 }
+interface CategoryProps  {
+  id: string;
+  name: string;
+};
+
+interface PostProps {
+  id: string;
+  userId: string;
+  title: string;
+  body: string;
+  categories?: CategoryProps[];
+};
+
 
 export type {
+  InputListProps,
   ProductProps,
   OrderProps,
   MenuItemProps,
   ProfileMenuItemProps,
   RouteItemsProps,
   PaginationProps,
-  TableDataProps
+  TableDataProps,
+  CategoryProps,
+  PostProps
 };
