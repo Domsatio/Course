@@ -1,10 +1,10 @@
-import { InputListProps } from "@/helper/typeProps";
+import { InputListProps } from "@/helpers/typeProps";
 
 const InputList = ({
-  className="",
-  name= "",
-  value= "",
-  type="input",
+  className = "",
+  name = "",
+  value = "",
+  type = "input",
   // onChange,
   disabled = false,
   listData = [],

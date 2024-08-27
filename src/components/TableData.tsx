@@ -16,7 +16,7 @@ import {
   CardBody,
   Input,
 } from "@material-tailwind/react";
-import { ProductProps, TableDataProps } from "@/helper/typeProps";
+import { ProductProps, TableDataProps } from "@/helpers/typeProps";
 
 const filterDataDummy = (data: [], page: number, size: number) => {
   const offset = Math.ceil(page - 1) * size || 0;
@@ -143,13 +143,13 @@ export default function TableData({
               </Button>
             )}
             {isActionAdd && (
-              <Button className="flex items-center gap-3" size="sm" onClick={() => router.push(router.pathname+"/tambah")}>
+              <Button className="flex items-center gap-3" size="sm" onClick={() => router.push(router.pathname + "/tambah")}>
                 Add
               </Button>
             )}
             {filter && (
               // <Button className="flex items-center gap-3" size="sm">
-                <FunnelIcon className="h-6 w-6" cursor='pointer' onClick={() => console.log('opop')} />
+              <FunnelIcon className="h-6 w-6" cursor='pointer' onClick={() => console.log('opop')} />
               //   Filter
               // </Button>
             )}
@@ -199,12 +199,12 @@ import {
   DialogBody,
   DialogFooter,
 } from "@material-tailwind/react";
- 
+
 export function DialogDefault() {
   const [open, setOpen] = React.useState(false);
- 
+
   const handleOpen = () => setOpen(!open);
- 
+
   return (
     <>
       <Button onClick={handleOpen} variant="gradient">

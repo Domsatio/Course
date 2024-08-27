@@ -21,6 +21,8 @@
     "next-connect": "^1.0.0",
     "react": "^18",
     "react-dom": "^18",
+    "uuid": "^10.0.0",
+    "yup": "^1.4.0",
     "use-debounce": "^10.0.3"
   },
   "devDependencies": {
@@ -29,6 +31,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/uuid": "^10.0.0",
     "autoprefixer": "^10.0.1",
     "eslint": "^8",
     "eslint-config-next": "14.0.4",

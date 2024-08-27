@@ -2,8 +2,8 @@
 import React from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/router";
-import { routeList } from "@/helper/routesList";
-import { MenuItemProps, ProfileMenuItemProps, RouteItemsProps } from "@/helper/typeProps";
+import { routeList } from "@/helpers/routesList";
+import { MenuItemProps, ProfileMenuItemProps, RouteItemsProps } from "@/helpers/typeProps";
 import {
   Navbar,
   IconButton,
@@ -119,11 +119,10 @@ function ProfileMenu() {
             <MenuItem
               key={label}
               onClick={closeMenu}
-              className={`flex items-center gap-2 rounded ${
-                isLastItem
+              className={`flex items-center gap-2 rounded ${isLastItem
                   ? "hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
                   : ""
-              }`}
+                }`}
             >
               {React.createElement(icon, {
                 className: `h-4 w-4 ${isLastItem ? "text-red-500" : ""}`,
@@ -137,10 +136,10 @@ function ProfileMenu() {
                 onClick={
                   isLastItem
                     ? async () =>
-                        await signOut({
-                          redirect: true,
-                          callbackUrl: "localhost:3000/admin/sign-in",
-                        })
+                      await signOut({
+                        redirect: true,
+                        callbackUrl: "localhost:3000/admin/sign-in",
+                      })
                     : () => router.push(href || "")
                 }
               >
@@ -158,15 +157,15 @@ export default function AdminNavbar() {
   const [openAlert, setOpenAlert] = React.useState(true);
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
   const router = useRouter();
-  
+
   const openDrawer = () => setIsDrawerOpen(true);
   const closeDrawer = () => setIsDrawerOpen(false);
-  
+
   const onClickMenuItem = (href: string) => {
     closeDrawer();
-    router.push(href);  
+    router.push(href);
   }
-  
+
   const RouteItems: React.FC<RouteItemsProps> = ({
     routeList = [],
     parentRoute = "",
@@ -178,7 +177,7 @@ export default function AdminNavbar() {
     };
     return (
       <div className={`ps-${padding}`}>
-        {routeList?.map(({ isheader=false, href='', label, icon, children }: MenuItemProps) => {
+        {routeList?.map(({ isheader = false, href = '', label, icon, children }: MenuItemProps) => {
           const childrenPadding = padding + 2;
           const currentRoute = parentRoute + href;
           if (isheader) {
@@ -189,9 +188,8 @@ export default function AdminNavbar() {
                 icon={
                   <ChevronDownIcon
                     strokeWidth={2.5}
-                    className={`mx-auto h-4 w-4 transition-transform ${
-                      open === label ? "rotate-180" : ""
-                    }`}
+                    className={`mx-auto h-4 w-4 transition-transform ${open === label ? "rotate-180" : ""
+                      }`}
                   />
                 }
               >
@@ -269,7 +267,7 @@ export default function AdminNavbar() {
             />
           </div>
           <List>
-            <RouteItems routeList={routeList} padding={0} parentRoute="/admin"/>
+            <RouteItems routeList={routeList} padding={0} parentRoute="/admin" />
             <hr className="my-2 border-blue-gray-50" />
             <ListItem>
               <ListItemPrefix>
