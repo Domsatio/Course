@@ -1,4 +1,5 @@
 import React from "react";
+import { StringDecoder } from "string_decoder";
 
 type FormInputTypeProps =
   | 'input'
@@ -11,9 +12,20 @@ type FormInputTypeProps =
   | 'csv'
   | 'date'
 
+  interface InputListOptionProps {
+    type: 'select' | 'multicheckbox' | 'datalist' | 'csv'
+    id: string
+    api?: string
+    data?: any[]
+    value?: string
+    watch?: string
+  }
+
+
   interface InputListProps {
     className?: string
     name: string
+    label: string
     protect?: string[]
     type: FormInputTypeProps
     hide?: boolean
@@ -21,11 +33,14 @@ type FormInputTypeProps =
     disabled?: boolean
     lockData?: boolean
     validator: any
-    value?: string | number
+    value?: string | number | any[]
     listData?: {
       title: string
       value: number | string
     }[]
+    onChange?: (e: any) => void
+    error?: string
+    option?: InputListOptionProps
   }
 
 interface MenuItemProps {
@@ -71,7 +86,7 @@ interface TableDataProps {
     dummyData?: any;
     onSuccess?: (e: any) => void;
     isActionAdd?: boolean;
-    filter?: any;
+    filter?: InputListProps[] | undefined;
     children?: React.ReactNode;
 }
 
