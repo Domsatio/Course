@@ -3,7 +3,6 @@ import TableData from "@/components/TableData";
 import { DATA_PRODUCTS } from "@/helpers/dummyData";
 import { ProductProps } from "@/helpers/typeProps";
 import { PencilIcon } from "@heroicons/react/24/solid";
-
 import {
   Typography,
   Chip,
@@ -23,11 +22,11 @@ export default function index() {
       description="List of products"
       tableHeader={TABLE_HEAD}
       dummyData={DATA_PRODUCTS}
-      urlData="https://dummyjson.com/RESOURCE"
+      urlData="https://dummyjson.com/posts"
       onSuccess={(data) => setData(data)}
     >
       {/* {children} */}
-      {data.map((product: ProductProps, index: number) => {
+      {data?.map((product: ProductProps, index: number) => {
         const isLast = index === data.length - 1;
         const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
         return (

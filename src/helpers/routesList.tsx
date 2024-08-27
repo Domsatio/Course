@@ -77,26 +77,26 @@ const routeList: MenuItemProps[] = [
             },
           ],
         },
-        {
-          isheader: true,
-          label: "users",
-          href: "/users",
-          icon: UserCircleIcon,
-          children: [
-            {
-              isPage: true,
-              href: "/setting",
-              label: "Users",
-            },
-            {
-              isPage: true,
-              href: "/roles",
-              label: "Roles",
-            },
-          ],
-        },
       ],
     },
+    {
+      isheader: true,
+      label: "Blog",
+      href: "/blog",
+      icon: UserCircleIcon,
+      children: [
+        {
+          isPage: true,
+          href: "/post",
+          label: "Post",
+        },
+        {
+          isPage: true,
+          href: "/category",
+          label: "Category",
+        },
+      ],
+    }
   ];
 
 export { routeList };
