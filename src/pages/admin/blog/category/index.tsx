@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import TableData from "@/component/TableData";
-import { DATA_CATEGORIES } from "@/helper/dummyData";
-import { CategoryProps } from "@/helper/typeProps";
+import TableData from "@/components/TableData";
+import { DATA_CATEGORIES } from "@/helpers/dummyData";
+import { CategoryProps } from "@/helpers/typeProps";
 import { PencilIcon } from "@heroicons/react/24/solid";
 import {
   Typography,

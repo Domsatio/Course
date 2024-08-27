@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import TableData from "@/component/TableData";
-import { DATA_POSTS } from "@/helper/dummyData";
-import { PostProps, CategoryProps } from "@/helper/typeProps";
+import TableData from "@/components/TableData";
+import { DATA_POSTS } from "@/helpers/dummyData";
+import { PostProps, CategoryProps, InputListProps } from "@/helpers/typeProps";
 import { PencilIcon } from "@heroicons/react/24/solid";
 import {
   Typography,
@@ -11,7 +11,7 @@ import {
   Tooltip,
   rating,
 } from "@material-tailwind/react";
-
+import * as Yup from "yup";
 const TABLE_HEAD = ["Title", "Body", "Category", ""];
 
 export default function index() {
@@ -24,11 +24,7 @@ export default function index() {
       dummyData={DATA_POSTS}
       urlData="https://dummyjson.com/posts"
       onSuccess={(data) => setData(data)}
-      filter={{
-        search: true,
-        filter: true,
-        limit: true,
-      }}
+      filter={dummyInputList}
     >
       {/* {children} */}
       {data?.map((post: PostProps, index: number) => {
@@ -81,3 +77,53 @@ export default function index() {
     </TableData>
   );
 }
+
+// Define the dummy data for the InputListProps interface
+const dummyInputList: InputListProps[] = [
+  {
+    className: 'input-text',
+    name: 'username',
+    label: 'Username',
+    type: 'input',
+    hide: false,
+    removeOnSubmit: false,
+    disabled: false,
+    lockData: false,
+    validator: Yup.string(),// Simple validator example
+    value: '',
+  },
+  {
+    className: 'input-select',
+    name: 'userRole',
+    label: 'User Role',
+    type: 'select',
+    hide: false,
+    removeOnSubmit: true,
+    disabled: false,
+    lockData: false,
+    validator: Yup.string(),// Simple validator example
+    value: '',
+    listData: [
+      { title: 'Admin', value: 'admin' },
+      { title: 'Editor', value: 'editor' },
+      { title: 'Viewer', value: 'viewer' },
+    ],
+  },
+  // {
+  //   className: 'input-multicheckbox',
+  //   name: 'preferences',
+  //   label: 'Preferences',
+  //   type: 'multicheckbox',
+  //   hide: false,
+  //   removeOnSubmit: false,
+  //   disabled: false,
+  //   lockData: false,
+  //   validator: Yup.array().required('preferences harus diisi'),// Simple validator example
+  //   value: [],
+  //   listData: [
+  //     { title: 'Email Notifications', value: 'email_notifications' },
+  //     { title: 'SMS Alerts', value: 'sms_alerts' },
+  //     { title: 'Push Notifications', value: 'push_notifications' },
+  //   ],
+  // },
+];
