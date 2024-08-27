@@ -1,0 +1,122 @@
+import { getCategory, getCategories, createCategory, updateCategory, deleteCategory } from '@/controllers/category.controller';
+import { createCategoryValidation, updateCategoryValidation } from '@/validations/category.validation';
+import type { NextApiRequest, NextApiResponse } from 'next'
+import { v4 as uuidv4 } from 'uuid';
+import { authOptions } from '../auth/[...nextauth]';
+import { getServerSession } from "next-auth/next"
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  // const session = await getServerSession(req, res, authOptions)
+
+  if (req.method === 'POST') {
+    // if (!session || session.user?.role !== 'admin') {
+    //   res.status(401).json({ message: "This is a protected route" })
+    //   return
+    // }
+
+    req.body.id = uuidv4()
+
+    const { validatedData, errors } = createCategoryValidation(req.body)
+
+    if (errors) {
+      console.error('ERR: category - create = ', errors)
+      return res.status(422).send({ status: false, statusCode: 422, message: errors })
+    }
+
+    try {
+      await createCategory(validatedData)
+      console.info("Create category success")
+      return res.status(201).send({ status: true, statusCode: 201, message: "Create category success" })
+    } catch (error) {
+      console.error("ERR: category - create = ", error)
+      return res.status(422).send({ status: false, statusCode: 422, message: error })
+    }
+  } else if (req.method === 'PUT') {
+    // if (!session || session.user?.role !== 'admin') {
+    //   res.status(401).json({ message: "This is a protected route" })
+    //   return
+    // }
+
+    const { id } = req.query
+
+    if (typeof id !== 'string') {
+      return res.status(400).json({ message: "Invalid id parameter" })
+    }
+
+    const { validatedData, errors } = updateCategoryValidation(req.body)
+
+    if (errors) {
+      console.error("ERR: category - update = ", errors)
+      return res.status(422).send({ status: false, statusCode: 422, message: errors })
+    }
+
+    try {
+      const result = await updateCategory(id, validatedData)
+
+      if (result) {
+        console.log("update category success")
+        return res.status(201).send({ status: true, statusCode: 201, message: "Update category success" })
+      } else {
+        console.log("Data not found")
+        return res.status(404).send({ status: false, statusCode: 404, message: "Data not found" })
+      }
+    } catch (error) {
+      console.error("ERR: category update = ", error)
+      return res.status(422).send({ status: false, statusCode: 422, message: error })
+    }
+  } else if (req.method === 'DELETE') {
+    // if (!session || session.user?.role !== 'admin') {
+    //   res.status(401).json({ message: "This is a protected route" })
+    //   return
+    // }
+
+    const { id } = req.query
+
+    if (typeof id !== 'string') {
+      return res.status(400).json({ message: "Invalid id parameter" })
+    }
+
+    try {
+      const result = await deleteCategory(id)
+
+      if (result) {
+        console.log("Delete category success")
+        return res.status(200).send({ status: true, statusCode: 200, message: "Delete category success" })
+      } else {
+        console.log("Data not found")
+        return res.status(404).send({ status: false, statusCode: 404, message: "Data not found" })
+      }
+    } catch (error) {
+      console.error("ERR: category - delete = ", error)
+      return res.status(422).send({ status: false, statusCode: 422, message: error })
+    }
+  } else if (req.method === 'GET') {
+    if (req.query.id) {
+      const { id } = req.query
+
+      if (typeof id !== 'string') {
+        return res.status(400).json({ message: "Invalid id parameter" })
+      }
+
+      try {
+        const data = await getCategory(id)
+        console.info("Get category success")
+        return res.status(200).send({ status: true, statusCode: 200, message: "Get category success", data })
+      } catch (error) {
+        console.error("ERR: category - get = ", error)
+        return res.status(422).send({ status: false, statusCode: 422, message: error })
+      }
+    } else {
+      try {
+        const data = await getCategories()
+        console.info("Get categories success")
+        return res.status(200).send({ status: true, statusCode: 200, message: "Get categories success", data })
+      } catch (error) {
+        console.error("ERR: categories - get = ", error)
+        return res.status(422).send({ status: false, statusCode: 422, message: error })
+      }
+    }
+  } else {
+    res.status(405).end()
+  }
+}
