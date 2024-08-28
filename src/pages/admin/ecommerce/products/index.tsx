@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useEffect } from "react";
 import TableData from "@/components/TableData";
 import { DATA_PRODUCTS } from "@/helpers/dummyData";

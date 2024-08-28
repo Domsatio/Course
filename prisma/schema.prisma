@@ -89,15 +89,16 @@ model Post {
   createdAt  DateTime            @default(now())
   updatedAt  DateTime            @updatedAt
   categories CategoriesOnPosts[]
-  user       User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Category {
-  id        String              @id @default(cuid())
-  name      String
-  createdAt DateTime            @default(now())
-  updatedAt DateTime            @default(now())
-  posts     CategoriesOnPosts[]
+  id         String   @id @default(cuid())
+  name       String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt @default(now())
+  posts CategoriesOnPosts[]
 }
 
 model CategoriesOnPosts {
