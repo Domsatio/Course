@@ -17,6 +17,7 @@ import {
   CardBody,
 } from "@material-tailwind/react";
 import { Form } from "formik";
+import { ro } from "date-fns/locale";
 
 interface FormInputProps {
   title: string;
@@ -32,6 +33,7 @@ interface FormInputProps {
     handler: (value: boolean) => void | undefined;
   };
   isFilter?: boolean;
+  redirect?: string;
 }
 
 export default function FormInput({
@@ -41,10 +43,11 @@ export default function FormInput({
   onSuccess,
   asModal,
   isFilter = false,
+  redirect
 }: FormInputProps) {
   const router = useRouter();
   const baseUrl =
-    process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000";
+    process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000/api";
   const createUrl = (route: any) => {
     const url = new URL(route.url, baseUrl);
     Object.entries(route.query).forEach(([key, value]) => {
@@ -83,18 +86,25 @@ export default function FormInput({
           onSuccess(response.data.data);
         }
         asModal?.handler(false);
+        if (redirect) {
+          router.push(redirect)
+        } else if (route.method === "POST" || route.method === "PUT") {
+          router.back();
+        }
       } catch (error) {
         console.error("Form submission error:", error);
       }
     },
+    validateOnChange: false,
+    validateOnBlur: false,
   });
 
   const handleChange = (e: any) => {
     const { name, value } = e.target;
     formik.setFieldValue(name, value);
-    if (formik.touched[name]) {
-      formik.setFieldTouched(name, false);
-    }
+    // if (formik.touched[name]) {
+    //   formik.setFieldTouched(name, false);
+    // }
     if (isFilter) {
       router.push({
         pathname: router.pathname,
@@ -106,17 +116,21 @@ export default function FormInput({
     }
   };
 
+  // useEffect(() => {
+  //   console.log("formik.values", formik.values);
+  // }, [formik.values]);
+
   useEffect(() => {
     if (route.method === "PUT") {
-      fetchData;
+      fetchData();
     }
-  }, []);
+  }, [route]);
 
   const fetchData = async () => {
     try {
       const response = await axios.get(createUrl(route));
-      response.data?.data?.forEach((item: any) => {
-        formik.setFieldValue(item.name, item.value);
+      Object.keys(response.data.data).forEach((key) => {
+        formik.setFieldValue(key, response.data.data[key]);
       });
     } catch (error) {
       console.error("Form submission error:", error);
@@ -158,7 +172,7 @@ export default function FormInput({
           key={index}
           {...input}
           value={formik.values[input.name]}
-          onChange={(data) => {
+          onChange={(data: any) => {
             handleChange(data);
           }}
           error={formik.errors[input.name]?.toString() || ""}

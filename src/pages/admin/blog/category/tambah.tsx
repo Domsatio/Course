@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import FormInput from "@/components/FormInput";
 import { FormInputList } from "./inputLayout";
 
+
 export default function tambah() {
   return (
     <div>
