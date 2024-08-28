@@ -13,8 +13,8 @@ import {
   CardBody,
   Input,
 } from "@material-tailwind/react";
-import { ProductProps, TableDataProps } from "@/helper/typeProps";
-import FormInput from "./FormInput";
+import { ProductProps, TableDataProps } from "@/helpers/typeProps";
+import FormInput from "@/components/FormInput";
 
 const filterDataDummy = (data: [], page: number, size: number) => {
   const offset = Math.ceil(page - 1) * size || 0;
@@ -60,7 +60,7 @@ export default function TableData({
     } else {
       getDataTable();
     }
-  }, [limit, data, activePage]);
+  }, [limit, activePage]);
 
   useEffect(() => {
     router.push(
@@ -99,7 +99,7 @@ export default function TableData({
       param.search = debounceValue;
     }
     try {
-      const response = await axios.get(urlData, {
+      const response = await axios.get("/api"+urlData, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -170,7 +170,7 @@ export default function TableData({
                   inputList={filter}
                   route={{
                     method: "POST",
-                    url: "/api/post",
+                    url: urlData,
                     query: router.query,
                   }}
                   title="Filter"
@@ -212,7 +212,7 @@ export default function TableData({
         totalPages={totalPages}
         limit={limit}
         handleLimit={handleSetLImit}
-        onPageChange={(e) => {
+        onPageChange={(e:any) => {
           if (activePage !== e) setActivePage(e);
         }}
       />

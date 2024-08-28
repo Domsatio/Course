@@ -1,4 +1,4 @@
-import { PaginationProps } from "@/helper/typeProps";
+import { PaginationProps } from "@/helpers/typeProps";
 import {
   Button,
   CardFooter,

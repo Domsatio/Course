@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import TableData from "@/component/TableData";
-import { DATA_POSTS } from "@/helper/dummyData";
-import { PostProps, CategoryProps, InputListProps } from "@/helper/typeProps";
+import TableData from "@/components/TableData";
+import { DATA_POSTS } from "@/helpers/dummyData";
+import { PostProps, CategoryProps, InputListProps } from "@/helpers/typeProps";
 import { PencilIcon } from "@heroicons/react/24/solid";
 import {
   Typography,
@@ -12,17 +12,19 @@ import {
   rating,
 } from "@material-tailwind/react";
 import * as Yup from "yup";
-const TABLE_HEAD = ["Title", "Body", "Category", ""];
+import { useRouter } from "next/router";
+const TABLE_HEAD = ["Title", "Body", "Category", "Action"];
 
 export default function index() {
   const [data, setData] = useState([]);
+  const router = useRouter();
   return (
     <TableData
       title="Posts"
       description="List of posts"
       tableHeader={TABLE_HEAD}
-      dummyData={DATA_POSTS}
-      urlData="https://dummyjson.com/posts"
+      // dummyData={DATA_POSTS}
+      urlData="/post"
       onSuccess={(data) => setData(data)}
       filter={dummyInputList}
     >
@@ -70,6 +72,15 @@ export default function index() {
                   )}
                 </div>
               </Typography>
+            </td>
+            <td className={classes}>
+              <Tooltip content="Edit User">
+                <IconButton variant="text" onClick={
+                  () => router.push(router.pathname + "/update/" + post.id)
+                }>
+                  <PencilIcon className="h-4 w-4" />
+                </IconButton>
+              </Tooltip>
             </td>
           </tr>
         );

@@ -1,8 +1,8 @@
-'use client'
-import React, {useEffect} from 'react'
-import { useRouter } from 'next/router'
-import ComplexNavbar from '@/component/client/navbar';
-import { useSession } from 'next-auth/react';
+"use client";
+import React, { useEffect } from "react";
+import { useRouter } from "next/router";
+import ComplexNavbar from "@/components/client/navbar";
+import { useSession } from "next-auth/react";
 
 export default function LayoutClient({ children }) {
   const router = useRouter();
@@ -10,13 +10,13 @@ export default function LayoutClient({ children }) {
   const { data: session } = useSession();
 
   useEffect(() => {
-    if (session && session.user?.role === 'admin') {
-      router.push('/admin/dashboard');
+    if (session && session.user?.role === "admin") {
+      router.push("/admin/dashboard");
     }
   }, [session, router]);
 
   // Paths where the ComplexNavbar should be hidden
-  const noNavPaths = ['/sign-in', '/register', '/admin', '/404'];
+  const noNavPaths = ["/sign-in", "/register", "/admin", "/404"];
 
   // const isAdminRoute = pathname.includes('/admin');
   const isAuthRoute = noNavPaths.includes(pathname);

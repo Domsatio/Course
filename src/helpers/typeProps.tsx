@@ -1,6 +1,18 @@
 import React from "react";
 import { StringDecoder } from "string_decoder";
+import 'next-auth';
 
+declare module 'next-auth' {
+  interface Session {
+    user: {
+      id: string;
+      email: string;
+      name: string;
+      image: string;
+      role: string; // add any custom fields here
+    };
+  }
+}
 type FormInputTypeProps =
   | 'input'
   | 'select'
@@ -11,16 +23,17 @@ type FormInputTypeProps =
   | 'component'
   | 'csv'
   | 'date'
+  | 'currency'
 
   interface InputListOptionProps {
     type: 'select' | 'multicheckbox' | 'datalist' | 'csv'
+    params?: string
     id: string
     api?: string
     data?: any[]
     value?: string
     watch?: string
   }
-
 
   interface InputListProps {
     className?: string
@@ -33,7 +46,7 @@ type FormInputTypeProps =
     disabled?: boolean
     lockData?: boolean
     validator: any
-    value?: string | number | any[]
+    value?: string | number | string[] 
     listData?: {
       title: string
       value: number | string
