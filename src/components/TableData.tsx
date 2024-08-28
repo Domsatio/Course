@@ -1,13 +1,10 @@
+"use client";
 import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { useDebounce } from "use-debounce";
 import { Pagination } from "./Pagination";
-import {
-  ArrowDownTrayIcon,
-  MagnifyingGlassIcon,
-  FunnelIcon
-} from "@heroicons/react/24/outline";
+import { MagnifyingGlassIcon, FunnelIcon } from "@heroicons/react/24/outline";
 import {
   Card,
   CardHeader,
@@ -17,6 +14,7 @@ import {
   Input,
 } from "@material-tailwind/react";
 import { ProductProps, TableDataProps } from "@/helpers/typeProps";
+import FormInput from "@/components/FormInput";
 
 const filterDataDummy = (data: [], page: number, size: number) => {
   const offset = Math.ceil(page - 1) * size || 0;
@@ -33,7 +31,7 @@ export default function TableData({
   onSuccess,
   children,
   isActionAdd = true,
-  filter
+  filter,
 }: TableDataProps) {
   const [data, setData] = React.useState<ProductProps[]>([]);
   const [searchQuery, setSearchQuery] = React.useState("");
@@ -41,6 +39,8 @@ export default function TableData({
   const [limit, setlimit] = React.useState<number>(5);
   const [totalPages, setTotalPages] = React.useState(0);
   const [debounceValue] = useDebounce(searchQuery, 1500);
+  const [modalFilter, setModalFilter] = React.useState(false);
+
   const router = useRouter();
   // const { search } = router.query;
 
@@ -60,7 +60,7 @@ export default function TableData({
     } else {
       getDataTable();
     }
-  }, [limit, data, activePage]);
+  }, [limit, activePage]);
 
   useEffect(() => {
     router.push(
@@ -86,7 +86,12 @@ export default function TableData({
   };
 
   const getDataTable = async () => {
-    const param: { limit: number; page: number; search?: string, filter?: any } = {
+    const param: {
+      limit: number;
+      page: number;
+      search?: string;
+      filter?: any;
+    } = {
       limit: limit,
       page: activePage,
     };
@@ -94,16 +99,15 @@ export default function TableData({
       param.search = debounceValue;
     }
     try {
-      const response = await axios.get(urlData, {
+      const response = await axios.get("/api"+urlData, {
         headers: {
           "Content-Type": "application/json",
         },
         // withCredentials: true,
-        params: param
+        params: param,
       });
-      console.log(response.data);
       if (onSuccess) {
-        onSuccess(response.data.posts);
+        onSuccess(response.data.data);
       }
       setTotalPages(response.data.totalPages);
       setData(response.data.data);
@@ -125,45 +129,68 @@ export default function TableData({
             </Typography>
           </div>
           <div className="flex w-full items-center shrink-0 gap-2 md:w-max">
-            <div className="w-full flex md:w-72">
+            <div className="relative w-full flex md:w-72">
               <Input
                 label="Search"
                 icon={<MagnifyingGlassIcon className="h-5 w-5" />}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 value={searchQuery}
+                className="pr-20"
+                containerProps={{
+                  className: "min-w-0",
+                }}
               />
+              {searchQuery && (
+                <Button
+                  className="flex bg-red-600 items-center gap-3 !absolute right-1 top-1 rounded"
+                  size="sm"
+                  onClick={() => setSearchQuery("")}
+                >
+                  clear
+                </Button>
+              )}
             </div>
-            {searchQuery && (
-              <Button
-                className="flex bg-red-600 items-center gap-3"
-                size="sm"
-                onClick={() => setSearchQuery("")}
-              >
-                clear
-              </Button>
-            )}
             {isActionAdd && (
-              <Button className="flex items-center gap-3" size="sm" onClick={() => router.push(router.pathname + "/tambah")}>
+              <Button
+                className="flex items-center gap-3"
+                size="sm"
+                onClick={() => router.push(router.pathname + "/tambah")}
+              >
                 Add
               </Button>
             )}
             {filter && (
-              // <Button className="flex items-center gap-3" size="sm">
-              <FunnelIcon className="h-6 w-6" cursor='pointer' onClick={() => console.log('opop')} />
-              //   Filter
-              // </Button>
+              <React.Fragment>
+                <FunnelIcon
+                  className="h-6 w-6"
+                  cursor="pointer"
+                  onClick={() => setModalFilter(true)}
+                />
+                <FormInput
+                  inputList={filter}
+                  route={{
+                    method: "POST",
+                    url: urlData,
+                    query: router.query,
+                  }}
+                  title="Filter"
+                  asModal={{ isOpen: modalFilter, handler: setModalFilter }}
+                  onSuccess={(data) => setData(data)}
+                  isFilter={true}
+                />
+              </React.Fragment>
             )}
           </div>
         </div>
       </CardHeader>
-      <CardBody className="overflow-scroll px-0">
-        <table className="w-full min-w-max table-auto text-left">
-          <thead>
+      <CardBody className="overflow-scroll px-0 max-h-[500px]">
+        <table className="w-full min-w-max text-left">
+          <thead className="sticky -top-[24.5px] h-8 z-30 bg-blue-gray-50">
             <tr>
               {tableHeader.map((head: any) => (
                 <th
                   key={head}
-                  className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4"
+                  className="border-y border-blue-gray-100  p-4"
                 >
                   <Typography
                     variant="small"
@@ -176,7 +203,7 @@ export default function TableData({
               ))}
             </tr>
           </thead>
-          <tbody>{children}</tbody>
+          <tbody className="">{children}</tbody>
         </table>
       </CardBody>
       <Pagination
@@ -185,53 +212,10 @@ export default function TableData({
         totalPages={totalPages}
         limit={limit}
         handleLimit={handleSetLImit}
-        onPageChange={(e) => {
+        onPageChange={(e:any) => {
           if (activePage !== e) setActivePage(e);
         }}
       />
     </Card>
-  );
-}
-
-import {
-  Dialog,
-  DialogHeader,
-  DialogBody,
-  DialogFooter,
-} from "@material-tailwind/react";
-
-export function DialogDefault() {
-  const [open, setOpen] = React.useState(false);
-
-  const handleOpen = () => setOpen(!open);
-
-  return (
-    <>
-      <Button onClick={handleOpen} variant="gradient">
-        Open Modal
-      </Button>
-      <Dialog open={open} handler={handleOpen}>
-        <DialogHeader>Its a simple modal.</DialogHeader>
-        <DialogBody>
-          The key to more success is to have a lot of pillows. Put it this way,
-          it took me twenty five years to get these plants, twenty five years of
-          blood sweat and tears, and I&apos;m never giving up, I&apos;m just
-          getting started. I&apos;m up to something. Fan luv.
-        </DialogBody>
-        <DialogFooter>
-          <Button
-            variant="text"
-            color="red"
-            onClick={handleOpen}
-            className="mr-1"
-          >
-            <span>Cancel</span>
-          </Button>
-          <Button variant="gradient" color="green" onClick={handleOpen}>
-            <span>Applay</span>
-          </Button>
-        </DialogFooter>
-      </Dialog>
-    </>
   );
 }
