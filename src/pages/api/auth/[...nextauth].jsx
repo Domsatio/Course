@@ -28,7 +28,7 @@ export const authOptions = {
           role: "user",
         };
       },
-      style: { logo: "/google.svg", bg: "#fff", text: "#000" },
+      // style: { logo: "/google.svg", bg: "#fff", text: "#000" },
     }),
     CredentialsProvider({
       name: "Credentials",
@@ -66,11 +66,11 @@ export const authOptions = {
       session.user.role = token.role;
       return session;
     },
-    async redirect({ url, baseUrl }) {
-      if (url.startsWith("/admin")) return `${baseUrl}/admin/dashboard`;
-      else if (new URL(url).origin === baseUrl) return url;
-      return baseUrl;
-    },
+    // async redirect({ url, baseUrl }) {
+    //   if (url.startsWith("/admin")) return `${baseUrl}/admin/dashboard`;
+    //   else if (new URL(url).origin === baseUrl) return url;
+    //   return baseUrl;
+    // },
   },
 };
 

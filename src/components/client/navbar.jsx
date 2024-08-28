@@ -60,7 +60,6 @@ function ProfileMenu() {
   const router = useRouter();
   const { data: session } = useSession();
 
-  console.log(session);
   const closeMenu = () => setIsMenuOpen(false);
 
   const profilePicture =

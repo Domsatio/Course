@@ -2,17 +2,16 @@ import { createPost, deletePost, getPost, getPosts, updatePost } from '@/control
 import { createPostValidation, updatePostValidation } from '@/validations/post.validation';
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { v4 as uuidv4 } from 'uuid';
-import { authOptions } from '../auth/[...nextauth]';
-import { getServerSession } from "next-auth/next"
+import { getToken } from 'next-auth/jwt';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // const session = await getServerSession(req, res, authOptions)
+  const token = await getToken({ req })
 
   if (req.method === 'POST') {
-    // if (!session || session.user?.role !== 'admin') {
-    //   res.status(401).json({ message: "This is a protected route" })
-    //   return
-    // }
+    if (!token || token.role !== 'admin') {
+      res.status(401).json({ message: "Forbidden" })
+      return
+    }
 
     req.body.id = uuidv4()
 
@@ -32,10 +31,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(422).send({ status: false, statusCode: 422, message: error })
     }
   } else if (req.method === 'PUT') {
-    // if (!session || session.user?.role !== 'admin') {
-    //   res.status(401).json({ message: "This is a protected route" })
-    //   return
-    // }
+    if (!token || token.role !== 'admin') {
+      res.status(401).json({ message: "Forbidden" })
+      return
+    }
 
     const { id } = req.query
 
@@ -65,10 +64,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(422).send({ status: false, statusCode: 422, message: error })
     }
   } else if (req.method === 'DELETE') {
-    // if (!session || session.user?.role !== 'admin') {
-    //   res.status(401).json({ message: "This is a protected route" })
-    //   return
-    // }
+    if (!token || token.role !== 'admin') {
+      res.status(401).json({ message: "Forbidden" })
+      return
+    }
 
     const { id } = req.query
 
@@ -93,6 +92,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   } else if (req.method === 'GET') {
     if (req.query.id) {
       const { id } = req.query
+
+      if (typeof id !== 'string') {
+        return res.status(400).json({ message: "Invalid id parameter" })
+      }
 
       try {
         const data = await getPost(id)
