@@ -15,6 +15,8 @@ declare module 'next-auth' {
 }
 type FormInputTypeProps =
   | 'input'
+  | 'number'
+  | 'url'
   | 'select'
   | 'multicheckbox'
   | 'datalist'
@@ -24,6 +26,7 @@ type FormInputTypeProps =
   | 'csv'
   | 'date'
   | 'currency'
+  | 'image'
 
   interface InputListOptionProps {
     type: 'select' | 'multicheckbox' | 'datalist' | 'csv'
@@ -149,6 +152,16 @@ interface PostProps {
   categories?: CategoryProps[];
 };
 
+interface CourseProps {
+  id: string;
+  title: string;
+  description: string;
+  image: string;
+  vidio: string;
+  publised: string;
+  createdAt: string;
+}
+
 
 export type {
   InputListProps,
@@ -160,5 +173,6 @@ export type {
   PaginationProps,
   TableDataProps,
   CategoryProps,
-  PostProps
+  PostProps,
+  CourseProps,
 };

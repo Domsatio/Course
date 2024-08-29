@@ -220,9 +220,9 @@ export default function AdminNavbar() {
           } else {
             return (
               <ListItem key={label} onClick={() => onClickMenuItem(currentRoute ?? '')}>
-                {/* <ListItemPrefix>
-                  <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
-                </ListItemPrefix> */}
+                {icon && React.createElement(icon, {
+                  className: "h-5 w-5 mr-4",
+                })}
                 {label}
               </ListItem>
             );

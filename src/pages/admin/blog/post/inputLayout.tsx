@@ -48,7 +48,7 @@ const FormInputListRenderer = ({id}: {id: string}) => {
             id: "id",
             type: "multicheckbox",
             params: "name",
-            api: "/category",
+            api: "/api/category",
             data: [],
           }
         },
@@ -101,7 +101,7 @@ const FormInputList: InputListProps[] = [
         id: "id",
         type: "select",
         params: "id, name",
-        api: "/category",
+        api: "/api/category",
         data: [],
       }
     },
