@@ -6,14 +6,13 @@ import { FormInputList } from "../inputLayout";
 
 
 export default function tambah() {
-  const router = useRouter()  
-    
+  const router = useRouter()
   return (
     <div>
         <FormInput
           inputList={FormInputList}
-          route={{ url: `/api/post`, query: {id:router.query.id || ""}, method: "PUT" }}
-          title="Update Post"
+          route={{ url: `/api/category`, query: {id:router.query.id || ""}, method: "PUT" }}
+          title="Update Course"
         />
     </div>
   );

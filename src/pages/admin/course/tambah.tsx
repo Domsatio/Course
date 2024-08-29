@@ -7,11 +7,11 @@ import { FormInputList } from "./inputLayout";
 export default function tambah() {
   return (
     <div>
-      <FormInput
-        inputList={FormInputList}
-        route={{ url: `/category`, query: {}, method: "POST" }}
-        title="Tambah Category"
-      />
+        <FormInput
+          inputList={FormInputList}
+          route={{ url: `/category`, query: {}, method: "POST" }}
+          title="Tambah Course"
+        />
     </div>
   );
 }

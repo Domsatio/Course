@@ -13,7 +13,7 @@ export default function tambah() {
         <FormInput
           inputList={FormInputList}
           route={{ url: `/api/post`, query: {id:router.query.id || ""}, method: "PUT" }}
-          title="Update Post"
+          title="Update Product"
         />
     </div>
   );

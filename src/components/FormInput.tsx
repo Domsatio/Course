@@ -16,8 +16,7 @@ import {
   CardHeader,
   CardBody,
 } from "@material-tailwind/react";
-import { Form } from "formik";
-import { ro } from "date-fns/locale";
+
 
 interface FormInputProps {
   title: string;
@@ -72,12 +71,27 @@ export default function FormInput({
     initialValues,
     validationSchema,
     onSubmit: async (values) => {
+      const formData = new FormData();
+      const containsFile = inputList.some((input) => input.type === "image");
+      if (containsFile) {
+        Object.keys(values).forEach((key) => {
+          formData.append(key, values[key]);
+        });
+      }
       try {
         let response;
         if (route.method === "POST") {
-          response = await axios.post(createUrl(route), values);
+          response = await axios.post(createUrl(route), containsFile ? formData : values, {
+            headers: {
+              "Content-Type": containsFile ? "multipart/form-data" : "application/json",
+            },
+          });
         } else if (route.method === "PUT") {
-          response = await axios.put(createUrl(route), values);
+          response = await axios.put(createUrl(route),containsFile ? formData : values, {
+            headers: {
+              "Content-Type": containsFile ? "multipart/form-data" : "application/json",
+            },
+          });
         } else {
           response = await axios.get(createUrl(route));
         }
@@ -116,9 +130,9 @@ export default function FormInput({
     }
   };
 
-  // useEffect(() => {
-  //   console.log("formik.values", formik.values);
-  // }, [formik.values]);
+  useEffect(() => {
+    console.log("formik.values", formik.values);
+  }, [formik.values]);
 
   useEffect(() => {
     if (route.method === "PUT") {
