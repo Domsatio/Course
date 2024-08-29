@@ -1,41 +1,131 @@
 import bcrypt from "bcrypt";
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { createUser, updateUser, deleteUser, getOneUser, getAllUsers, existingUser } from '@/controllers/userController';
+import { createUser, updateUser, deleteUser, getOneUser, getAllUsers, existingUser } from '@/controllers/user.controller';
+import { createUserValidation, updateUserValidation } from "@/validations/user.validation";
+import { getToken } from 'next-auth/jwt';
+import { v4 as uuidv4 } from 'uuid';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const token = await getToken({ req })
+
   if (req.method === 'POST') {
-    const { email, password, name } = req.body;    
-    const isUserExist = await existingUser(email);
-    console.log(email, password, name);
-    
+    const isUserExist = await existingUser(req.body.email);
+
     if (isUserExist) {
-        return res.status(409).json({ error: 'User already exists' });
+      console.error("User already exists");
+      return res.status(409).send({ status: false, statusCode: 409, message: "User already exists" });
     }
-    const hashedPassword = await bcrypt.hash(password, 10);
+
+    req.body.id = uuidv4()
+
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
     req.body.password = hashedPassword;
-    const user = await createUser(req.body);
-    if (!user) {
-        return res.status(500).json({ error: 'Error creating user' });
+
+    const { validatedData, errors } = createUserValidation(req.body);
+
+    if (errors) {
+      console.error('ERR: user - create = ', errors)
+      return res.status(422).send({ status: false, statusCode: 422, message: errors })
     }
-    res.status(201).json({
-        data: user,
-        message: 'User created successfully',
-    });
-  }  else if (req.method === 'PUT') {
+
+    try {
+      await createUser(validatedData)
+      console.info("Create user success")
+      return res.status(201).send({ status: true, statusCode: 201, message: "Create user success" })
+    } catch (error) {
+      console.error("ERR: user - create = ", error)
+      return res.status(422).send({ status: false, statusCode: 422, message: error })
+    }
+  } else if (req.method === 'PUT') {
+    if (!token) {
+      res.status(401).json({ message: "Forbidden" })
+      return
+    }
+
     const { id } = req.query;
-    const user = await updateUser(Number(id), req.body);
-    res.status(200).json(user);
+
+    if (typeof id !== 'string') {
+      return res.status(400).json({ message: "Invalid id parameter" })
+    }
+
+    const { validatedData, errors } = updateUserValidation(req.body);
+
+    if (errors) {
+      console.error("ERR: user - update = ", errors);
+      return res.status(422).send({ status: false, statusCode: 422, message: errors });
+    }
+
+    try {
+      const result = await updateUser(id, validatedData);
+
+      if (result) {
+        console.log("update user success");
+        return res.status(201).send({ status: true, statusCode: 201, message: "Update user success" });
+      } else {
+        console.log("Data not found");
+        return res.status(404).send({ status: false, statusCode: 404, message: "Data not found" });
+      }
+    } catch (error) {
+      console.error("ERR: user - update = ", error);
+      return res.status(422).send({ status: false, statusCode: 422, message: error });
+    }
   } else if (req.method === 'DELETE') {
+    if (!token) {
+      res.status(401).json({ message: "Forbidden" })
+      return
+    }
+
     const { id } = req.query;
-    await deleteUser(Number(id));
-    res.status(204).end();
-  } else if (req.method === 'GET' && req.query.id) {
-    const { id } = req.query;
-    const user = await getOneUser(Number(id));
-    res.status(200).json(user);
+
+    if (typeof id !== 'string') {
+      return res.status(400).json({ message: "Invalid id parameter" })
+    }
+
+    try {
+      const result = await deleteUser(id);
+
+      if (result) {
+        console.log("Delete user success");
+        return res.status(200).send({ status: true, statusCode: 200, message: "Delete user success" });
+      } else {
+        console.log("Data not found");
+        return res.status(404).send({ status: false, statusCode: 404, message: "Data not found" });
+      }
+    } catch (error) {
+      console.error("ERR: user - delete = ", error);
+      return res.status(422).send({ status: false, statusCode: 422, message: error });
+    }
   } else if (req.method === 'GET') {
-    const users = await getAllUsers();
-    res.status(200).json(users);
+    if (!token) {
+      res.status(401).json({ message: "Forbidden" })
+      return
+    }
+
+    if (req.query.id) {
+      const { id } = req.query;
+
+      if (typeof id !== 'string') {
+        return res.status(400).json({ message: "Invalid id parameter" })
+      }
+
+      try {
+        const data = await getOneUser(id);
+        console.info("Get one user success");
+        return res.status(200).send({ status: true, statusCode: 200, message: "Get one user success", data });
+      } catch (error) {
+        console.error("ERR: user - get one = ", error);
+        return res.status(422).send({ status: false, statusCode: 422, message: error });
+      }
+    } else {
+      try {
+        const data = await getAllUsers();
+        console.info("Get all users success");
+        return res.status(200).send({ status: true, statusCode: 200, message: "Get all users success", data });
+      } catch (error) {
+        console.error("ERR: user - get all = ", error);
+        return res.status(422).send({ status: false, statusCode: 422, message: error });
+      }
+    }
   } else {
     res.status(405).end();
   }

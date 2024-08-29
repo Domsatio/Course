@@ -8,7 +8,7 @@ datasource db {
 }
 
 model Account {
-  id                String  @id @default(cuid())
+  id                String  @id @default(uuid())
   userId            String
   type              String
   provider          String
@@ -26,7 +26,7 @@ model Account {
 }
 
 model Session {
-  id           String   @id @default(cuid())
+  id           String   @id @default(uuid())
   sessionToken String   @unique
   userId       String
   expires      DateTime
@@ -70,7 +70,7 @@ model Product {
 }
 
 model Order {
-  id        String   @id @default(cuid())
+  id        String   @id @default(uuid())
   userId    String
   productId String
   startTime DateTime
@@ -89,16 +89,15 @@ model Post {
   createdAt  DateTime            @default(now())
   updatedAt  DateTime            @updatedAt
   categories CategoriesOnPosts[]
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user       User                @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Category {
-  id         String   @id @default(cuid())
-  name       String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt @default(now())
-  posts CategoriesOnPosts[]
+  id        String              @id @default(cuid())
+  name      String
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @default(now())
+  posts     CategoriesOnPosts[]
 }
 
 model CategoriesOnPosts {

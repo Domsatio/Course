@@ -25,9 +25,9 @@
     "react-currency-input-field": "^3.8.0",
     "react-datepicker": "^7.3.0",
     "react-dom": "^18",
+    "use-debounce": "^10.0.3",
     "uuid": "^10.0.0",
-    "yup": "^1.4.0",
-    "use-debounce": "^10.0.3"
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",

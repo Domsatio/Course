@@ -87,7 +87,7 @@ export default function FormInput({
             },
           });
         } else if (route.method === "PUT") {
-          response = await axios.put(createUrl(route),containsFile ? formData : values, {
+          response = await axios.put(createUrl(route), containsFile ? formData : values, {
             headers: {
               "Content-Type": containsFile ? "multipart/form-data" : "application/json",
             },
@@ -100,8 +100,8 @@ export default function FormInput({
           onSuccess(response.data.data);
         }
         asModal?.handler(false);
-        if(redirect){
-          router.push(redirect) 
+        if (redirect) {
+          router.push(redirect)
         } else if (route.method === "POST" || route.method === "PUT") {
           router.back();
         }
@@ -109,7 +109,7 @@ export default function FormInput({
         console.error("Form submission error:", error);
       }
     },
-    validateOnChange: false, 
+    validateOnChange: false,
     validateOnBlur: false,
   });
 

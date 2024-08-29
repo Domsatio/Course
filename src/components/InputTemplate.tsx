@@ -326,8 +326,8 @@ export const InputListRenderer = ({
             Array.isArray(value)
               ? new Date()
               : value
-              ? new Date(value)
-              : new Date()
+                ? new Date(value)
+                : new Date()
           }
           onChange={(date) => {
             onChange?.({ target: { name, value: date } });

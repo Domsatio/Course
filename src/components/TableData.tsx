@@ -99,7 +99,7 @@ export default function TableData({
       param.search = debounceValue;
     }
     try {
-      const response = await axios.get("/api"+urlData, {
+      const response = await axios.get("/api" + urlData, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -212,7 +212,7 @@ export default function TableData({
         totalPages={totalPages}
         limit={limit}
         handleLimit={handleSetLImit}
-        onPageChange={(e:any) => {
+        onPageChange={(e: any) => {
           if (activePage !== e) setActivePage(e);
         }}
       />
