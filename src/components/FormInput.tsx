@@ -87,7 +87,7 @@ export default function FormInput({
             },
           });
         } else if (route.method === "PUT") {
-          response = await axios.put(createUrl(route),containsFile ? formData : values, {
+          response = await axios.put(createUrl(route), containsFile ? formData : values, {
             headers: {
               "Content-Type": containsFile ? "multipart/form-data" : "application/json",
             },
