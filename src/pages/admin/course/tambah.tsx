@@ -10,7 +10,7 @@ export default function tambah() {
         <FormInput
           inputList={FormInputList}
           route={{ url: `/category`, query: {}, method: "POST" }}
-          title="Tambah Category"
+          title="Tambah Course"
         />
     </div>
   );

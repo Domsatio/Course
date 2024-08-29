@@ -1,5 +1,7 @@
 import { InputListProps } from "@/helpers/typeProps";
+import { Form } from "formik";
 import * as Yup from "yup";
+
 const FormInputList: InputListProps[] = [
   {
     className: "",
@@ -19,6 +21,14 @@ const FormInputList: InputListProps[] = [
   },
   {
     className: "",
+    name: "image",
+    label: "Gambar",
+    type: "image",
+    validator: Yup.mixed().required("Gambar harus diisi"),
+    value: "",
+  },
+  {
+    className: "",
     name: "price",
     label: "Harga",
     type: "currency",
@@ -29,7 +39,7 @@ const FormInputList: InputListProps[] = [
     className: "",
     name: "stock",
     label: "Stok",
-    type: "input",
+    type: "number",
     validator: Yup.number().typeError('Harus angka').required("Stok harus diisi"),
     value: "",
   },
@@ -41,19 +51,18 @@ const FormInputList: InputListProps[] = [
     validator: Yup.date().required("Tanggal harus diisi"),
     value: "",
   },
-  // {
-  //   className: "",
-  //   name: "category",
-  //   label: "Kategori",
-  //   type: "select",
-  //   validator: Yup.string().required("Kategori harus diisi"),
-  //   value: "",
-  //   listData: [
-  //     { title: "1", value: "1" },
-  //     { title: "2", value: "2" },
-  //     { title: "3", value: "3" },
-  //   ],
-  // },
+  {
+    className: "",
+    name: "published",
+    label: "Dipublikasikan",
+    type: "select",
+    validator: Yup.string().required("Pilihan harus diisi"),
+    value: "",
+    listData: [
+      { title: "Yes", value: "yes" },
+      { title: "No", value: "no" },
+    ],
+  }
 ];
 
 export {FormInputList};

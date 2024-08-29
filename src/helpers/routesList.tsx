@@ -44,6 +44,12 @@ const routeList: MenuItemProps[] = [
       ],
     },
     {
+      isPage: true,
+      href: "/course",
+      label: "Courses",
+      icon: CubeTransparentIcon,
+    },
+    {
       isheader: true,
       label: "Ecommerce",
       href: "/ecommerce",

@@ -3,7 +3,9 @@ import React, { use, useEffect, useState } from "react";
 import { InputListProps } from "@/helpers/typeProps";
 import * as Yup from "yup";
 import axios from "axios";
+import Image from "next/image";
 import {
+  Button,
   Input,
   Select,
   Option,
@@ -12,17 +14,53 @@ import {
   Popover,
   PopoverHandler,
   PopoverContent,
+  Tooltip,
+  Dialog,
+  DialogHeader,
+  DialogBody,
+  DialogFooter,
 } from "@material-tailwind/react";
 import { useDebounce } from "use-debounce";
 import {
   MagnifyingGlassIcon,
   ChevronRightIcon,
   ChevronLeftIcon,
+  TrashIcon,
+  EyeIcon,
 } from "@heroicons/react/24/outline";
 import CurrencyInput from "react-currency-input-field";
 import { format } from "date-fns";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+
+type FileWieverProps = {
+  file: string;
+  isOpen: boolean;
+  handleOpen: (value: boolean) => void;
+};
+
+const FileWiever = ({ file, isOpen, handleOpen }: FileWieverProps) => {
+  return (
+    <Dialog size="sm" open={isOpen} handler={() => handleOpen(false)}>
+      <DialogHeader className="border-b">Preview</DialogHeader>
+      <DialogBody className="h-[500px]">
+        <div className="relative h-full w-full">
+          <Image
+            src={file}
+            className="object-contain"
+            alt="Preview image"
+            fill={true}
+          />
+        </div>
+      </DialogBody>
+      <DialogFooter>
+        <Button className="" onClick={() => handleOpen(false)}>
+          Close
+        </Button>
+      </DialogFooter>
+    </Dialog>
+  );
+};
 
 export const InputListRenderer = ({
   className = "",
@@ -43,6 +81,8 @@ export const InputListRenderer = ({
     .tests?.find((item: { name: string }) => item.name === "required");
   const [data, setData] = useState<any[]>(listData || []);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [preview, setPreview] = useState<boolean>(false);
   const [watch, setWatch] = useState<any[]>([]);
   const [search, setSearch] = useState<string>("");
   const [debounceValue] = useDebounce(search, 1500);
@@ -54,6 +94,9 @@ export const InputListRenderer = ({
     } else {
       setData(listData);
       setIsLoading(false);
+    }
+    if (type === "image" && typeof value === "string") {
+      setPreviewImage(value);
     }
   }, [debounceValue]);
 
@@ -89,13 +132,30 @@ export const InputListRenderer = ({
     });
   };
 
+  const handleImageChange = (e: any) => {
+    const file = e.target.files[0];
+    if (file) {
+      onChange?.({
+        target: {
+          name,
+          value: file,
+        },
+      });
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <div className={`flex flex-col gap-2 mb-3 ${hide && "hidden"}`}>
       <label className="form-label">
         {label}
         {isRequired && <span className="text-red-600">*</span>}
       </label>
-      {type === "input" && (
+      {(type === "input" || type === "number" || type === "url") && (
         <Input
           type="text"
           label={label}
@@ -104,6 +164,9 @@ export const InputListRenderer = ({
           value={value}
           onChange={onChange}
           disabled={disabled}
+          inputMode={
+            type === "number" ? "numeric" : type === "url" ? "url" : "text"
+          }
         />
       )}
       {type === "select" && (
@@ -201,24 +264,75 @@ export const InputListRenderer = ({
         <label className={`form-label ${className}`}>{value}</label>
       )}
       {type === "component" && <div className={className}>{value}</div>}
-      {type === "csv" && (
-        <Input
-          type="file"
-          className={className}
-          name={name}
-          onChange={onChange}
-          disabled={disabled}
-        />
+      {type === "image" && (
+        <React.Fragment>
+          {previewImage && (
+            <FileWiever
+              file={previewImage}
+              isOpen={preview}
+              handleOpen={setPreview}
+            />
+          )}
+          {!previewImage && (
+            <input
+              name={name}
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="block w-64 text-sm text-gray-500
+                file:py-2 file:px-4 file:rounded-full file:border-0
+                file:text-sm file:font-semibold
+                file:bg-blue-50 file:text-blue-700
+                hover:file:bg-blue-100
+                file:cursor-pointer file:h-10 file:leading-tight"
+            />
+          )}
+          {previewImage && (
+            <div className="flex gap-2">
+              <Tooltip content="View">
+                <button
+                  type="button"
+                  className="inline-flex justify-center items-center px-3 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700 focus:outline-none"
+                  onClick={() => setPreview(true)}
+                >
+                  <EyeIcon className="h-5 w-5" aria-hidden="true" />
+                </button>
+              </Tooltip>
+              <Tooltip content="Delete">
+                <button
+                  type="button"
+                  className="inline-flex justify-center items-center px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-700 focus:outline-none"
+                  onClick={() => {
+                    onChange?.({
+                      target: {
+                        name,
+                        value: "",
+                      },
+                    });
+                    setPreviewImage(null);
+                  }}
+                >
+                  <TrashIcon className="h-5 w-5" aria-hidden="true" />
+                </button>
+              </Tooltip>
+            </div>
+          )}
+        </React.Fragment>
       )}
       {type === "date" && (
-        <DatePicker 
+        <DatePicker
           className="border border-blue-gray-200 rounded-md px-3 py-2.5 w-full text-sm font-normal text-blue-gray-700 focus:outline-none focus:border-gray-900 focus:border-2"
-          selected={Array.isArray(value)
-            ? new Date()
-            : value ? new Date(value) : new Date()} 
+          selected={
+            Array.isArray(value)
+              ? new Date()
+              : value
+              ? new Date(value)
+              : new Date()
+          }
           onChange={(date) => {
-          onChange?.({target: {name, value: date}})
-        }} />
+            onChange?.({ target: { name, value: date } });
+          }}
+        />
       )}
       {type === "currency" && (
         <CurrencyInput
@@ -235,8 +349,8 @@ export const InputListRenderer = ({
           }}
           intlConfig={{ locale: "id-ID", currency: "IDR" }}
           // prefix="Rp. "
-          groupSeparator= ','
-          decimalSeparator= '.'
+          groupSeparator=","
+          decimalSeparator="."
           min={0}
         />
       )}
@@ -248,3 +362,5 @@ export const InputListRenderer = ({
     </div>
   );
 };
+
+
