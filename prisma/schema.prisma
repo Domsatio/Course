@@ -11,7 +11,7 @@ datasource db {
 }
 
 model Account {
-  id                String  @id @default(cuid())
+  id                String  @id @default(uuid())
   userId            String
   type              String
   provider          String
@@ -30,7 +30,7 @@ model Account {
 }
 
 model Session {
-  id           String   @id @default(cuid())
+  id           String   @id @default(uuid())
   sessionToken String   @unique
   userId       String
   expires      DateTime
@@ -38,7 +38,7 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String    @id @default(uuid())
   name          String
   email         String    @unique
   emailVerified DateTime?
@@ -48,8 +48,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   Order         Order[]
-
-  Post Post[]
+  Post          Post[]
 }
 
 model VerificationToken {
@@ -61,21 +60,21 @@ model VerificationToken {
 }
 
 model Product {
-  id          String   @id @default(cuid())
-  name        String
-  description String
-  price       Float
-  discount    Int?     @default(0)
-  image       String
-  quantity    Int      @default(0)
-  quantityOrdered      Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  Order       Order[]
+  id                String   @id @default(uuid())
+  name              String
+  description       String
+  price             Float
+  discount          Int?     @default(0)
+  image             String
+  quantity          Int      @default(0)
+  quantityOrdered   Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  Order             Order[]
 }
 
 model Order {
-  id        String   @id @default(cuid())
+  id        String   @id @default(uuid())
   userId    String
   productId String
   startTime DateTime
@@ -83,28 +82,28 @@ model Order {
   status    String   @default("ordered")
   createdAt DateTime @default(now())
 
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
 
 model Post {
-  id         String   @id @default(cuid())
+  id         String               @id @default(uuid())
   userId     String
   title      String
   body       String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  createdAt  DateTime             @default(now())
+  updatedAt  DateTime             @updatedAt
   categories CategoriesOnPosts[]
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user       User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Category {
-  id         String   @id @default(cuid())
+  id         String   @id @default(uuid())
   name       String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt @default(now())
-  posts CategoriesOnPosts[]
+  posts      CategoriesOnPosts[]
 }
 
 model CategoriesOnPosts {

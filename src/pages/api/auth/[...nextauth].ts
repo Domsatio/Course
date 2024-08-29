@@ -1,21 +1,21 @@
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import bcrypt from "bcrypt";
-import { existingUser } from "@/controllers/userController";
+import { existingUser } from "@/controllers/user.controller";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export const authOptions = {
+export const authOptions: NextAuthOptions = {
   debug: process.env.NODE_ENV === "development",
   adapter: PrismaAdapter(prisma),
   providers: [
     GoogleProvider({
       name: "Google",
-      clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-      clientSecret: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET,
+      clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "",
+      clientSecret: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET || "",
       httpOptions: {
         timeout: 60000,
       },
@@ -28,7 +28,6 @@ export const authOptions = {
           role: "user",
         };
       },
-      // style: { logo: "/google.svg", bg: "#fff", text: "#000" },
     }),
     CredentialsProvider({
       name: "Credentials",
@@ -38,21 +37,22 @@ export const authOptions = {
         password: { label: "password", type: "password" },
       },
       async authorize(credentials) {
-        const user = await existingUser(credentials.email);
+        const { email, password } = credentials as {
+          email: string;
+          password: string;
+        };
+        const user = await existingUser(email);
         if (user) {
-          const match = await bcrypt.compare(
-            credentials.password,
-            user.password
-          );
-          if (match) {
-            return user;
-          } else {
-            return null;
-          }
+          const passwordConfirm = await bcrypt.compare(password, user.password);
+          if (passwordConfirm) return user;
+          return null;
         }
       },
     }),
   ],
+  pages: {
+    signIn: "/sign-in",
+  },
   session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60,
@@ -62,15 +62,10 @@ export const authOptions = {
     async jwt({ token, user }) {
       return { ...token, ...user };
     },
-    async session({ session, token }) {
+    async session({ session, token }: any) {
       session.user.role = token.role;
       return session;
     },
-    // async redirect({ url, baseUrl }) {
-    //   if (url.startsWith("/admin")) return `${baseUrl}/admin/dashboard`;
-    //   else if (new URL(url).origin === baseUrl) return url;
-    //   return baseUrl;
-    // },
   },
 };
 
