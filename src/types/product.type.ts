@@ -3,8 +3,16 @@ export type Product = {
   name: string;
   description: string;
   price: number;
+  discount?: number;
   image: string;
   quantity: number;
 };
 
-export type UpdateProduct = Omit<Product, "id">;
+export type UpdateProduct = {
+  name?: string;
+  description?: string;
+  price?: number;
+  discount?: number;
+  image?: string;
+  quantity?: number;
+};

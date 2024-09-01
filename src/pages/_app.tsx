@@ -5,11 +5,12 @@ import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "@material-tailwind/react";
 import LayoutClient from "@/layouts/client";
 import LayoutAdmin from "@/layouts/admin";
+import { AppProps } from "next/app";
 
 export default function App({
   Component,
   pageProps: { session, ...pageProps },
-}) {
+}: AppProps) {
   const { pathname } = useRouter();
   const isAdminRoute = pathname.includes("/admin");
 
