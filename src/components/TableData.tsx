@@ -15,6 +15,7 @@ import {
 } from "@material-tailwind/react";
 import { ProductProps, TableDataProps } from "@/helpers/typeProps";
 import FormInput from "@/components/FormInput";
+import { children } from "@material-tailwind/react/types/components/accordion";
 
 const filterDataDummy = (data: [], page: number, size: number) => {
   const offset = Math.ceil(page - 1) * size || 0;
@@ -34,6 +35,7 @@ export default function TableData({
   filter,
 }: TableDataProps) {
   const [data, setData] = React.useState<ProductProps[]>([]);
+  const [isLoad, setIsLoad] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [activePage, setActivePage] = React.useState(1);
   const [limit, setlimit] = React.useState<number>(5);
@@ -71,7 +73,7 @@ export default function TableData({
       undefined,
       { shallow: true }
     );
-    // getDataTable();
+    getDataTable();
     // if (search) {
     //   const filterData = data.filter((item) => {
     //     return item.name.toLowerCase().includes(search.toLowerCase());
@@ -99,7 +101,8 @@ export default function TableData({
       param.search = debounceValue;
     }
     try {
-      const response = await axios.get("/api"+urlData, {
+      setIsLoad(true);
+      const response = await axios.get("/api" + urlData, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -113,6 +116,8 @@ export default function TableData({
       setData(response.data.data);
     } catch (error) {
       console.log("error", error);
+    } finally {
+      setIsLoad(false);
     }
   };
 
@@ -188,10 +193,7 @@ export default function TableData({
           <thead className="sticky -top-[24.5px] h-8 z-30 bg-blue-gray-50">
             <tr>
               {tableHeader.map((head: any) => (
-                <th
-                  key={head}
-                  className="border-y border-blue-gray-100  p-4"
-                >
+                <th key={head} className="border-y border-blue-gray-100  p-4">
                   <Typography
                     variant="small"
                     color="blue-gray"
@@ -203,7 +205,9 @@ export default function TableData({
               ))}
             </tr>
           </thead>
-          <tbody className="">{children}</tbody>
+          <tbody className="">
+            {isLoad ? <TableSkeleton long={tableHeader.length} /> : children}
+          </tbody>
         </table>
       </CardBody>
       <Pagination
@@ -212,10 +216,35 @@ export default function TableData({
         totalPages={totalPages}
         limit={limit}
         handleLimit={handleSetLImit}
-        onPageChange={(e:any) => {
+        onPageChange={(e: any) => {
           if (activePage !== e) setActivePage(e);
         }}
       />
     </Card>
   );
 }
+
+const TableSkeleton = ({ long }: { long: number }) => {
+  return (
+    <React.Fragment>
+      {[...Array(5)].map((_, index) => (
+        <tr>
+          {[...Array(long)].map((_, index) => (
+            <td key={index} className="border-y border-blue-gray-100 p-4">
+              <Typography
+                variant="small"
+                color="blue-gray"
+                className="font-normal leading-none opacity-70"
+              >
+                <Typography as="div" className="h-5 rounded-full bg-gray-300">
+                  {" "}
+                  &nbsp;
+                </Typography>
+              </Typography>
+            </td>
+          ))}
+        </tr>
+      ))}
+    </React.Fragment>
+  );
+};
