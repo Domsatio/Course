@@ -1,7 +1,20 @@
-import { Product } from "./product.type";
+export enum OrderStatus {
+  PENDING = "PENDING",
+  PROCESSING = "PROCESSING",
+  SHIPPING = "SHIPPING",
+  DELIVERED = "DELIVERED",
+  CANCELLED = "CANCELLED",
+}
 
 export type Order = {
   id: string;
   userId: string;
-  products: Pick<Product, "id" | "quantity">[];
+  productId: string;
+  quantity: number;
+  status?: OrderStatus;
+};
+
+export type UpdateOrder = {
+  quantity?: number;
+  status?: OrderStatus;
 };

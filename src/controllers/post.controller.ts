@@ -1,8 +1,8 @@
-import { db } from "@/libs/prisma";
+import prisma from "@/libs/prisma/db";
 import { Post, UpdatePost } from "@/types/post.type";
 
 export const getPosts = async () => {
-  return db.post.findMany({
+  return prisma.post.findMany({
     include: {
       categories: {
         include: {
@@ -14,7 +14,7 @@ export const getPosts = async () => {
 };
 
 export const getPost = async (id: string) => {
-  return db.post.findUnique({
+  return prisma.post.findUnique({
     where: { id },
     include: {
       categories: {
@@ -33,7 +33,7 @@ export const createPost = async ({
   body,
   categories,
 }: Post) => {
-  return db.post.create({
+  return prisma.post.create({
     data: {
       id,
       userId,
@@ -54,35 +54,25 @@ export const updatePost = async (
   id: string,
   { title, body, categories }: UpdatePost
 ) => {
-  return db.$transaction(async (tx: typeof db) => {
-    await tx.post.update({
-      where: { id },
-      data: {
-        categories: {
-          deleteMany: {},
-        },
+  return prisma.post.update({
+    where: { id },
+    data: {
+      title,
+      body,
+      categories: {
+        deleteMany: {},
+        create: categories?.map((id) => ({
+          category: {
+            connect: { id },
+          },
+        })),
       },
-    });
-
-    return tx.post.update({
-      where: { id },
-      data: {
-        title,
-        body,
-        categories: {
-          create: categories?.map((id) => ({
-            category: {
-              connect: { id },
-            },
-          })),
-        },
-      },
-    });
+    },
   });
 };
 
 export const deletePost = async (id: string) => {
-  return db.$transaction(async (tx: typeof db) => {
+  return prisma.$transaction(async (tx) => {
     await tx.post.update({
       where: { id },
       data: {
