@@ -39,13 +39,11 @@ export default async function handler(
     try {
       await createCategory(validatedData);
       console.info("Create category success");
-      return res
-        .status(201)
-        .send({
-          status: true,
-          statusCode: 201,
-          message: "Create category success",
-        });
+      return res.status(201).send({
+        status: true,
+        statusCode: 201,
+        message: "Create category success",
+      });
     } catch (error) {
       console.error("ERR: category - create = ", error);
       return res
@@ -70,23 +68,13 @@ export default async function handler(
     }
 
     try {
-      const result = await updateCategory(id as string, validatedData);
-
-      if (result) {
-        console.log("update category success");
-        return res
-          .status(201)
-          .send({
-            status: true,
-            statusCode: 201,
-            message: "Update category success",
-          });
-      } else {
-        console.log("Data not found");
-        return res
-          .status(404)
-          .send({ status: false, statusCode: 404, message: "Data not found" });
-      }
+      await updateCategory(id as string, validatedData);
+      console.log("update category success");
+      return res.status(201).send({
+        status: true,
+        statusCode: 201,
+        message: "Update category success",
+      });
     } catch (error) {
       console.error("ERR: category update = ", error);
       return res
@@ -102,23 +90,13 @@ export default async function handler(
     const { id } = req.query;
 
     try {
-      const result = await deleteCategory(id as string);
-
-      if (result) {
-        console.log("Delete category success");
-        return res
-          .status(200)
-          .send({
-            status: true,
-            statusCode: 200,
-            message: "Delete category success",
-          });
-      } else {
-        console.log("Data not found");
-        return res
-          .status(404)
-          .send({ status: false, statusCode: 404, message: "Data not found" });
-      }
+      await deleteCategory(id as string);
+      console.log("Delete category success");
+      return res.status(200).send({
+        status: true,
+        statusCode: 200,
+        message: "Delete category success",
+      });
     } catch (error) {
       console.error("ERR: category - delete = ", error);
       return res
@@ -136,14 +114,12 @@ export default async function handler(
       try {
         const data = await getCategory(id);
         console.info("Get category success");
-        return res
-          .status(200)
-          .send({
-            status: true,
-            statusCode: 200,
-            message: "Get category success",
-            data,
-          });
+        return res.status(200).send({
+          status: true,
+          statusCode: 200,
+          message: "Get category success",
+          data,
+        });
       } catch (error) {
         console.error("ERR: category - get = ", error);
         return res
@@ -154,14 +130,12 @@ export default async function handler(
       try {
         const data = await getCategories();
         console.info("Get categories success");
-        return res
-          .status(200)
-          .send({
-            status: true,
-            statusCode: 200,
-            message: "Get categories success",
-            data,
-          });
+        return res.status(200).send({
+          status: true,
+          statusCode: 200,
+          message: "Get categories success",
+          data,
+        });
       } catch (error) {
         console.error("ERR: categories - get = ", error);
         return res

@@ -23,6 +23,7 @@ model Account {
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@index([userId])
 }
 
 model Session {
@@ -31,6 +32,8 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model User {
@@ -40,11 +43,16 @@ model User {
   emailVerified DateTime?
   image         String?
   name          String
-  role          String    @default("user")
+  role          UserRole  @default(USER)
   accounts      Account[]
   orders        Order[]
   posts         Post[]
   sessions      Session[]
+}
+
+enum UserRole {
+  USER
+  ADMIN
 }
 
 model VerificationToken {
@@ -69,14 +77,26 @@ model Product {
 }
 
 model Order {
-  id        String   @id @default(uuid())
+  id        String        @id @default(uuid())
   userId    String
   productId String
-  status    String   @default("ordered")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quantity  Int           @default(1)
+  status    OrderStatus?  @default(PENDING)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  product   Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([productId])
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPING
+  DELIVERED
+  CANCELLED
 }
 
 model Post {
@@ -84,10 +104,13 @@ model Post {
   userId     String
   title      String
   body       String
+  published  Boolean             @default(false)
   createdAt  DateTime            @default(now())
   updatedAt  DateTime            @updatedAt
   categories CategoriesOnPosts[]
   user       User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model Category {
@@ -105,4 +128,6 @@ model CategoriesOnPosts {
   post       Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   @@id([postId, categoryId])
+  @@index([postId])
+  @@index([categoryId])
 }

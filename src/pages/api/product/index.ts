@@ -104,23 +104,13 @@ export default async function handler(
     }
 
     try {
-      const result = await updateProduct(id as string, validatedData);
-
-      if (result) {
-        console.info("Update product success");
-        return res.status(200).send({
-          status: true,
-          statusCode: 200,
-          message: "Update product success",
-        });
-      } else {
-        console.log("Data not found");
-        return res.status(404).send({
-          status: false,
-          statusCode: 404,
-          message: "Data not found",
-        });
-      }
+      await updateProduct(id as string, validatedData);
+      console.info("Update product success");
+      return res.status(200).send({
+        status: true,
+        statusCode: 200,
+        message: "Update product success",
+      });
     } catch (error) {
       console.error("ERR: product - update = ", error);
       return res
@@ -136,23 +126,13 @@ export default async function handler(
     const { id } = req.query;
 
     try {
-      const result = await deleteProduct(id as string);
-
-      if (result) {
-        console.info("Delete product success");
-        return res.status(200).send({
-          status: true,
-          statusCode: 200,
-          message: "Delete product success",
-        });
-      } else {
-        console.log("Data not found");
-        return res.status(404).send({
-          status: false,
-          statusCode: 404,
-          message: "Data not found",
-        });
-      }
+      await deleteProduct(id as string);
+      console.info("Delete product success");
+      return res.status(200).send({
+        status: true,
+        statusCode: 200,
+        message: "Delete product success",
+      });
     } catch (error) {
       console.error("ERR: product - delete = ", error);
       return res
