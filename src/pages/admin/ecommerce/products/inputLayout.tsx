@@ -37,7 +37,7 @@ const FormInputList: InputListProps[] = [
   },
   {
     className: "",
-    name: "stock",
+    name: "quantity",
     label: "Stok",
     type: "number",
     validator: Yup.number().typeError('Harus angka').required("Stok harus diisi"),
@@ -45,24 +45,33 @@ const FormInputList: InputListProps[] = [
   },
   {
     className: "",
-    name: "date",
-    label: "Tanggal",
-    type: "date",
-    validator: Yup.date().required("Tanggal harus diisi"),
+    name: "discount",
+    label: "Diskon",
+    type: "number",
+    validator: Yup.number().typeError('Harus angka'),
     value: "",
   },
-  {
-    className: "",
-    name: "published",
-    label: "Dipublikasikan",
-    type: "select",
-    validator: Yup.string().required("Pilihan harus diisi"),
-    value: "",
-    listData: [
-      { title: "Yes", value: "yes" },
-      { title: "No", value: "no" },
-    ],
-  }
+
+  // {
+  //   className: "",
+  //   name: "date",
+  //   label: "Tanggal",
+  //   type: "date",
+  //   validator: Yup.date().required("Tanggal harus diisi"),
+  //   value: "",
+  // },
+  // {
+  //   className: "",
+  //   name: "published",
+  //   label: "Dipublikasikan",
+  //   type: "select",
+  //   validator: Yup.string().required("Pilihan harus diisi"),
+  //   value: "",
+  //   listData: [
+  //     { title: "Yes", value: "yes" },
+  //     { title: "No", value: "no" },
+  //   ],
+  // }
 ];
 
 export {FormInputList};

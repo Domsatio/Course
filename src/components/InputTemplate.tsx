@@ -29,9 +29,12 @@ import {
   EyeIcon,
 } from "@heroicons/react/24/outline";
 import CurrencyInput from "react-currency-input-field";
-import { format } from "date-fns";
+import { format, set } from "date-fns";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { UploadButton } from "@/libs/uploadThing";
+import { FormInputHooks } from "./FormInput";
+import { se } from "date-fns/locale";
 
 type FileWieverProps = {
   file: string;
@@ -83,11 +86,11 @@ export const InputListRenderer = ({
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [preview, setPreview] = useState<boolean>(false);
-  const [watch, setWatch] = useState<any[]>([]);
   const [search, setSearch] = useState<string>("");
   const [debounceValue] = useDebounce(search, 1500);
   const param = option?.params?.split(/\s*,\s*/) || [];
 
+  const { setDisabled, disabled: formDisabled } = FormInputHooks();
   useEffect(() => {
     if (option?.api) {
       getDataApi();
@@ -132,20 +135,66 @@ export const InputListRenderer = ({
     });
   };
 
-  const handleImageChange = (e: any) => {
-    const file = e.target.files[0];
-    if (file) {
-      onChange?.({
-        target: {
-          name,
-          value: file,
-        },
-      });
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+  // const handleImageChange = (e: any) => {
+  //   const file = e.target.files[0];
+  //   if (file) {
+  //     onChange?.({
+  //       target: {
+  //         name,
+  //         value: file,
+  //       },
+  //     });
+  //     const reader = new FileReader();
+  //     reader.onloadend = () => {
+  //       setPreviewImage(reader.result as string);
+  //     };
+  //     reader.readAsDataURL(file);
+  //   }
+  // };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    setDisabled(true);
+    const files = e.target.files?.[0];
+    if (files) {
+      try {
+        const { data } = await axios.post(
+          "/api/uploadthing?actionType=upload&slug=imageUploader",
+          {
+            files: [{ name: files.name, type: files.type, size: files.size }],
+          }
+        );
+
+        const { url, fields, fileUrl } = data[0];
+        const formData = new FormData();
+
+        Object.entries(fields).forEach(([key, value]: [string, any]) => {
+          formData.append(key, value);
+        });
+        formData.append("file", files);
+        const response = await axios.post(url, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
+        if (response.status === 204) {
+          onChange?.({
+            target: {
+              name,
+              value: fileUrl,
+            },
+          });
+          setPreviewImage(fileUrl);
+          console.log("File uploaded successfully!");
+        } else {
+          console.error("Upload failed:", response.data);
+        }
+      } catch (error) {
+        console.error("Upload failed:", error);
+      } finally {
+        setDisabled(false);
+      }
     }
   };
 
@@ -273,12 +322,15 @@ export const InputListRenderer = ({
               handleOpen={setPreview}
             />
           )}
-          {!previewImage && (
+          {!previewImage && !formDisabled && (
             <input
               name={name}
               type="file"
               accept="image/*"
-              onChange={handleImageChange}
+              onChange={(e) => {
+                // handleImageChange(e);
+                handleImageUpload(e);
+              }}
               className="block w-64 text-sm text-gray-500
                 file:py-2 file:px-4 file:rounded-full file:border-0
                 file:text-sm file:font-semibold
@@ -286,6 +338,11 @@ export const InputListRenderer = ({
                 hover:file:bg-blue-100
                 file:cursor-pointer file:h-10 file:leading-tight"
             />
+          )}
+          {formDisabled && (
+            <Typography color="blue-gray" className="text-sm">
+              Uploading...
+            </Typography>
           )}
           {previewImage && (
             <div className="flex gap-2">
@@ -317,6 +374,18 @@ export const InputListRenderer = ({
               </Tooltip>
             </div>
           )}
+          {/* <UploadButton
+            endpoint="imageUploader"
+            onClientUploadComplete={(res) => {
+             
+              console.log("Files: ", res);
+              alert("Upload Completed");
+            }}
+            onUploadError={(error: Error) => {
+              // Do something with the error.
+              alert(`ERROR! ${error.message}`);
+            }}
+          /> */}
         </React.Fragment>
       )}
       {type === "date" && (
@@ -362,5 +431,3 @@ export const InputListRenderer = ({
     </div>
   );
 };
-
-

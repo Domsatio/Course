@@ -1,6 +1,6 @@
 "use client";
 import { useEffect } from "react";
-import { Input, Checkbox, Button, Typography } from "@material-tailwind/react";
+import { Input, Button, Typography } from "@material-tailwind/react";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/router";
@@ -10,30 +10,28 @@ import { useSession } from "next-auth/react";
 export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const router = useRouter();
+  const { push } = useRouter();
   const { data: session } = useSession();
 
-  useEffect(() => {
-    if (session?.user) {
-      router.push("/");
-    }
-  }, [session, router]);
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
+
     const signInData = await signIn("credentials", {
       redirect: false,
       email,
       password,
     });
-    setEmail("");
-    setPassword("");
+
     if (signInData?.error) {
       alert(signInData.error);
-    } else {
-      router.push("/");
     }
+
+    setIsLoading(false);
+    setEmail("");
+    setPassword("");
   };
 
   const authUseGoogle = async () => {
@@ -42,6 +40,12 @@ export default function SignIn() {
       alert(signInData.error);
     }
   };
+
+  useEffect(() => {
+    if (session?.user) {
+      push("/");
+    }
+  }, [session, push]);
 
   return (
     <section className="flex gap-4 justify-center min-h-screen items-center">
@@ -68,7 +72,7 @@ export default function SignIn() {
               color="blue-gray"
               className="-mb-3 font-medium"
             >
-              Your email
+              Email
             </Typography>
             <Input
               type="email"
@@ -80,6 +84,7 @@ export default function SignIn() {
               }}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              required
             />
             <Typography
               variant="small"
@@ -98,17 +103,13 @@ export default function SignIn() {
               }}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              required
             />
           </div>
-          <Button type="submit" className="mt-6" fullWidth>
+          <Button type="submit" className="mt-6" loading={isLoading} fullWidth>
             Sign In
           </Button>
 
-          <div className="flex items-center justify-end gap-2 mt-6">
-            <Typography variant="small" className="font-medium text-gray-900">
-              <a href="#">Forgot Password</a>
-            </Typography>
-          </div>
           <div className="space-y-4 mt-8">
             <Button
               size="lg"

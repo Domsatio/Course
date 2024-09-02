@@ -15,7 +15,6 @@ import {
 } from "@material-tailwind/react";
 import { ProductProps, TableDataProps } from "@/helpers/typeProps";
 import FormInput from "@/components/FormInput";
-import { children } from "@material-tailwind/react/types/components/accordion";
 
 const filterDataDummy = (data: [], page: number, size: number) => {
   const offset = Math.ceil(page - 1) * size || 0;

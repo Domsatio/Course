@@ -1,4 +1,4 @@
-import { OurFileRouter } from "@/pages/api/uploadThing";
+import { OurFileRouter } from "@/controllers/uploadThing";
 import {
   generateUploadButton,
   generateUploadDropzone,
