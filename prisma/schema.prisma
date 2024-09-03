@@ -23,6 +23,7 @@ model Account {
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@index([userId])
 }
 
 model Session {
@@ -31,6 +32,8 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model User {
@@ -40,7 +43,7 @@ model User {
   emailVerified DateTime?
   image         String?
   name          String
-  role          String    @default("user")
+  role          UserRole  @default(USER)
   accounts      Account[]
   orders        Order[]
   posts         Post[]
@@ -56,27 +59,31 @@ model VerificationToken {
 }
 
 model Product {
-  id              String   @id @default(uuid())
-  name            String
-  description     String
-  price           Float
-  discount        Int?     @default(0)
-  image           String
-  quantity        Int      @default(0)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  orders          Order[]
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  price       Float
+  discount    Int?     @default(0)
+  image       String
+  quantity    Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  orders      Order[]
 }
 
 model Order {
-  id        String   @id @default(uuid())
+  id        String       @id @default(uuid())
   userId    String
   productId String
-  status    String   @default("ordered")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  quantity  Int          @default(1)
+  status    OrderStatus? @default(PENDING)
+  product   Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([userId])
 }
 
 model Post {
@@ -86,8 +93,11 @@ model Post {
   body       String
   createdAt  DateTime            @default(now())
   updatedAt  DateTime            @updatedAt
+  published  Boolean             @default(false)
   categories CategoriesOnPosts[]
   user       User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model Category {
@@ -105,4 +115,19 @@ model CategoriesOnPosts {
   post       Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   @@id([postId, categoryId])
+  @@index([categoryId])
+  @@index([postId])
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPING
+  DELIVERED
+  CANCELLED
+}
+
+enum UserRole {
+  USER
+  ADMIN
 }

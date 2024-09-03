@@ -103,7 +103,7 @@ interface TableDataProps {
     onSuccess?: (e: any) => void;
     isActionAdd?: boolean;
     filter?: InputListProps[] | undefined;
-    children?: React.ReactNode;
+    // children?: React.ReactNode;
 }
 
 interface PaginationProps {
@@ -124,9 +124,9 @@ interface ProductProps {
   image: string;
   status?: string;
   category?: string;
-  account: string;
   rating: number;
-  stock?: number;
+  quantity?: number;
+  discount?: number;
   date?: string;
   createdAt: string;
 }

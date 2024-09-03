@@ -37,7 +37,7 @@ import { FormInputHooks } from "./FormInput";
 import { se } from "date-fns/locale";
 
 type FileWieverProps = {
-  file: string;
+  file: string | null;
   isOpen: boolean;
   handleOpen: (value: boolean) => void;
 };
@@ -49,7 +49,7 @@ const FileWiever = ({ file, isOpen, handleOpen }: FileWieverProps) => {
       <DialogBody className="h-[500px]">
         <div className="relative h-full w-full">
           <Image
-            src={file}
+            src={file|| ""}
             className="object-contain"
             alt="Preview image"
             fill={true}
@@ -102,6 +102,8 @@ export const InputListRenderer = ({
       setPreviewImage(value);
     }
   }, [debounceValue]);
+  
+  
 
   const getDataApi = async () => {
     setIsLoading(true);
@@ -315,14 +317,14 @@ export const InputListRenderer = ({
       {type === "component" && <div className={className}>{value}</div>}
       {type === "image" && (
         <React.Fragment>
-          {previewImage && (
+          {value && (
             <FileWiever
-              file={previewImage}
+              file={value.toLocaleString()}
               isOpen={preview}
               handleOpen={setPreview}
             />
           )}
-          {!previewImage && !formDisabled && (
+          {!value && !formDisabled && (
             <input
               name={name}
               type="file"
@@ -344,7 +346,7 @@ export const InputListRenderer = ({
               Uploading...
             </Typography>
           )}
-          {previewImage && (
+          {value && (
             <div className="flex gap-2">
               <Tooltip content="View">
                 <button

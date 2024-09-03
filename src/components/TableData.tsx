@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { useDebounce } from "use-debounce";
@@ -12,38 +12,40 @@ import {
   Button,
   CardBody,
   Input,
+  Menu,
+  MenuHandler,
+  MenuList,
+  MenuItem,
 } from "@material-tailwind/react";
 import { ProductProps, TableDataProps } from "@/helpers/typeProps";
 import FormInput from "@/components/FormInput";
 
-const filterDataDummy = (data: [], page: number, size: number) => {
+export interface TableActionProps {
+  action: "update" | "delete" | "view" | "custom";
+  onClick?: () => void;
+  custom?: {
+    label: string;
+    icon: any;
+  };
+}
+
+const filterDataDummy = (data: any[], page: number, size: number) => {
   const offset = Math.ceil(page - 1) * size || 0;
   const filterDataWithPagination = data.slice(offset, offset + size) || [];
   return filterDataWithPagination;
 };
 
-export default function TableData({
-  dummyData,
-  tableHeader = [],
-  urlData = "",
-  title = "",
-  description = "",
-  onSuccess,
-  children,
-  isActionAdd = true,
-  filter,
-}: TableDataProps) {
-  const [data, setData] = React.useState<ProductProps[]>([]);
-  const [isLoad, setIsLoad] = React.useState(false);
-  const [searchQuery, setSearchQuery] = React.useState("");
-  const [activePage, setActivePage] = React.useState(1);
-  const [limit, setlimit] = React.useState<number>(5);
-  const [totalPages, setTotalPages] = React.useState(0);
-  const [debounceValue] = useDebounce(searchQuery, 1500);
-  const [modalFilter, setModalFilter] = React.useState(false);
-
+const TableHook = ({onSuccess, urlData}: {onSuccess?: (e: any) => void, urlData:string}) => {
+  const [data, setData] = useState<ProductProps[]>([]);
+  const [isLoad, setIsLoad] = useState(false);
   const router = useRouter();
-  // const { search } = router.query;
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activePage, setActivePage] = useState(1);
+  const [limit, setlimit] = useState<number>(5);
+  const [totalPages, setTotalPages] = useState(0);
+  const [debounceValue] = useDebounce(searchQuery, 1500);
+  const [modalFilter, setModalFilter] = useState(false);
+  const [dummyData, setDummyData] = useState([]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -120,8 +122,77 @@ export default function TableData({
     }
   };
 
-  return (
-    <Card className="h-full w-full">
+  const handleDelete = async (id: string) => {
+    try {
+      const response = await axios.delete("/api" + urlData, {params: { id: id }});
+      if (response.data) {
+        getDataTable();
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+  return { 
+    router,
+    data,
+    setData,
+    isLoad,
+    setIsLoad,
+    searchQuery,
+    setSearchQuery,
+    activePage,
+    setActivePage,
+    limit,
+    setlimit,
+    totalPages,
+    setTotalPages,
+    debounceValue,
+    modalFilter,
+    setModalFilter,
+    handleSetLImit,
+    getDataTable,
+    handleDelete,
+    dummyData,
+    setDummyData,
+   };
+}
+
+export default function TableData({
+  dummyData,
+  tableHeader = [],
+  urlData = "",
+  title = "",
+  description = "",
+  onSuccess,
+  isActionAdd = true,
+  filter,
+}: TableDataProps) {
+  const { router,
+    data,
+    setData,
+    isLoad,
+    setIsLoad,
+    searchQuery,
+    setSearchQuery,
+    activePage,
+    setActivePage,
+    limit,
+    setlimit,
+    totalPages,
+    setTotalPages,
+    debounceValue,
+    modalFilter,
+    setModalFilter,
+    handleSetLImit,
+    getDataTable,
+    handleDelete,
+    setDummyData,
+  } = TableHook({onSuccess: onSuccess, urlData: urlData});
+  
+  const Table = ({children}: {children:React.ReactNode}) => {
+    return (
+      <Card className="h-full w-full">
       <CardHeader floated={false} shadow={false} className="rounded-none">
         <div className="mb-4 flex flex-col justify-between gap-8 md:flex-row md:items-center">
           <div>
@@ -220,7 +291,37 @@ export default function TableData({
         }}
       />
     </Card>
-  );
+    )
+  }
+
+  const TableAction = ({data, id}: {data: TableActionProps[], id:string|number}) => {
+    return (
+      <Menu>
+        <MenuHandler>
+          <Button>Action</Button>
+        </MenuHandler>
+        <MenuList>
+          {data.map((item) => (
+            <MenuItem key={item.action} onClick={
+              item.action === "custom"
+                ? item.onClick :
+                item.action === "delete"
+                ? () => {
+                    handleDelete(id.toString());
+                  } : () => router.push(router.pathname + "/update/" + id)
+            }>
+              {item.action === "custom" ? item.custom?.label : item.action}
+            </MenuItem>
+          ))}
+        </MenuList>
+      </Menu>
+    );
+  }
+
+  return {
+    Table,
+    TableAction,
+  }
 }
 
 const TableSkeleton = ({ long }: { long: number }) => {
@@ -247,3 +348,7 @@ const TableSkeleton = ({ long }: { long: number }) => {
     </React.Fragment>
   );
 };
+
+
+
+

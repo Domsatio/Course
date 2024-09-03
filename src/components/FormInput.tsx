@@ -78,24 +78,28 @@ export default function FormInput({
     validationSchema,
     onSubmit: async (values) => {
       const formData = new FormData();
-      const containsFile = inputList.some((input) => input.type === "image");
-      if (containsFile) {
-        Object.keys(values).forEach((key) => {
-          formData.append(key, values[key]);
-        });
-      }
+      // const containsFile = inputList.some((input) => input.type === "image");
+      // if (containsFile) {
+      //   Object.keys(values).forEach((key) => {
+      //     formData.append(key, values[key]);
+      //   });
+      // }
       try {
         let response;
         if (route.method === "POST") {
-          response = await axios.post(createUrl(route), containsFile ? formData : values, {
+          // response = await axios.post(createUrl(route), containsFile ? formData : values, {
+          response = await axios.post(createUrl(route), values, {
             headers: {
-              "Content-Type": containsFile ? "multipart/form-data" : "application/json",
+              // "Content-Type": containsFile ? "multipart/form-data" : "application/json",
+              "Content-Type": "application/json",
             },
           });
         } else if (route.method === "PUT") {
-          response = await axios.put(createUrl(route), containsFile ? formData : values, {
+          // response = await axios.put(createUrl(route), containsFile ? formData : values, {
+          response = await axios.put(createUrl(route), values, {
             headers: {
-              "Content-Type": containsFile ? "multipart/form-data" : "application/json",
+              // "Content-Type": containsFile ? "multipart/form-data" : "application/json",
+              "Content-Type": "application/json",
             },
           });
         } else {
