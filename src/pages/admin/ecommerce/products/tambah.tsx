@@ -10,7 +10,7 @@ export default function tambah() {
         title="Tambah Produk"
         inputList={FormInputList}
         route={{
-          url: "/products",
+          url: "/api/product",
           query: {},
           method: "POST",
         }}

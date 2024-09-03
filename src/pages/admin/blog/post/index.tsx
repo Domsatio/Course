@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import TableData from "@/components/TableData";
+import { TableActionProps } from "@/components/TableData";
 import { DATA_POSTS } from "@/helpers/dummyData";
 import { PostProps, CategoryProps, InputListProps } from "@/helpers/typeProps";
 import { PencilIcon } from "@heroicons/react/24/solid";
@@ -12,23 +13,20 @@ import {
   rating,
 } from "@material-tailwind/react";
 import * as Yup from "yup";
-import { useRouter } from "next/router";
 const TABLE_HEAD = ["Title", "Body", "Category", "Action"];
 
 export default function index() {
   const [data, setData] = useState([]);
-  const router = useRouter();
+  const { Table, TableAction } = TableData({
+    title: "Posts",
+    description: "List of posts",
+    tableHeader: TABLE_HEAD,
+    urlData: "/post",
+    onSuccess: (data) => setData(data),
+    filter: dummyInputList,
+  });
   return (
-    <TableData
-      title="Posts"
-      description="List of posts"
-      tableHeader={TABLE_HEAD}
-      // dummyData={DATA_POSTS}
-      urlData="/post"
-      onSuccess={(data) => setData(data)}
-      filter={dummyInputList}
-    >
-      {/* {children} */}
+    <Table>
       {data?.map((post: PostProps, index: number) => {
         const isLast = index === data.length - 1;
         const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
@@ -74,20 +72,37 @@ export default function index() {
               </Typography>
             </td>
             <td className={classes}>
-              <Tooltip content="Edit User">
-                <IconButton variant="text" onClick={
-                  () => router.push(router.pathname + "/update/" + post.id)
-                }>
-                  <PencilIcon className="h-4 w-4" />
-                </IconButton>
-              </Tooltip>
+              <TableAction data={dataAction} id={post.id} />
             </td>
           </tr>
         );
       })}
-    </TableData>
+    </Table>
   );
 }
+
+const dataAction: TableActionProps[] = [
+  {
+    action: "update",
+  },
+  {
+    action: "delete",
+  },
+  {
+    action: "view",
+  },
+  {
+    action: "custom",
+    onClick: () => {
+      console.log("custom action");
+    },
+    custom: {
+      label: "Custom",
+      icon: <PencilIcon className="h-4 w-4" />,
+    },
+  },
+];
+
 
 // Define the dummy data for the InputListProps interface
 const dummyInputList: InputListProps[] = [

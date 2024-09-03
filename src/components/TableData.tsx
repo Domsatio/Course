@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { useDebounce } from "use-debounce";
@@ -12,37 +12,40 @@ import {
   Button,
   CardBody,
   Input,
+  Menu,
+  MenuHandler,
+  MenuList,
+  MenuItem,
 } from "@material-tailwind/react";
 import { ProductProps, TableDataProps } from "@/helpers/typeProps";
 import FormInput from "@/components/FormInput";
 
-const filterDataDummy = (data: [], page: number, size: number) => {
+export interface TableActionProps {
+  action: "update" | "delete" | "view" | "custom";
+  onClick?: () => void;
+  custom?: {
+    label: string;
+    icon: any;
+  };
+}
+
+const filterDataDummy = (data: any[], page: number, size: number) => {
   const offset = Math.ceil(page - 1) * size || 0;
   const filterDataWithPagination = data.slice(offset, offset + size) || [];
   return filterDataWithPagination;
 };
 
-export default function TableData({
-  dummyData,
-  tableHeader = [],
-  urlData = "",
-  title = "",
-  description = "",
-  onSuccess,
-  children,
-  isActionAdd = true,
-  filter,
-}: TableDataProps) {
-  const [data, setData] = React.useState<ProductProps[]>([]);
-  const [searchQuery, setSearchQuery] = React.useState("");
-  const [activePage, setActivePage] = React.useState(1);
-  const [limit, setlimit] = React.useState<number>(5);
-  const [totalPages, setTotalPages] = React.useState(0);
-  const [debounceValue] = useDebounce(searchQuery, 1500);
-  const [modalFilter, setModalFilter] = React.useState(false);
-
+const TableHook = ({onSuccess, urlData}: {onSuccess?: (e: any) => void, urlData:string}) => {
+  const [data, setData] = useState<ProductProps[]>([]);
+  const [isLoad, setIsLoad] = useState(false);
   const router = useRouter();
-  // const { search } = router.query;
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activePage, setActivePage] = useState(1);
+  const [limit, setlimit] = useState<number>(5);
+  const [totalPages, setTotalPages] = useState(0);
+  const [debounceValue] = useDebounce(searchQuery, 1500);
+  const [modalFilter, setModalFilter] = useState(false);
+  const [dummyData, setDummyData] = useState([]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -71,7 +74,7 @@ export default function TableData({
       undefined,
       { shallow: true }
     );
-    // getDataTable();
+    getDataTable();
     // if (search) {
     //   const filterData = data.filter((item) => {
     //     return item.name.toLowerCase().includes(search.toLowerCase());
@@ -99,6 +102,7 @@ export default function TableData({
       param.search = debounceValue;
     }
     try {
+      setIsLoad(true);
       const response = await axios.get("/api" + urlData, {
         headers: {
           "Content-Type": "application/json",
@@ -113,11 +117,82 @@ export default function TableData({
       setData(response.data.data);
     } catch (error) {
       console.log("error", error);
+    } finally {
+      setIsLoad(false);
     }
   };
 
-  return (
-    <Card className="h-full w-full">
+  const handleDelete = async (id: string) => {
+    try {
+      const response = await axios.delete("/api" + urlData, {params: { id: id }});
+      if (response.data) {
+        getDataTable();
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+  return { 
+    router,
+    data,
+    setData,
+    isLoad,
+    setIsLoad,
+    searchQuery,
+    setSearchQuery,
+    activePage,
+    setActivePage,
+    limit,
+    setlimit,
+    totalPages,
+    setTotalPages,
+    debounceValue,
+    modalFilter,
+    setModalFilter,
+    handleSetLImit,
+    getDataTable,
+    handleDelete,
+    dummyData,
+    setDummyData,
+   };
+}
+
+export default function TableData({
+  dummyData,
+  tableHeader = [],
+  urlData = "",
+  title = "",
+  description = "",
+  onSuccess,
+  isActionAdd = true,
+  filter,
+}: TableDataProps) {
+  const { router,
+    data,
+    setData,
+    isLoad,
+    setIsLoad,
+    searchQuery,
+    setSearchQuery,
+    activePage,
+    setActivePage,
+    limit,
+    setlimit,
+    totalPages,
+    setTotalPages,
+    debounceValue,
+    modalFilter,
+    setModalFilter,
+    handleSetLImit,
+    getDataTable,
+    handleDelete,
+    setDummyData,
+  } = TableHook({onSuccess: onSuccess, urlData: urlData});
+  
+  const Table = ({children}: {children:React.ReactNode}) => {
+    return (
+      <Card className="h-full w-full">
       <CardHeader floated={false} shadow={false} className="rounded-none">
         <div className="mb-4 flex flex-col justify-between gap-8 md:flex-row md:items-center">
           <div>
@@ -188,10 +263,7 @@ export default function TableData({
           <thead className="sticky -top-[24.5px] h-8 z-30 bg-blue-gray-50">
             <tr>
               {tableHeader.map((head: any) => (
-                <th
-                  key={head}
-                  className="border-y border-blue-gray-100  p-4"
-                >
+                <th key={head} className="border-y border-blue-gray-100  p-4">
                   <Typography
                     variant="small"
                     color="blue-gray"
@@ -203,7 +275,9 @@ export default function TableData({
               ))}
             </tr>
           </thead>
-          <tbody className="">{children}</tbody>
+          <tbody className="">
+            {isLoad ? <TableSkeleton long={tableHeader.length} /> : children}
+          </tbody>
         </table>
       </CardBody>
       <Pagination
@@ -217,5 +291,64 @@ export default function TableData({
         }}
       />
     </Card>
-  );
+    )
+  }
+
+  const TableAction = ({data, id}: {data: TableActionProps[], id:string|number}) => {
+    return (
+      <Menu>
+        <MenuHandler>
+          <Button>Action</Button>
+        </MenuHandler>
+        <MenuList>
+          {data.map((item) => (
+            <MenuItem key={item.action} onClick={
+              item.action === "custom"
+                ? item.onClick :
+                item.action === "delete"
+                ? () => {
+                    handleDelete(id.toString());
+                  } : () => router.push(router.pathname + "/update/" + id)
+            }>
+              {item.action === "custom" ? item.custom?.label : item.action}
+            </MenuItem>
+          ))}
+        </MenuList>
+      </Menu>
+    );
+  }
+
+  return {
+    Table,
+    TableAction,
+  }
 }
+
+const TableSkeleton = ({ long }: { long: number }) => {
+  return (
+    <React.Fragment>
+      {[...Array(5)].map((_, index) => (
+        <tr>
+          {[...Array(long)].map((_, index) => (
+            <td key={index} className="border-y border-blue-gray-100 p-4">
+              <Typography
+                variant="small"
+                color="blue-gray"
+                className="font-normal leading-none opacity-70"
+              >
+                <Typography as="div" className="h-5 rounded-full bg-gray-300">
+                  {" "}
+                  &nbsp;
+                </Typography>
+              </Typography>
+            </td>
+          ))}
+        </tr>
+      ))}
+    </React.Fragment>
+  );
+};
+
+
+
+

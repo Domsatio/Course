@@ -64,19 +64,33 @@ model VerificationToken {
 }
 
 model Product {
-  id              String   @id @default(uuid())
-  name            String
-  description     String
-  price           Float
-  discount        Int?     @default(0)
-  image           String
-  quantity        Int      @default(0)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  orders          Order[]
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  price       Float
+  discount    Int?     @default(0)
+  image       String
+  quantity    Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  orders      Order[]
 }
 
 model Order {
+<<<<<<< HEAD
+  id        String       @id @default(uuid())
+  userId    String
+  productId String
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  quantity  Int          @default(1)
+  status    OrderStatus? @default(PENDING)
+  product   Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([userId])
+=======
   id        String        @id @default(uuid())
   userId    String
   productId String
@@ -97,6 +111,7 @@ enum OrderStatus {
   SHIPPING
   DELIVERED
   CANCELLED
+>>>>>>> 9e8aae236cfcb0f440c99a09a18414b6da38d96d
 }
 
 model Post {
@@ -107,6 +122,7 @@ model Post {
   published  Boolean             @default(false)
   createdAt  DateTime            @default(now())
   updatedAt  DateTime            @updatedAt
+  published  Boolean             @default(false)
   categories CategoriesOnPosts[]
   user       User                @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -128,6 +144,24 @@ model CategoriesOnPosts {
   post       Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   @@id([postId, categoryId])
+<<<<<<< HEAD
+  @@index([categoryId])
+  @@index([postId])
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPING
+  DELIVERED
+  CANCELLED
+}
+
+enum UserRole {
+  USER
+  ADMIN
+=======
   @@index([postId])
   @@index([categoryId])
+>>>>>>> 9e8aae236cfcb0f440c99a09a18414b6da38d96d
 }

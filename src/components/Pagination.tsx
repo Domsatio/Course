@@ -56,6 +56,7 @@ export const Pagination: React.FC<PaginationProps> = ({
           </MenuList>
         </Menu>
       </div>
+      {totalPages > 1 && (
       <div className="w-full flex justify-center items-center gap-2">
         <Button
           variant="outlined"
@@ -126,6 +127,7 @@ export const Pagination: React.FC<PaginationProps> = ({
           }}
         />
       </div>
+      )}
     </CardFooter>
   );
 };
