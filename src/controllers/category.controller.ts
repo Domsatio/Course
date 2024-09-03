@@ -1,8 +1,8 @@
-import { db } from "@/libs/prisma";
+import prisma from "@/libs/prisma/db";
 import { Category, UpdateCategory } from "@/types/category.type";
 
 export const getCategories = async () => {
-  return db.category.findMany({
+  return prisma.category.findMany({
     include: {
       posts: {
         include: {
@@ -14,7 +14,7 @@ export const getCategories = async () => {
 };
 
 export const getCategory = async (id: string) => {
-  return db.category.findUnique({
+  return prisma.category.findUnique({
     where: { id },
     include: {
       posts: {
@@ -27,18 +27,18 @@ export const getCategory = async (id: string) => {
 };
 
 export const createCategory = async (data: Category) => {
-  return db.category.create({ data });
+  return prisma.category.create({ data });
 };
 
 export const updateCategory = async (id: string, data: UpdateCategory) => {
-  return db.category.update({
+  return prisma.category.update({
     where: { id },
     data,
   });
 };
 
 export const deleteCategory = async (id: string) => {
-  return db.$transaction(async (tx: typeof db) => {
+  return prisma.$transaction(async (tx) => {
     await tx.category.update({
       where: { id },
       data: {

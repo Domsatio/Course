@@ -1,17 +1,17 @@
 import {
-  createPost,
-  deletePost,
-  getPost,
-  getPosts,
-  updatePost,
-} from "@/controllers/post.controller";
+  createOrder,
+  updateOrder,
+  deleteOrder,
+  getOrder,
+  getOrders,
+} from "@/controllers/order.controller";
 import {
-  createPostValidation,
-  updatePostValidation,
-} from "@/validations/post.validation";
+  createOrderValidation,
+  updateOrderValidation,
+} from "@/validations/order.validation";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { v4 as uuidv4 } from "uuid";
 import { getToken } from "next-auth/jwt";
+import { v4 as uuidv4 } from "uuid";
 
 export default async function handler(
   req: NextApiRequest,
@@ -20,89 +20,85 @@ export default async function handler(
   const token = await getToken({ req });
 
   if (req.method === "POST") {
-    if (!token || token.role !== "admin") {
+    if (!token) {
       res.status(401).json({ message: "Forbidden" });
       return;
     }
 
     req.body.id = uuidv4();
 
-    const { validatedData, errors } = createPostValidation(req.body);
+    const { validatedData, errors } = createOrderValidation(req.body);
 
     if (errors) {
-      console.error("ERR: post - create = ", errors);
+      console.error("ERR: order - create = ", errors);
       return res
         .status(422)
         .send({ status: false, statusCode: 422, message: errors });
     }
 
     try {
-      await createPost(validatedData);
-      console.info("Create post success");
+      await createOrder(validatedData);
+      console.info("Create order success");
       return res.status(201).send({
         status: true,
         statusCode: 201,
-        message: "Create post success",
+        message: "Create order success",
       });
     } catch (error) {
-      console.error("ERR: post - create = ", error);
+      console.error("ERR: order - create = ", error);
       return res
         .status(422)
         .send({ status: false, statusCode: 422, message: error });
     }
   } else if (req.method === "PUT") {
-    if (!token || token.role !== "admin") {
+    if (!token) {
       res.status(401).json({ message: "Forbidden" });
       return;
     }
 
     const { id } = req.query;
 
-    const { validatedData, errors } = updatePostValidation(req.body);
+    const { validatedData, errors } = updateOrderValidation(req.body);
 
     if (errors) {
-      console.error("ERR: post - update = ", errors);
+      console.error("ERR: order - update = ", errors);
       return res
         .status(422)
         .send({ status: false, statusCode: 422, message: errors });
     }
 
     try {
-      await updatePost(id as string, validatedData);
-      console.log("update post success");
-      return res.status(201).send({
+      await updateOrder(id as string, validatedData);
+      console.info("Update order success");
+      return res.status(200).send({
         status: true,
-        statusCode: 201,
-        message: "Update post success",
+        statusCode: 200,
+        message: "Update order success",
       });
     } catch (error) {
-      console.error("ERR: post update = ", error);
+      console.error("ERR: order - update = ", error);
       return res
         .status(422)
         .send({ status: false, statusCode: 422, message: error });
     }
   } else if (req.method === "DELETE") {
-    if (!token || token.role !== "admin") {
+    if (!token) {
       res.status(401).json({ message: "Forbidden" });
       return;
     }
 
     const { id } = req.query;
 
-    if (typeof id !== "string") {
-      return res.status(400).json({ message: "Invalid id parameter" });
-    }
-
     try {
-      await deletePost(id);
-      console.log("Delete post success");
+      await deleteOrder(id as string);
+      console.info("Delete order success");
       return res.status(200).send({
         status: true,
         statusCode: 200,
-        message: "Delete post success",
+        message: "Delete order success",
       });
     } catch (error) {
-      console.error("ERR: post - delete = ", error);
+      console.error("ERR: order - delete = ", error);
       return res
         .status(422)
         .send({ status: false, statusCode: 422, message: error });
@@ -112,32 +108,32 @@ export default async function handler(
       const { id } = req.query;
 
       try {
-        const data = await getPost(id as string);
-        console.info("Get post success");
+        const data = await getOrder(id as string);
+        console.info("Get order success");
         return res.status(200).send({
           status: true,
           statusCode: 200,
-          message: "Get post success",
+          message: "Get order success",
           data,
         });
       } catch (error) {
-        console.error("ERR: post - get = ", error);
+        console.error("ERR: order - get = ", error);
         return res
           .status(422)
           .send({ status: false, statusCode: 422, message: error });
       }
     } else {
       try {
-        const data = await getPosts();
-        console.info("Get posts success");
+        const data = await getOrders();
+        console.info("Get orders success");
         return res.status(200).send({
           status: true,
           statusCode: 200,
-          message: "Get posts success",
+          message: "Get orders success",
           data,
         });
       } catch (error) {
-        console.error("ERR: posts - get = ", error);
+        console.error("ERR: orders - get = ", error);
         return res
           .status(422)
           .send({ status: false, statusCode: 422, message: error });

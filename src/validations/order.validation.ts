@@ -1,14 +1,13 @@
-import { Post, UpdatePost } from "@/types/post.type";
-import { array, boolean, object, string } from "yup";
+import { Order, OrderStatus, UpdateOrder } from "@/types/order.type";
+import { object, number, string, mixed } from "yup";
 
-export const createPostValidation = (payload: Post) => {
+export const createOrderValidation = (payload: Order) => {
   const schema = object({
     id: string().required("ID is required"),
     userId: string().required("User ID is required"),
-    title: string().required("Title is required"),
-    body: string().required("Body is required"),
-    published: boolean().optional().default(false),
-    categories: array().optional(),
+    productId: string().required("Product ID is required"),
+    quantity: number().required("Quantity is required"),
+    status: mixed<OrderStatus>().oneOf(Object.values(OrderStatus)).optional(),
   });
 
   try {
@@ -19,12 +18,10 @@ export const createPostValidation = (payload: Post) => {
   }
 };
 
-export const updatePostValidation = (payload: UpdatePost) => {
+export const updateOrderValidation = (payload: UpdateOrder) => {
   const schema = object({
-    title: string().optional(),
-    body: string().optional(),
-    published: boolean().optional(),
-    categories: array().optional(),
+    quantity: number().optional(),
+    status: mixed<OrderStatus>().oneOf(Object.values(OrderStatus)).optional(),
   });
 
   try {

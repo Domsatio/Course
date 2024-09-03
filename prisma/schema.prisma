@@ -50,6 +50,11 @@ model User {
   sessions      Session[]
 }
 
+enum UserRole {
+  USER
+  ADMIN
+}
+
 model VerificationToken {
   identifier String
   token      String   @unique
@@ -72,6 +77,7 @@ model Product {
 }
 
 model Order {
+<<<<<<< HEAD
   id        String       @id @default(uuid())
   userId    String
   productId String
@@ -84,6 +90,28 @@ model Order {
 
   @@index([productId])
   @@index([userId])
+=======
+  id        String        @id @default(uuid())
+  userId    String
+  productId String
+  quantity  Int           @default(1)
+  status    OrderStatus?  @default(PENDING)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  product   Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([productId])
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPING
+  DELIVERED
+  CANCELLED
+>>>>>>> 9e8aae236cfcb0f440c99a09a18414b6da38d96d
 }
 
 model Post {
@@ -91,6 +119,7 @@ model Post {
   userId     String
   title      String
   body       String
+  published  Boolean             @default(false)
   createdAt  DateTime            @default(now())
   updatedAt  DateTime            @updatedAt
   published  Boolean             @default(false)
@@ -115,6 +144,7 @@ model CategoriesOnPosts {
   post       Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   @@id([postId, categoryId])
+<<<<<<< HEAD
   @@index([categoryId])
   @@index([postId])
 }
@@ -130,4 +160,8 @@ enum OrderStatus {
 enum UserRole {
   USER
   ADMIN
+=======
+  @@index([postId])
+  @@index([categoryId])
+>>>>>>> 9e8aae236cfcb0f440c99a09a18414b6da38d96d
 }
