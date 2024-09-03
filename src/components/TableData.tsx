@@ -308,7 +308,7 @@ export default function TableData({
                 item.action === "delete"
                 ? () => {
                     handleDelete(id.toString());
-                  } : () => router.push(router.pathname + "/update/" + id)
+                  } : () => router.push(router.pathname + `/${item.action}/` + id)
             }>
               {item.action === "custom" ? item.custom?.label : item.action}
             </MenuItem>
