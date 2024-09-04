@@ -41,8 +41,7 @@ export default function TableData({
   const [debounceValue] = useDebounce(searchQuery, 1500);
   const [modalFilter, setModalFilter] = React.useState(false);
 
-  const router = useRouter();
-  // const { search } = router.query;
+  const { push, pathname, query } = useRouter();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -63,9 +62,9 @@ export default function TableData({
   }, [limit, activePage]);
 
   useEffect(() => {
-    router.push(
+    push(
       {
-        pathname: router.pathname,
+        pathname: pathname,
         query: { search: debounceValue.toLowerCase() },
       },
       undefined,
@@ -154,7 +153,7 @@ export default function TableData({
               <Button
                 className="flex items-center gap-3"
                 size="sm"
-                onClick={() => router.push(router.pathname + "/tambah")}
+                onClick={() => push(pathname + "/create")}
               >
                 Add
               </Button>
@@ -171,7 +170,7 @@ export default function TableData({
                   route={{
                     method: "POST",
                     url: urlData,
-                    query: router.query,
+                    query: query,
                   }}
                   title="Filter"
                   asModal={{ isOpen: modalFilter, handler: setModalFilter }}

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, FC } from "react";
 import TableData from "@/components/TableData";
-import { CategoryProps } from "@/helpers/typeProps";
+import { GetCategory } from "@/types/category.type";
 import { PencilIcon } from "@heroicons/react/24/solid";
 import {
   Typography,
@@ -9,11 +9,12 @@ import {
 } from "@material-tailwind/react";
 import { useRouter } from "next/router";
 
-const TABLE_HEAD = ["Name", "Action"];
+const TABLE_HEAD = ["Name", "Total Post", "Action"];
 
-export default function index() {
+const Index: FC = () => {
   const [data, setData] = useState([]);
-  const router = useRouter();
+  const { push, pathname } = useRouter();
+
   return (
     <TableData
       title="Categories"
@@ -22,23 +23,33 @@ export default function index() {
       urlData="/category"
       onSuccess={(data: any) => setData(data)}
     >
-      {data?.map((categori: CategoryProps, index: number) => {
+      {data?.map((category: GetCategory, index: number) => {
         const isLast = index === data.length - 1;
         const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
+
         return (
-          <tr key={categori.id}>
+          <tr key={category.id}>
             <td className={classes}>
               <Typography
                 variant="small"
                 color="blue-gray"
                 className="font-normal"
               >
-                {categori.name}
+                {category.name}
               </Typography>
             </td>
             <td className={classes}>
-              <Tooltip content="Edit Categori">
-                <IconButton variant="text" onClick={() => router.push(router.pathname + "/update/" + categori.id)}>
+              <Typography
+                variant="small"
+                color="blue-gray"
+                className="font-normal"
+              >
+                {category.posts.length}
+              </Typography>
+            </td>
+            <td className={classes}>
+              <Tooltip content="Edit Category">
+                <IconButton variant="text" onClick={() => push(pathname + "/update/" + category.id)}>
                   <PencilIcon className="h-4 w-4" />
                 </IconButton>
               </Tooltip>
@@ -49,3 +60,5 @@ export default function index() {
     </TableData>
   );
 }
+
+export default Index

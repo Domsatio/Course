@@ -17,7 +17,6 @@ import {
   CardBody,
 } from "@material-tailwind/react";
 
-
 interface FormInputProps {
   title: string;
   inputList: InputListProps[];
