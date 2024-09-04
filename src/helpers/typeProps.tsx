@@ -27,6 +27,8 @@ type FormInputTypeProps =
   | 'date'
   | 'currency'
   | 'image'
+  | 'multipleImage'
+  | 'multipleInput'
 
   interface InputListOptionProps {
     type: 'select' | 'multicheckbox' | 'datalist' | 'csv'
@@ -57,6 +59,7 @@ type FormInputTypeProps =
     onChange?: (e: any) => void
     error?: string
     option?: InputListOptionProps
+    component?: InputListProps[]
   }
 
 interface MenuItemProps {
