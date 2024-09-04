@@ -22,9 +22,19 @@ const FormInputList: InputListProps[] = [
         className: "",
         name: "video",
         label: "Video",
-        type: "url",
-        validator: Yup.string().required("Nama harus diisi"),
+        type: "component",
+        validator: Yup.array().required("Nama harus diisi"),
         value: "",
+        component: [
+          {
+            className: "",
+            name: "video",
+            label: "Video",
+            type: "input",
+            validator: Yup.string().required("Vidio harus diisi"),
+            value: "",
+          },
+        ]
       },
       {
         className: "",

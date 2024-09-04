@@ -1,8 +1,7 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState} from "react";
 import TableData from "@/components/TableData";
 import { TableActionProps } from "@/components/TableData";
-import { DATA_PRODUCTS } from "@/helpers/dummyData";
 import { ProductProps } from "@/helpers/typeProps";
 import { PencilIcon } from "@heroicons/react/24/solid";
 import {
@@ -13,7 +12,7 @@ import {
   Tooltip,
   rating,
 } from "@material-tailwind/react";
-import { useRouter } from "next/router";
+import { NullProof } from "@/helpers/appFunction";
 
 const TABLE_HEAD = [
   "Name",
@@ -26,7 +25,32 @@ const TABLE_HEAD = [
 
 export default function index() {
   const [data, setData] = useState([]);
-  const router = useRouter();
+  const [modal, setModal] = useState(false);
+
+  console.log(modal, "modal");
+
+  const dataAction: TableActionProps[] = [
+    {
+      action: "update",
+    },
+    {
+      action: "delete",
+    },
+    {
+      action: "view",
+    },
+    {
+      action: "custom",
+      onClick: () => {
+        setModal(prev => !prev);
+      },
+      custom: {
+        label: "Custom",
+        icon: <PencilIcon className="h-4 w-4" />,
+      },
+    },
+  ];
+
   const { Table, TableAction } = TableData({
     title: "Products",
     description: "List of products",
@@ -73,7 +97,7 @@ export default function index() {
                 color="blue-gray"
                 className="font-normal"
               >
-                {product.price}
+                {NullProof({input:product, params: "price", type: "currency"})}
               </Typography>
             </td>
             <td className={classes}>
@@ -95,11 +119,6 @@ export default function index() {
               </Typography>
             </td>
             <td className={classes}>
-              {/* <Tooltip content="Edit User">
-                <IconButton variant="text" onClick={()=> router.push(router.pathname + "/update/" + product.id)}>
-                  <PencilIcon className="h-4 w-4" />
-                </IconButton>
-              </Tooltip> */}
               <TableAction data={dataAction} id={product.id} />
             </td>
           </tr>
@@ -109,24 +128,4 @@ export default function index() {
   );
 }
 
-const dataAction: TableActionProps[] = [
-  {
-    action: "update",
-  },
-  {
-    action: "delete",
-  },
-  {
-    action: "view",
-  },
-  {
-    action: "custom",
-    onClick: () => {
-      console.log("custom action");
-    },
-    custom: {
-      label: "Custom",
-      icon: <PencilIcon className="h-4 w-4" />,
-    },
-  },
-];
+
