@@ -20,6 +20,24 @@ const FormInputList: InputListProps[] = [
     },
     {
         className: "",
+        name: "image",
+        label: "Image",
+        type: "component",
+        validator: Yup.array().required("Nama harus diisi"),
+        value: "",
+        component: [
+          {
+            className: "",
+            name: "image",
+            label: "Image",
+            type: "image",
+            validator: Yup.string().required("Gambar harus diisi"),
+            value: "",
+          },
+        ]
+    },
+    {
+        className: "",
         name: "video",
         label: "Video",
         type: "component",
@@ -44,8 +62,8 @@ const FormInputList: InputListProps[] = [
         validator: Yup.string().required("Pilihan harus diisi"),
         value: "",
         listData: [
-          { title: "Yes", value: "yes" },
-          { title: "No", value: "no" },
+          { title: "Yes", value: true },
+          { title: "No", value: false },
         ],
       }
   ];

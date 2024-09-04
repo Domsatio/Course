@@ -54,7 +54,7 @@ type FormInputTypeProps =
     value?: string | number | string[] 
     listData?: {
       title: string
-      value: number | string
+      value: number | string |boolean
     }[]
     onChange?: (e: any) => void
     error?: string
