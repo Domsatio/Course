@@ -1,10 +1,24 @@
 export type Course = {
-    id: string;
-    title: string;
-    description: string;
-    image: Record<string, string>[];
-    video: Record<string, string>;
-    published: boolean
+  id: string;
+  title: string;
+  description: string;
+  image: {
+    image: string;
+  }[];
+  video: {
+    video: string;
+  }[];
+  published: boolean;
 };
 
-export type UpdateCourse = Omit<Course, "id">;
+export type UpdateCourse = {
+  title?: string;
+  description?: string;
+  image?: {
+    image: string;
+  }[];
+  video?: {
+    video: string;
+  }[];
+  published?: boolean;
+};

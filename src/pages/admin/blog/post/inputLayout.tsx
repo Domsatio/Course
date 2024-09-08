@@ -1,7 +1,7 @@
 import * as Yup from "yup";
 import { InputListProps } from "@/helpers/typeProps";
 
-const FormInputListRenderer = ({ id }: { id: string }) => {
+export const FormInputListRenderer = ({ id }: { id: string }) => {
   const FormInputList: InputListProps[] = [
     {
       className: "",
@@ -10,7 +10,7 @@ const FormInputListRenderer = ({ id }: { id: string }) => {
       type: "input",
       hide: true,
       removeOnSubmit: true,
-      validator: Yup.string().required("id harus diisi"),
+      validator: Yup.string().required("Id is required"),
       value: id,
     },
     {
@@ -19,7 +19,7 @@ const FormInputListRenderer = ({ id }: { id: string }) => {
       label: "Title",
       type: "input",
       removeOnSubmit: false,
-      validator: Yup.string().required("title harus diisi"),
+      validator: Yup.string().required("Title is required"),
       value: "",
     },
     {
@@ -28,7 +28,7 @@ const FormInputListRenderer = ({ id }: { id: string }) => {
       label: "Body",
       type: "textarea",
       removeOnSubmit: false,
-      validator: Yup.string().required("judul harus diisi"),
+      validator: Yup.string().required("Body is required"),
       value: "",
     },
     {
@@ -37,13 +37,8 @@ const FormInputListRenderer = ({ id }: { id: string }) => {
       label: "Category",
       type: "multicheckbox",
       removeOnSubmit: false,
-      validator: Yup.array().required("Category harus diisi"),
+      validator: Yup.array().required("Category is required"),
       value: [],
-      listData: [
-        { title: "1", value: "1" },
-        { title: "2", value: "2" },
-        { title: "3", value: "3" },
-      ],
       option: {
         id: "id",
         type: "multicheckbox",
@@ -52,10 +47,23 @@ const FormInputListRenderer = ({ id }: { id: string }) => {
         data: [],
       }
     },
+    {
+      className: "",
+      name: "published",
+      label: "Published",
+      type: "select",
+      removeOnSubmit: false,
+      validator: Yup.boolean().required("Published is required"),
+      value: false,
+      listData: [
+        { title: "Yes", value: true },
+        { title: "No", value: false },
+      ],
+    }
   ];
   return FormInputList;
 }
-const FormInputList: InputListProps[] = [
+export const FormInputList: InputListProps[] = [
   {
     className: "",
     name: "id",
@@ -63,7 +71,7 @@ const FormInputList: InputListProps[] = [
     type: "input",
     hide: true,
     removeOnSubmit: true,
-    validator: Yup.string().required("id harus diisi"),
+    validator: Yup.string().required("Id is required"),
     value: "",
   },
   {
@@ -72,7 +80,7 @@ const FormInputList: InputListProps[] = [
     label: "Title",
     type: "input",
     removeOnSubmit: false,
-    validator: Yup.string().required("title harus diisi"),
+    validator: Yup.string().required("Title is required"),
     value: "",
   },
   {
@@ -81,22 +89,17 @@ const FormInputList: InputListProps[] = [
     label: "Body",
     type: "textarea",
     removeOnSubmit: false,
-    validator: Yup.string().required("judul harus diisi"),
+    validator: Yup.string().required("Body is required"),
     value: "",
   },
   {
     className: "input-text",
-    name: "isi",
-    label: "Isi",
+    name: "category",
+    label: "Category",
     type: "select",
     removeOnSubmit: false,
-    validator: Yup.string().required("isi harus diisi"),
+    validator: Yup.string().required("Category is required"),
     value: "",
-    //   listData: [
-    //     { title: "1", value: "1" },
-    //     { title: "2", value: "2" },
-    //     { title: "3", value: "3" },
-    //   ],
     option: {
       id: "id",
       type: "select",
@@ -105,10 +108,17 @@ const FormInputList: InputListProps[] = [
       data: [],
     }
   },
+  {
+    className: "",
+    name: "published",
+    label: "Published",
+    type: "select",
+    removeOnSubmit: false,
+    validator: Yup.boolean().required("Published is required"),
+    value: false,
+    listData: [
+      { title: "Yes", value: true },
+      { title: "No", value: false },
+    ],
+  }
 ];
-
-
-export {
-  FormInputList,
-  FormInputListRenderer
-}
