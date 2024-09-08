@@ -89,8 +89,7 @@ export const InputListRenderer = ({
   const [search, setSearch] = useState<string>("");
   const [debounceValue] = useDebounce(search, 1500);
   const param = option?.params?.split(/\s*,\s*/) || [];
-
-  console.log(error, "error");
+  
 
   const { setDisabled, disabled: formDisabled } = FormInputHooks();
   useEffect(() => {
