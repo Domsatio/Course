@@ -1,6 +1,8 @@
 import { formatDistanceToNow, format, differenceInDays, parse } from "date-fns";
 import { id } from "date-fns/locale";
-import { FC } from "react";
+import React, { useEffect } from "react";
+import { useRouter } from "next/router";
+import axios from "axios";
 
 type DateFnsProps = {
   date: string;
@@ -152,4 +154,44 @@ function NullProof({
   }
 }
 
-export { NullProof, ConvertCurrency, formatDate, parseDate };
+interface DetailPageProps {
+  api: string;
+  onSusccess: (data: any) => void;
+  onError?: (data: any) => void;
+  id?: string;
+  children?: React.ReactNode; 
+}
+const DetailPage = ({
+  api,
+  onSusccess,
+  onError,
+  id,
+  children
+}: DetailPageProps) => {
+  const router = useRouter();
+
+  useEffect(() => {
+    getData();
+  }, [router.query.id]);
+
+  const getData = async () => {
+    try {
+      const res = await axios.get(`/api${api}`, {
+        params: {
+          id: id || router.query.id,
+        },
+      });
+      onSusccess?.(res.data.data);
+    } catch (error) {
+      onError?.(error);
+    }
+  };
+
+  return (
+    <React.Fragment>
+      {children}
+    </React.Fragment>
+  )
+}
+
+export { NullProof, ConvertCurrency, formatDate, parseDate, DetailPage };

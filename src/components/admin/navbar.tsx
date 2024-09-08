@@ -2,6 +2,7 @@
 import React from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/router";
+import { useRouter as topLoader } from 'nextjs-toploader/app';
 import { routeList } from "@/helpers/routesList";
 import { MenuItemProps, ProfileMenuItemProps, RouteItemsProps } from "@/helpers/typeProps";
 import {
@@ -157,13 +158,15 @@ export default function AdminNavbar() {
   const [openAlert, setOpenAlert] = React.useState(true);
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
   const router = useRouter();
+  const routeLoader = topLoader();
 
   const openDrawer = () => setIsDrawerOpen(true);
   const closeDrawer = () => setIsDrawerOpen(false);
 
   const onClickMenuItem = (href: string) => {
     closeDrawer();
-    router.push(href);
+    routeLoader.push(href);
+    // router.push(href);
   }
 
   const RouteItems: React.FC<RouteItemsProps> = ({
@@ -234,7 +237,7 @@ export default function AdminNavbar() {
 
   return (
     <>
-      <Navbar className="flex items-center justify-betwee mx-auto max-w-full px-4 py-2 lg:px-8 lg:py-4">
+      <Navbar className="flex items-center justify-between mx-auto max-w-full px-4 py-2 lg:px-8 lg:py-4">
         <IconButton variant="text" size="lg" onClick={openDrawer}>
           {isDrawerOpen ? (
             <XMarkIcon className="h-8 w-8 stroke-2" />

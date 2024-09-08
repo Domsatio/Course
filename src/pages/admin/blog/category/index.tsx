@@ -1,28 +1,25 @@
-import React, { useState, useEffect, FC } from "react";
+import React, { useState, FC } from "react";
 import TableData from "@/components/TableData";
-import { GetCategory } from "@/types/category.type";
-import { PencilIcon } from "@heroicons/react/24/solid";
-import {
-  Typography,
-  IconButton,
-  Tooltip,
-} from "@material-tailwind/react";
+import { TableActionProps } from "@/components/TableData";
+import { Typography } from "@material-tailwind/react";
 import { useRouter } from "next/router";
+import { GetCategory } from "@/types/category.type";
 
 const TABLE_HEAD = ["Name", "Total Post", "Action"];
 
 const Index: FC = () => {
   const [data, setData] = useState([]);
-  const { push, pathname } = useRouter();
+  const { push } = useRouter();
+  const { Table, TableAction } = TableData({
+    title: "Categories",
+    description: "List of categories",
+    tableHeader: TABLE_HEAD,
+    urlData: "/category",
+    onSuccess: (data) => setData(data),
+  });
 
   return (
-    <TableData
-      title="Categories"
-      description="List of categories"
-      tableHeader={TABLE_HEAD}
-      urlData="/category"
-      onSuccess={(data: any) => setData(data)}
-    >
+    <Table>
       {data?.map((category: GetCategory, index: number) => {
         const isLast = index === data.length - 1;
         const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
@@ -48,17 +45,25 @@ const Index: FC = () => {
               </Typography>
             </td>
             <td className={classes}>
-              <Tooltip content="Edit Category">
-                <IconButton variant="text" onClick={() => push(pathname + "/update/" + category.id)}>
-                  <PencilIcon className="h-4 w-4" />
-                </IconButton>
-              </Tooltip>
+              <TableAction data={dataAction} id={category.id} />
             </td>
           </tr>
         );
       })}
-    </TableData>
+    </Table>
   );
 }
 
-export default Index
+const dataAction: TableActionProps[] = [
+  {
+    action: "view",
+  },
+  {
+    action: "update",
+  },
+  {
+    action: "delete",
+  },
+];
+
+export default Index;

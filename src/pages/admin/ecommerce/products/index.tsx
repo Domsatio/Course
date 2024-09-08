@@ -1,7 +1,7 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState} from "react";
 import TableData from "@/components/TableData";
-import { DATA_PRODUCTS } from "@/helpers/dummyData";
+import { TableActionProps } from "@/components/TableData";
 import { ProductProps } from "@/helpers/typeProps";
 import { PencilIcon } from "@heroicons/react/24/solid";
 import {
@@ -12,21 +12,54 @@ import {
   Tooltip,
   rating,
 } from "@material-tailwind/react";
+import { NullProof } from "@/helpers/appFunction";
 
-const TABLE_HEAD = ["Transaction", "Amount", "Date", "Status", "Account", ""];
+const TABLE_HEAD = [
+  "Name",
+  "Description",
+  "Price",
+  "Discount",
+  "Quantity",
+  "Action",
+];
 
 export default function index() {
   const [data, setData] = useState([]);
+  const [modal, setModal] = useState(false);
+
+  console.log(modal, "modal");
+
+  const dataAction: TableActionProps[] = [
+    {
+      action: "update",
+    },
+    {
+      action: "delete",
+    },
+    {
+      action: "view",
+    },
+    {
+      action: "custom",
+      onClick: () => {
+        setModal(prev => !prev);
+      },
+      custom: {
+        label: "Custom",
+        icon: <PencilIcon className="h-4 w-4" />,
+      },
+    },
+  ];
+
+  const { Table, TableAction } = TableData({
+    title: "Products",
+    description: "List of products",
+    tableHeader: TABLE_HEAD,
+    urlData: "/product",
+    onSuccess: (data) => setData(data),
+  });
   return (
-    <TableData
-      title="Products"
-      description="List of products"
-      tableHeader={TABLE_HEAD}
-      dummyData={DATA_PRODUCTS}
-      urlData="https://dummyjson.com/posts"
-      onSuccess={(data) => setData(data)}
-    >
-      {/* {children} */}
+    <Table>
       {data?.map((product: ProductProps, index: number) => {
         const isLast = index === data.length - 1;
         const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
@@ -55,7 +88,7 @@ export default function index() {
                 color="blue-gray"
                 className="font-normal"
               >
-                {product.price}
+                {product.description}
               </Typography>
             </td>
             <td className={classes}>
@@ -64,68 +97,35 @@ export default function index() {
                 color="blue-gray"
                 className="font-normal"
               >
-                {product.date}
+                {NullProof({input:product, params: "price", type: "currency"})}
               </Typography>
             </td>
             <td className={classes}>
-              <div className="w-max">
-                <Chip
-                  size="sm"
-                  variant="ghost"
-                  value={status}
-                  color={
-                    status === "paid"
-                      ? "green"
-                      : status === "pending"
-                        ? "amber"
-                        : "red"
-                  }
-                />
-              </div>
+              <Typography
+                variant="small"
+                color="blue-gray"
+                className="font-normal"
+              >
+                {product.discount}%
+              </Typography>
             </td>
             <td className={classes}>
-              <div className="flex items-center gap-3">
-                <div className="h-9 w-12 rounded-md border border-blue-gray-50 p-1">
-                  <Avatar
-                    src={
-                      product.account === "visa"
-                        ? "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/logos/visa.png"
-                        : "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/logos/mastercard.png"
-                    }
-                    size="sm"
-                    alt={product.account}
-                    variant="square"
-                    className="h-full w-full object-contain p-1"
-                  />
-                </div>
-                <div className="flex flex-col">
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal capitalize"
-                  >
-                    {product.account.split("-").join(" ")} {product.rating}
-                  </Typography>
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal opacity-70"
-                  >
-                    {product.createdAt}
-                  </Typography>
-                </div>
-              </div>
+              <Typography
+                variant="small"
+                color="blue-gray"
+                className="font-normal"
+              >
+                {product.quantity}
+              </Typography>
             </td>
             <td className={classes}>
-              <Tooltip content="Edit User">
-                <IconButton variant="text">
-                  <PencilIcon className="h-4 w-4" />
-                </IconButton>
-              </Tooltip>
+              <TableAction data={dataAction} id={product.id} />
             </td>
           </tr>
         );
       })}
-    </TableData>
+    </Table>
   );
 }
+
+

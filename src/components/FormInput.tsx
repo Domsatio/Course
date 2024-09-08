@@ -16,6 +16,7 @@ import {
   CardHeader,
   CardBody,
 } from "@material-tailwind/react";
+import { TrashIcon } from "@heroicons/react/24/outline";
 
 interface FormInputProps {
   title: string;
@@ -34,6 +35,11 @@ interface FormInputProps {
   redirect?: string;
 }
 
+export const FormInputHooks = () => {
+  const [disabled, setDisabled] = useState(false);
+  return { disabled, setDisabled };
+};
+
 export default function FormInput({
   title = "",
   inputList,
@@ -41,8 +47,9 @@ export default function FormInput({
   onSuccess,
   asModal,
   isFilter = false,
-  redirect
+  redirect,
 }: FormInputProps) {
+  const { disabled } = FormInputHooks();
   const router = useRouter();
   const baseUrl =
     process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000/api";
@@ -61,7 +68,19 @@ export default function FormInput({
 
   const validationSchema = Yup.object(
     inputList.reduce((acc: Record<string, any>, item) => {
-      acc[item.name] = item.validator || Yup.string(); // Default to Yup.string() if no validator is provided
+      if (item.type === "component") {
+        acc[item.name] = Yup.array().of(
+          Yup.object().shape(
+            (item.component || []).reduce((acc: Record<string, any>, component) => {
+              acc[component.name] = component.validator || Yup.string();
+              return acc;
+            }, {})
+          )
+        );
+      } else {
+        acc[item.name] = item.validator || Yup.string();
+      }
+      // acc[item.name] = item.validator || Yup.string(); // Default to Yup.string() if no validator is provided
       return acc;
     }, {})
   );
@@ -71,24 +90,28 @@ export default function FormInput({
     validationSchema,
     onSubmit: async (values) => {
       const formData = new FormData();
-      const containsFile = inputList.some((input) => input.type === "image");
-      if (containsFile) {
-        Object.keys(values).forEach((key) => {
-          formData.append(key, values[key]);
-        });
-      }
+      // const containsFile = inputList.some((input) => input.type === "image");
+      // if (containsFile) {
+      //   Object.keys(values).forEach((key) => {
+      //     formData.append(key, values[key]);
+      //   });
+      // }
       try {
         let response;
         if (route.method === "POST") {
-          response = await axios.post(createUrl(route), containsFile ? formData : values, {
+          // response = await axios.post(createUrl(route), containsFile ? formData : values, {
+          response = await axios.post(createUrl(route), values, {
             headers: {
-              "Content-Type": containsFile ? "multipart/form-data" : "application/json",
+              // "Content-Type": containsFile ? "multipart/form-data" : "application/json",
+              "Content-Type": "application/json",
             },
           });
         } else if (route.method === "PUT") {
-          response = await axios.put(createUrl(route), containsFile ? formData : values, {
+          // response = await axios.put(createUrl(route), containsFile ? formData : values, {
+          response = await axios.put(createUrl(route), values, {
             headers: {
-              "Content-Type": containsFile ? "multipart/form-data" : "application/json",
+              // "Content-Type": containsFile ? "multipart/form-data" : "application/json",
+              "Content-Type": "application/json",
             },
           });
         } else {
@@ -100,7 +123,7 @@ export default function FormInput({
         }
         asModal?.handler(false);
         if (redirect) {
-          router.push(redirect)
+          router.push(redirect);
         } else if (route.method === "POST" || route.method === "PUT") {
           router.back();
         }
@@ -180,17 +203,88 @@ export default function FormInput({
 
   const renderFormContent = () => (
     <>
-      {inputList.map((input, index) => (
-        <InputListRenderer
-          key={index}
-          {...input}
-          value={formik.values[input.name]}
-          onChange={(data: any) => {
-            handleChange(data);
-          }}
-          error={formik.errors[input.name]?.toString() || ""}
-        />
-      ))}
+      {inputList.map((input, index) => {
+        if (input.type === "component") {
+          return (
+            <div key={index} className="flex flex-col">
+              <label>{input.label}</label>
+              {formik.values[input.name] &&
+                formik.values[input.name]?.map((item: any, i: number) => (
+                  <div key={i}>
+                    {input.component?.map((component, ii) => (
+                      <InputListRenderer
+                        key={ii}
+                        {...component}
+                        value={item[component.name]}
+                        onChange={(e: any) => {
+                          const { name, value } = e.target;
+                          console.log("name", name);
+                          console.log("value", value);
+                          const newValues = formik.values[input.name].map(
+                            (pastValue: any, idx: number) => {
+                              if (i === idx) {
+                                pastValue[component.name] = value;
+                              }
+                              return pastValue;
+                            }
+                          );
+                          formik.setFieldValue(input.name, newValues);
+                        }}
+                        error={formik.errors[component.name]?.toString() || ""}
+                      />
+                    ))}
+                    <Button
+                      color="red"
+                      size="sm"
+                      className="p-2 mb-2"
+                      onClick={() => {
+                        const newValues = formik.values[input.name].filter(
+                          (removItem: any, idx: number) => i !== idx
+                        );
+                        formik.setFieldValue(input.name, newValues);
+                      }}
+                    >
+                      <TrashIcon className="h-5 w-5" />
+                    </Button>
+                  </div>
+                ))}
+              <div className="flex justify-center mb-3">
+                <Button
+                  color="blue"
+                  className="max-w-max"
+                  onClick={() => {
+                    const newValues = input.component?.reduce(
+                      (acc: Record<string, any>, item) => {
+                        acc[item.name] = "";
+                        return acc;
+                      },
+                      {}
+                    );
+                    formik.setFieldValue(input.name, [
+                      ...formik.values[input.name],
+                      { ...newValues },
+                    ]);
+                  }}
+                >
+                  Add {input.label} +
+                </Button>
+              </div>
+            </div>
+          );
+        }
+
+        return (
+          <InputListRenderer
+            key={index}
+            {...input}
+            value={formik.values[input.name]}
+            onChange={(data: any) => {
+              handleChange(data);
+            }}
+            error={formik.errors[input.name]?.toString() || ""}
+          />
+        );
+      })}
       <div className="flex justify-end items-center gap-2">
         <Button
           color="red"
@@ -205,7 +299,7 @@ export default function FormInput({
         >
           Cancel
         </Button>
-        <Button type="submit" className="btn btn-primary">
+        <Button type="submit" className="btn btn-primary" disabled={disabled}>
           Submit
         </Button>
       </div>

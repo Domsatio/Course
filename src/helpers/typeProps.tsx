@@ -27,6 +27,8 @@ type FormInputTypeProps =
   | 'date'
   | 'currency'
   | 'image'
+  | 'multipleImage'
+  | 'multipleInput'
 
   interface InputListOptionProps {
     type: 'select' | 'multicheckbox' | 'datalist' | 'csv'
@@ -52,11 +54,12 @@ type FormInputTypeProps =
     value?: string | number | string[] 
     listData?: {
       title: string
-      value: number | string
+      value: number | string |boolean
     }[]
     onChange?: (e: any) => void
     error?: string
     option?: InputListOptionProps
+    component?: InputListProps[]
   }
 
 interface MenuItemProps {
@@ -103,7 +106,7 @@ interface TableDataProps {
     onSuccess?: (e: any) => void;
     isActionAdd?: boolean;
     filter?: InputListProps[] | undefined;
-    children?: React.ReactNode;
+    // children?: React.ReactNode;
 }
 
 interface PaginationProps {
@@ -124,9 +127,9 @@ interface ProductProps {
   image: string;
   status?: string;
   category?: string;
-  account: string;
   rating: number;
-  stock?: number;
+  quantity?: number;
+  discount?: number;
   date?: string;
   createdAt: string;
 }

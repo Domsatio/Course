@@ -29,12 +29,15 @@ import {
   EyeIcon,
 } from "@heroicons/react/24/outline";
 import CurrencyInput from "react-currency-input-field";
-import { format } from "date-fns";
+import { format, set } from "date-fns";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { UploadButton } from "@/libs/uploadThing";
+import { FormInputHooks } from "./FormInput";
+import { se } from "date-fns/locale";
 
 type FileWieverProps = {
-  file: string;
+  file: string | null;
   isOpen: boolean;
   handleOpen: (value: boolean) => void;
 };
@@ -46,7 +49,7 @@ const FileWiever = ({ file, isOpen, handleOpen }: FileWieverProps) => {
       <DialogBody className="h-[500px]">
         <div className="relative h-full w-full">
           <Image
-            src={file}
+            src={file|| ""}
             className="object-contain"
             alt="Preview image"
             fill={true}
@@ -83,11 +86,13 @@ export const InputListRenderer = ({
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [preview, setPreview] = useState<boolean>(false);
-  const [watch, setWatch] = useState<any[]>([]);
   const [search, setSearch] = useState<string>("");
   const [debounceValue] = useDebounce(search, 1500);
   const param = option?.params?.split(/\s*,\s*/) || [];
 
+  console.log(error, "error");
+
+  const { setDisabled, disabled: formDisabled } = FormInputHooks();
   useEffect(() => {
     if (option?.api) {
       getDataApi();
@@ -99,6 +104,8 @@ export const InputListRenderer = ({
       setPreviewImage(value);
     }
   }, [debounceValue]);
+  
+  
 
   const getDataApi = async () => {
     setIsLoading(true);
@@ -132,20 +139,66 @@ export const InputListRenderer = ({
     });
   };
 
-  const handleImageChange = (e: any) => {
-    const file = e.target.files[0];
-    if (file) {
-      onChange?.({
-        target: {
-          name,
-          value: file,
-        },
-      });
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+  // const handleImageChange = (e: any) => {
+  //   const file = e.target.files[0];
+  //   if (file) {
+  //     onChange?.({
+  //       target: {
+  //         name,
+  //         value: file,
+  //       },
+  //     });
+  //     const reader = new FileReader();
+  //     reader.onloadend = () => {
+  //       setPreviewImage(reader.result as string);
+  //     };
+  //     reader.readAsDataURL(file);
+  //   }
+  // };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    setDisabled(true);
+    const files = e.target.files?.[0];
+    if (files) {
+      try {
+        const { data } = await axios.post(
+          "/api/uploadthing?actionType=upload&slug=imageUploader",
+          {
+            files: [{ name: files.name, type: files.type, size: files.size }],
+          }
+        );
+
+        const { url, fields, fileUrl } = data[0];
+        const formData = new FormData();
+
+        Object.entries(fields).forEach(([key, value]: [string, any]) => {
+          formData.append(key, value);
+        });
+        formData.append("file", files);
+        const response = await axios.post(url, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
+        if (response.status === 204) {
+          onChange?.({
+            target: {
+              name,
+              value: fileUrl,
+            },
+          });
+          setPreviewImage(fileUrl);
+          console.log("File uploaded successfully!");
+        } else {
+          console.error("Upload failed:", response.data);
+        }
+      } catch (error) {
+        console.error("Upload failed:", error);
+      } finally {
+        setDisabled(false);
+      }
     }
   };
 
@@ -266,19 +319,22 @@ export const InputListRenderer = ({
       {type === "component" && <div className={className}>{value}</div>}
       {type === "image" && (
         <React.Fragment>
-          {previewImage && (
+          {value && (
             <FileWiever
-              file={previewImage}
+              file={value.toLocaleString()}
               isOpen={preview}
               handleOpen={setPreview}
             />
           )}
-          {!previewImage && (
+          {!value && !formDisabled && (
             <input
               name={name}
               type="file"
               accept="image/*"
-              onChange={handleImageChange}
+              onChange={(e) => {
+                // handleImageChange(e);
+                handleImageUpload(e);
+              }}
               className="block w-64 text-sm text-gray-500
                 file:py-2 file:px-4 file:rounded-full file:border-0
                 file:text-sm file:font-semibold
@@ -287,7 +343,12 @@ export const InputListRenderer = ({
                 file:cursor-pointer file:h-10 file:leading-tight"
             />
           )}
-          {previewImage && (
+          {formDisabled && (
+            <Typography color="blue-gray" className="text-sm">
+              Uploading...
+            </Typography>
+          )}
+          {value && (
             <div className="flex gap-2">
               <Tooltip content="View">
                 <button
@@ -317,6 +378,18 @@ export const InputListRenderer = ({
               </Tooltip>
             </div>
           )}
+          {/* <UploadButton
+            endpoint="imageUploader"
+            onClientUploadComplete={(res) => {
+             
+              console.log("Files: ", res);
+              alert("Upload Completed");
+            }}
+            onUploadError={(error: Error) => {
+              // Do something with the error.
+              alert(`ERROR! ${error.message}`);
+            }}
+          /> */}
         </React.Fragment>
       )}
       {type === "date" && (
@@ -326,8 +399,8 @@ export const InputListRenderer = ({
             Array.isArray(value)
               ? new Date()
               : value
-                ? new Date(value)
-                : new Date()
+              ? new Date(value)
+              : new Date()
           }
           onChange={(date) => {
             onChange?.({ target: { name, value: date } });
@@ -362,5 +435,3 @@ export const InputListRenderer = ({
     </div>
   );
 };
-
-

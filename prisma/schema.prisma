@@ -50,11 +50,6 @@ model User {
   sessions      Session[]
 }
 
-enum UserRole {
-  USER
-  ADMIN
-}
-
 model VerificationToken {
   identifier String
   token      String   @unique
@@ -64,39 +59,31 @@ model VerificationToken {
 }
 
 model Product {
-  id              String   @id @default(uuid())
-  name            String
-  description     String
-  price           Float
-  discount        Int?     @default(0)
-  image           String
-  quantity        Int      @default(0)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  orders          Order[]
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  price       Float
+  discount    Int?     @default(0)
+  image       String
+  quantity    Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  orders      Order[]
 }
 
 model Order {
-  id        String        @id @default(uuid())
+  id        String       @id @default(uuid())
   userId    String
   productId String
-  quantity  Int           @default(1)
-  status    OrderStatus?  @default(PENDING)
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
-  product   Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
-  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  quantity  Int          @default(1)
+  status    OrderStatus? @default(PENDING)
+  product   Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([productId])
-}
-
-enum OrderStatus {
-  PENDING
-  PROCESSING
-  SHIPPING
-  DELIVERED
-  CANCELLED
 }
 
 model Post {
@@ -104,9 +91,9 @@ model Post {
   userId     String
   title      String
   body       String
-  published  Boolean             @default(false)
   createdAt  DateTime            @default(now())
   updatedAt  DateTime            @updatedAt
+  published  Boolean             @default(false)
   categories CategoriesOnPosts[]
   user       User                @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -130,4 +117,28 @@ model CategoriesOnPosts {
   @@id([postId, categoryId])
   @@index([postId])
   @@index([categoryId])
+}
+
+model Course {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  image       Json
+  video       Json
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPING
+  DELIVERED
+  CANCELLED
 }

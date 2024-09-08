@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import TableData from "@/components/TableData";
+import { TableActionProps } from "@/components/TableData";
 import { CategoryProps } from "@/helpers/typeProps";
-import { PencilIcon } from "@heroicons/react/24/solid";
+import { NullProof } from "@/helpers/appFunction";
 import {
   Typography,
   IconButton,
@@ -9,19 +10,33 @@ import {
 } from "@material-tailwind/react";
 import { useRouter } from "next/router";
 
-const TABLE_HEAD = ["Name", "Action"];
+const TABLE_HEAD = ["Title", "Description", "Publised", "Action"];
 
 export default function index() {
   const [data, setData] = useState([]);
   const router = useRouter();
+
+  const dataAction: TableActionProps[] = [
+    {
+      action: "update",
+    },
+    {
+      action: "delete",
+    },
+    {
+      action: "view",
+    },
+  ];
+  const {Table, TableAction} = TableData({
+    title: "Courses",
+    description: "List of courses",
+    tableHeader: TABLE_HEAD,
+    urlData: "/course",
+    onSuccess: (data: any) => setData(data),
+  })
+
   return (
-    <TableData
-      title="Courses"
-      description="List of courses"
-      tableHeader={TABLE_HEAD}
-      urlData="/category"
-      onSuccess={(data:any) => setData(data)}
-    >
+    <Table>
       {data?.map((categori: CategoryProps, index: number) => {
         const isLast = index === data.length - 1;
         const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
@@ -33,19 +48,33 @@ export default function index() {
                 color="blue-gray"
                 className="font-normal"
               >
-                {categori.name}
+                {NullProof({input:categori, params: "name"})}
               </Typography>
             </td>
             <td className={classes}>
-              <Tooltip content="Edit Categori">
-                <IconButton variant="text" onClick={()=> router.push(router.pathname + "/update/" + categori.id)}>
-                  <PencilIcon className="h-4 w-4" />
-                </IconButton>
-              </Tooltip>
+              <Typography
+                variant="small"
+                color="blue-gray"
+                className="font-normal"
+              >
+                {NullProof({input:categori, params: "description"})}
+              </Typography>
+            </td>
+            <td className={classes}>
+              <Typography
+                variant="small"
+                color="blue-gray"
+                className="font-normal"
+              >
+                {NullProof({input:categori, params: "Published"})}
+              </Typography>
+            </td>
+            <td className={classes}>
+            <TableAction data={dataAction} id={categori.id} />
             </td>
           </tr>
         );
       })}
-    </TableData>
+    </Table>
   );
 }
