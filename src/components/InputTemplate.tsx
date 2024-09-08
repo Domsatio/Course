@@ -1,5 +1,5 @@
 "use client";
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { InputListProps } from "@/helpers/typeProps";
 import * as Yup from "yup";
 import axios from "axios";
@@ -36,20 +36,20 @@ import { UploadButton } from "@/libs/uploadThing";
 import { FormInputHooks } from "./FormInput";
 import { se } from "date-fns/locale";
 
-type FileWieverProps = {
+type FileViewerProps = {
   file: string | null;
   isOpen: boolean;
   handleOpen: (value: boolean) => void;
 };
 
-const FileWiever = ({ file, isOpen, handleOpen }: FileWieverProps) => {
+const FileViewer = ({ file, isOpen, handleOpen }: FileViewerProps) => {
   return (
     <Dialog size="sm" open={isOpen} handler={() => handleOpen(false)}>
       <DialogHeader className="border-b">Preview</DialogHeader>
       <DialogBody className="h-[500px]">
         <div className="relative h-full w-full">
           <Image
-            src={file|| ""}
+            src={file || ""}
             className="object-contain"
             alt="Preview image"
             fill={true}
@@ -90,7 +90,7 @@ export const InputListRenderer = ({
   const [debounceValue] = useDebounce(search, 1500);
   const param = option?.params?.split(/\s*,\s*/) || [];
 
-  console.log(error, "error");
+  // console.log(error, "error");
 
   const { setDisabled, disabled: formDisabled } = FormInputHooks();
   useEffect(() => {
@@ -104,8 +104,8 @@ export const InputListRenderer = ({
       setPreviewImage(value);
     }
   }, [debounceValue]);
-  
-  
+
+
 
   const getDataApi = async () => {
     setIsLoading(true);
@@ -320,7 +320,7 @@ export const InputListRenderer = ({
       {type === "image" && (
         <React.Fragment>
           {value && (
-            <FileWiever
+            <FileViewer
               file={value.toLocaleString()}
               isOpen={preview}
               handleOpen={setPreview}
@@ -399,8 +399,8 @@ export const InputListRenderer = ({
             Array.isArray(value)
               ? new Date()
               : value
-              ? new Date(value)
-              : new Date()
+                ? new Date(value)
+                : new Date()
           }
           onChange={(date) => {
             onChange?.({ target: { name, value: date } });

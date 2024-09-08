@@ -10,7 +10,7 @@ export default withAuth(async function middleware(req: NextRequestWithAuth) {
   const pathname = nextUrl.pathname.split("/")[1];
 
   if (pathname === "admin") {
-    if (!token || token?.role !== "admin") {
+    if (!token || token?.role !== "ADMIN") {
       return NextResponse.redirect(new URL("/sign-in", req.url));
     }
   }

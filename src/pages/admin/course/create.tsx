@@ -1,21 +1,17 @@
 'use client';
 import React from "react";
-import { useRouter } from "next/router";
 import FormInput from "@/components/FormInput";
-import { FormInputList } from "../inputLayout";
+import { FormInputList } from "./inputLayout";
 import { courseServices } from "@/services/serviceGenerator";
 
-export default function Update() {
-  const { query: { id } } = useRouter()
-
+export default function Create() {
   return (
     <div>
       <FormInput
         inputList={FormInputList}
+        method="POST"
         service={courseServices}
-        method="PUT"
-        id={id as string}
-        title="Update Course"
+        title="Tambah Course"
       />
     </div>
   );

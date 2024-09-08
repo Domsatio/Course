@@ -1,15 +1,14 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import axios from "axios";
 import { useDebounce } from "use-debounce";
 import { Pagination } from "./Pagination";
 import {
   MagnifyingGlassIcon,
   FunnelIcon,
-  PencilIcon,
   EyeIcon,
   TrashIcon,
+  PencilSquareIcon,
 } from "@heroicons/react/24/solid";
 import {
   Card,
@@ -23,6 +22,7 @@ import {
   MenuList,
   MenuItem,
   IconButton,
+  Tooltip,
 } from "@material-tailwind/react";
 import { ProductProps, TableDataProps } from "@/helpers/typeProps";
 import FormInput from "@/components/FormInput";
@@ -44,10 +44,10 @@ const filterDataDummy = (data: any[], page: number, size: number) => {
 
 const TableHook = ({
   onSuccess,
-  urlData,
+  service
 }: {
   onSuccess?: (e: any) => void;
-  urlData: string;
+  service: any
 }) => {
   const [data, setData] = useState<ProductProps[]>([]);
   const [isLoad, setIsLoad] = useState(false);
@@ -102,7 +102,7 @@ const TableHook = ({
   };
 
   const getDataTable = async () => {
-    const param: {
+    const params: {
       limit: number;
       page: number;
       search?: string;
@@ -112,22 +112,16 @@ const TableHook = ({
       page: activePage,
     };
     if (searchQuery) {
-      param.search = debounceValue;
+      params.search = debounceValue;
     }
     try {
       setIsLoad(true);
-      const response = await axios.get("/api" + urlData, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        // withCredentials: true,
-        params: param,
-      });
+      const { data: { data, totalPages } } = await service.getItems(params);
       if (onSuccess) {
-        onSuccess(response.data.data);
+        onSuccess(data);
       }
-      setTotalPages(response.data.totalPages);
-      setData(response.data.data);
+      setTotalPages(totalPages);
+      setData(data);
     } catch (error) {
       console.log("error", error);
     } finally {
@@ -137,10 +131,11 @@ const TableHook = ({
 
   const handleDelete = async (id: string) => {
     try {
-      const response = await axios.delete("/api" + urlData, {
-        params: { id: id },
-      });
-      if (response.data) {
+      // const response = await axios.delete("/api" + urlData, {
+      //   params: { id: id },
+      // });
+      const { data } = await service.deleteItem({ id: id });
+      if (data) {
         getDataTable();
       }
     } catch (error) {
@@ -174,7 +169,6 @@ const TableHook = ({
 };
 
 export default function TableData({
-  dummyData,
   tableHeader = [],
   urlData = "",
   title = "",
@@ -182,6 +176,7 @@ export default function TableData({
   onSuccess,
   isActionAdd = true,
   filter,
+  service
 }: TableDataProps) {
   const {
     router,
@@ -204,7 +199,7 @@ export default function TableData({
     getDataTable,
     handleDelete,
     setDummyData,
-  } = TableHook({ onSuccess: onSuccess, urlData: urlData });
+  } = TableHook({ onSuccess: onSuccess, service: service });
 
   const Table = ({ children }: { children: React.ReactNode }) => {
     return (
@@ -243,11 +238,10 @@ export default function TableData({
               </div>
               {isActionAdd && (
                 <Button
-                  className="flex items-center gap-3"
-                  size="sm"
+                  color="blue"
                   onClick={() => router.push(router.pathname + "/create")}
                 >
-                  Add
+                  Create
                 </Button>
               )}
               {filter && (
@@ -264,6 +258,7 @@ export default function TableData({
                       url: urlData,
                       query: router.query,
                     }}
+                    service={service}
                     title="Filter"
                     asModal={{ isOpen: modalFilter, handler: setModalFilter }}
                     onSuccess={(data) => setData(data)}
@@ -315,35 +310,35 @@ export default function TableData({
     id,
   }: {
     data: TableActionProps[];
-    id: string | number;
+    id: string;
   }) => {
     return (
       <div className="flex gap-2 items-center">
-        {data.map((item) => (
-          <IconButton
-            key={item.action}
-            variant="text"
-            className="cursor-pointer"
-            onClick={
-              item.action === "custom"
-                ? item.onClick
-                : item.action === "delete"
-                  ? () => {
-                    handleDelete(id.toString());
-                  }
-                  : () => router.push(router.pathname + `/${item.action}/` + id)
-            }
-          >
-            {item.action === "custom" ? (
-              item.custom?.icon
-            ) : item.action === "update" ? (
-              <PencilIcon className="h-4 w-4" />
-            ) : item.action === "delete" ? (
-              <TrashIcon className="h-4 w-4" />
-            ) : item.action === "view" ? (
-              <EyeIcon className="h-4 w-4" />
-            ) : null}
-          </IconButton>
+        {data.map(({ action, onClick, custom }) => (
+          <Tooltip key={action} content={action[0].toUpperCase() + action.substring(1)}>
+            <IconButton
+              variant="text"
+              className="cursor-pointer"
+              size="sm"
+              onClick={
+                action === "custom"
+                  ? onClick
+                  : action === "delete"
+                    ? () => handleDelete(id)
+                    : () => router.push(router.pathname + `/${action}/` + id)
+              }
+            >
+              {action === "custom" ? (
+                custom?.icon
+              ) : action === "update" ? (
+                <PencilSquareIcon className="h-4 w-4" />
+              ) : action === "delete" ? (
+                <TrashIcon className="h-4 w-4" color="red" />
+              ) : action === "view" ? (
+                <EyeIcon className="h-4 w-4" />
+              ) : null}
+            </IconButton>
+          </Tooltip>
         ))}
       </div>
     );

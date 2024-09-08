@@ -159,7 +159,7 @@ export default async function handler(
           .send({ status: false, statusCode: 422, message: error });
       }
     } else {
-      if (token.role !== "admin") {
+      if (token.role !== "ADMIN") {
         res.status(401).json({ message: "Forbidden" });
         return;
       }

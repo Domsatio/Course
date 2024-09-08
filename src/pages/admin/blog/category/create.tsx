@@ -2,12 +2,14 @@
 import React from "react";
 import FormInput from "@/components/FormInput";
 import { FormInputList } from "./inputLayout";
+import { categoryServices } from "@/services/serviceGenerator";
 
-export default function tambah() {
+export default function Create() {
   return (
     <FormInput
       inputList={FormInputList}
-      route={{ url: `/category`, query: {}, method: "POST" }}
+      method="POST"
+      service={categoryServices}
       title="Create Category"
     />
   );
