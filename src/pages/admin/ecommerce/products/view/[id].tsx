@@ -1,33 +1,44 @@
-import React, {useState} from 'react'
-import { useRouter } from 'next/router'
-import { DetailPage, NullProof } from '@/helpers/appFunction'
+import React, { useState } from "react";
+import Image from "next/image";
+import { useRouter } from "next/router";
+import { DetailPage, NullProof } from "@/helpers/appFunction";
 
 export default function view() {
-  const [data, setData] = useState<any>({})
+  const { Page, Label, data } = DetailPage({
+    api: "/product",
+  });
   return (
-    <DetailPage
-      api="/product"
-      onSusccess={(data:any) => setData(data)}
-    >
-      <div>
-        <h1>Product Detail</h1>
-
+    <Page title="Product">
+      <div className="flex flex-wrap gap-5">
         <div>
-          <h3>Product Name</h3>
-          <p>{NullProof({input:data, params:'name'})}</p>
+          <Image
+            src={data.image}
+            alt={NullProof({ input: data, params: "name" })}
+            width={400}
+            height={400}
+            className="rounded-md"
+          />
         </div>
-        <div>
-          <h3>Product Name</h3>
-          <p>{NullProof({input:data, params:'price', type:"currency"})}</p>
-        </div>
-        <div>
-          <h3>Product Name</h3>
-          <p>{NullProof({input:data, params:'updatedAt', type:"date"})}</p>
+        <div className="flex flex-col gap-4">
+          <div>
+            <h1 className="font-black text-xl lg:text-3xl">
+              {NullProof({ input: data, params: "name" })}
+            </h1>
+          </div>
+          <Label label="Description" position="vertikal">
+            {NullProof({ input: data, params: "description" })}
+          </Label>
+          <Label label="Price" position="vertikal">
+            {NullProof({ input: data, params: "price", type: "currency" })}
+          </Label>
+          <Label label="Stock" position="vertikal">
+            {NullProof({ input: data, params: "quantity" })}
+          </Label>
+          <Label label="Discount" position="vertikal">
+            {NullProof({ input: data, params: "discount" })}{NullProof({ input: data, params: "discount" }) > 0 ? "%" : ""}
+          </Label>
         </div>
       </div>
-    </DetailPage>
-
-  )
+    </Page>
+  );
 }
-
-
