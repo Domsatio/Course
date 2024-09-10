@@ -32,6 +32,7 @@ export const createPost = async ({
   title,
   body,
   categories,
+  published,
 }: Post) => {
   return prisma.post.create({
     data: {
@@ -39,6 +40,7 @@ export const createPost = async ({
       userId,
       title,
       body,
+      published,
       categories: {
         create: categories?.map((id) => ({
           category: {
@@ -52,13 +54,14 @@ export const createPost = async ({
 
 export const updatePost = async (
   id: string,
-  { title, body, categories }: UpdatePost
+  { title, body, categories, published }: UpdatePost
 ) => {
   return prisma.post.update({
     where: { id },
     data: {
       title,
       body,
+      published,
       categories: {
         deleteMany: {},
         create: categories?.map((id) => ({

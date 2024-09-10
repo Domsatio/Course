@@ -69,6 +69,11 @@ export default async function handler(
 
     const { id } = req.query;
 
+    if (token.id !== id) {
+      res.status(401).json({ message: "Forbidden" });
+      return;
+    }
+
     const { validatedData, errors } = updateUserValidation(req.body);
 
     if (errors) {
@@ -108,6 +113,11 @@ export default async function handler(
 
     const { id } = req.query;
 
+    if (token.id !== id) {
+      res.status(401).json({ message: "Forbidden" });
+      return;
+    }
+
     try {
       const result = await deleteUser(id as string);
 
@@ -138,6 +148,11 @@ export default async function handler(
 
     if (req.query.id) {
       const { id } = req.query;
+
+      if (token.id !== id) {
+        res.status(401).json({ message: "Forbidden" });
+        return;
+      }
 
       if (typeof id !== "string") {
         return res.status(400).json({ message: "Invalid id parameter" });

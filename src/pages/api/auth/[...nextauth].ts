@@ -41,7 +41,7 @@ export const authOptions: NextAuthOptions = {
           email: string;
           password: string;
         };
-        const user = await existingUser(email);
+        const user: any = await existingUser(email);
         if (user) {
           const passwordConfirm = await bcrypt.compare(password, user.password);
           if (passwordConfirm) return user;
@@ -64,6 +64,7 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, token }: any) {
       session.user.role = token.role;
+      session.user.id = token.id;
       return session;
     },
   },

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import TableData from "@/components/TableData";
 import { TableActionProps } from "@/components/TableData";
-import { CategoryProps } from "@/helpers/typeProps";
 import { NullProof } from "@/helpers/appFunction";
 import {
   Typography,

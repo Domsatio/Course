@@ -1,8 +1,7 @@
-import React from "react";
 import { StringDecoder } from "string_decoder";
-import 'next-auth';
+import "next-auth";
 
-declare module 'next-auth' {
+declare module "next-auth" {
   interface Session {
     user: {
       id: string;
@@ -13,54 +12,55 @@ declare module 'next-auth' {
     };
   }
 }
+
 type FormInputTypeProps =
-  | 'input'
-  | 'number'
-  | 'url'
-  | 'select'
-  | 'multicheckbox'
-  | 'datalist'
-  | 'textarea'
-  | 'label'
-  | 'component'
-  | 'csv'
-  | 'date'
-  | 'currency'
-  | 'image'
-  | 'multipleImage'
-  | 'multipleInput'
-  | 'checkbox'
+  | "input"
+  | "number"
+  | "url"
+  | "select"
+  | "multicheckbox"
+  | "datalist"
+  | "textarea"
+  | "label"
+  | "component"
+  | "csv"
+  | "date"
+  | "currency"
+  | "image"
+  | "multipleImage"
+  | "multipleInput"
+  | "checkbox";
 
 interface InputListOptionProps {
-  type: 'select' | 'multicheckbox' | 'datalist' | 'csv'
-  params?: string
-  id: string
-  api?: string
-  data?: any[]
-  value?: string
-  watch?: string
+  type: "select" | "multicheckbox" | "datalist" | "csv";
+  params?: string;
+  id: string;
+  api?: string;
+  data?: any[];
+  value?: string;
+  watch?: string;
 }
 
 interface InputListProps {
-  className?: string
-  name: string
-  label: string
-  protect?: string[]
-  type: FormInputTypeProps
-  hide?: boolean
-  removeOnSubmit?: boolean
-  disabled?: boolean
-  lockData?: boolean
-  validator: any
-  value?: string | number | string[] | boolean
+  className?: string;
+  name: string;
+  label: string;
+  protect?: string[];
+  type: FormInputTypeProps;
+  hide?: boolean;
+  removeOnSubmit?: boolean;
+  disabled?: boolean;
+  lockData?: boolean;
+  validator: any;
+  value?: string | number | string[] | boolean;
   listData?: {
-    title: string
-    value: number | string | boolean
-  }[]
-  onChange?: (e: any) => void
-  error?: string
-  option?: InputListOptionProps
-  component?: InputListProps[]
+    title: string;
+    value: number | string | boolean;
+  }[];
+  onChange?: (e: any) => void;
+  error?: string;
+  option?: InputListOptionProps;
+  component?: InputListProps[];
 }
 
 interface MenuItemProps {
@@ -107,7 +107,7 @@ interface TableDataProps {
   onSuccess?: (e: any) => void;
   isActionAdd?: boolean;
   filter?: InputListProps[] | undefined;
-  service: any
+  service: any;
   // children?: React.ReactNode;
 }
 
@@ -144,28 +144,6 @@ interface OrderProps {
   account?: string;
   createdAt: string;
 }
-interface CategoryProps {
-  id: string;
-  name: string;
-};
-
-interface PostProps {
-  id: string;
-  userId: string;
-  title: string;
-  body: string;
-  categories?: CategoryProps[];
-};
-
-interface CourseProps {
-  id: string;
-  title: string;
-  description: string;
-  image: string;
-  vidio: string;
-  publised: string;
-  createdAt: string;
-}
 
 export type {
   InputListProps,
@@ -176,7 +154,4 @@ export type {
   RouteItemsProps,
   PaginationProps,
   TableDataProps,
-  CategoryProps,
-  PostProps,
-  CourseProps,
 };

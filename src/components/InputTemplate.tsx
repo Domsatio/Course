@@ -32,7 +32,6 @@ import CurrencyInput from "react-currency-input-field";
 import { format, set } from "date-fns";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { UploadButton } from "@/libs/uploadThing";
 import { FormInputHooks } from "./FormInput";
 import { se } from "date-fns/locale";
 
@@ -225,7 +224,7 @@ export const InputListRenderer = ({
       {type === "select" && (
         <Select
           className={className}
-          label={`Pilih ${label}`}
+          label={`Choose ${label}`}
           name={name}
           onChange={(e) => {
             console.log(e);
