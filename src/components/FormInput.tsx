@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useRouter } from "next/router";
 import { FormikErrors, useFormik } from "formik";
 import * as Yup from "yup";
@@ -11,7 +10,6 @@ import {
   Dialog,
   DialogHeader,
   DialogBody,
-  DialogFooter,
   Card,
   CardHeader,
   CardBody,
@@ -21,11 +19,9 @@ import { TrashIcon } from "@heroicons/react/24/outline";
 interface FormInputProps {
   title: string;
   inputList: InputListProps[];
-  route: {
-    url: string;
-    query: any;
-    method: "POST" | "PUT";
-  };
+  method: "POST" | "PUT" | "GET";
+  id?: string
+  service: any
   onSuccess?: (data: any) => void;
   asModal?: {
     isOpen: boolean;
@@ -43,7 +39,9 @@ export const FormInputHooks = () => {
 export default function FormInput({
   title = "",
   inputList,
-  route = { url: "", query: {}, method: "POST" },
+  method,
+  service,
+  id = '',
   onSuccess,
   asModal,
   isFilter = false,
@@ -51,15 +49,6 @@ export default function FormInput({
 }: FormInputProps) {
   const { disabled } = FormInputHooks();
   const router = useRouter();
-  const baseUrl =
-    process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000/api";
-  const createUrl = (route: any) => {
-    const url = new URL(route.url, baseUrl);
-    Object.entries(route.query).forEach(([key, value]) => {
-      url.searchParams.append(key, String(value));
-    });
-    return url.toString();
-  };
 
   const initialValues = inputList.reduce((acc: Record<string, any>, item) => {
     acc[item.name] = item.value || "";
@@ -100,24 +89,12 @@ export default function FormInput({
       // }
       try {
         let response;
-        if (route.method === "POST") {
-          // response = await axios.post(createUrl(route), containsFile ? formData : values, {
-          response = await axios.post(createUrl(route), values, {
-            headers: {
-              // "Content-Type": containsFile ? "multipart/form-data" : "application/json",
-              "Content-Type": "application/json",
-            },
-          });
-        } else if (route.method === "PUT") {
-          // response = await axios.put(createUrl(route), containsFile ? formData : values, {
-          response = await axios.put(createUrl(route), values, {
-            headers: {
-              // "Content-Type": containsFile ? "multipart/form-data" : "application/json",
-              "Content-Type": "application/json",
-            },
-          });
+        if (method === "POST") {
+          response = await service.addItem(values)
+        } else if (method === "PUT") {
+          response = await service.updateItem(values, { id })
         } else {
-          response = await axios.get(createUrl(route));
+          response = await service.getItems()
         }
 
         if (response?.data && onSuccess) {
@@ -126,7 +103,7 @@ export default function FormInput({
         asModal?.handler(false);
         if (redirect) {
           router.push(redirect);
-        } else if (route.method === "POST" || route.method === "PUT") {
+        } else if (method === "POST" || method === "PUT") {
           router.back();
         }
       } catch (error) {
@@ -151,22 +128,22 @@ export default function FormInput({
     }
   };
 
-  useEffect(() => {
-    console.log("formik.values", formik.values);
-  }, [formik.values]);
+  // useEffect(() => {
+  //   console.log("formik.values", formik.values);
+  // }, [formik.values]);
 
   useEffect(() => {
-    if (route.method === "PUT") {
+    if (method === "PUT") {
       fetchData();
     }
-  }, [route]);
+  }, [method]);
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(createUrl(route));
-      Object.keys(response.data.data).forEach((key) => {
-        formik.setFieldValue(key, response.data.data[key]);
-      });
+      const { data: { data } } = await service.getItems({ id })
+      Object.keys(data).forEach((key) => {
+        inputList.filter((input) => input.name === key).length > 0 && formik.setFieldValue(key, data[key]);
+      })
     } catch (error) {
       console.error("Form submission error:", error);
     }
@@ -266,6 +243,7 @@ export default function FormInput({
       })}
       <div className="flex justify-end items-center gap-2">
         <Button
+          variant="text"
           color="red"
           onClick={() => {
             if (asModal) {
@@ -278,8 +256,8 @@ export default function FormInput({
         >
           Cancel
         </Button>
-        <Button type="submit" className="btn btn-primary" disabled={disabled}>
-          Submit
+        <Button type="submit" className="btn" color="green" disabled={disabled}>
+          Create
         </Button>
       </div>
     </>

@@ -9,7 +9,7 @@ export default function LayoutClient({ children }) {
   const { data: session } = useSession();
 
   useEffect(() => {
-    if (session && session.user?.role === "admin") {
+    if (session && session.user?.role === "ADMIN") {
       push("/admin/dashboard");
     }
   }, [session, push]);

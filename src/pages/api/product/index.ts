@@ -20,7 +20,7 @@ export default async function handler(
   const token = await getToken({ req });
 
   if (req.method === "POST") {
-    if (!token || token.role !== "admin") {
+    if (!token || token.role !== "ADMIN") {
       res.status(401).json({ message: "Forbidden" });
       return;
     }
@@ -87,7 +87,7 @@ export default async function handler(
       }
     }
   } else if (req.method === "PUT") {
-    if (!token || token.role !== "admin") {
+    if (!token || token.role !== "ADMIN") {
       res.status(401).json({ message: "Forbidden" });
       return;
     }
@@ -118,7 +118,7 @@ export default async function handler(
         .send({ status: false, statusCode: 422, message: error });
     }
   } else if (req.method === "DELETE") {
-    if (!token || token.role !== "admin") {
+    if (!token || token.role !== "ADMIN") {
       res.status(401).json({ message: "Forbidden" });
       return;
     }

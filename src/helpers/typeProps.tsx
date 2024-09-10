@@ -18,6 +18,7 @@ type FormInputTypeProps =
   | 'number'
   | 'url'
   | 'select'
+  | 'checkbox'
   | 'multicheckbox'
   | 'datalist'
   | 'textarea'
@@ -29,38 +30,39 @@ type FormInputTypeProps =
   | 'image'
   | 'multipleImage'
   | 'multipleInput'
+  | 'checkbox'
 
-  interface InputListOptionProps {
-    type: 'select' | 'multicheckbox' | 'datalist' | 'csv'
-    params?: string
-    id: string
-    api?: string
-    data?: any[]
-    value?: string
-    watch?: string
-  }
+interface InputListOptionProps {
+  type: 'select' | 'multicheckbox' | 'datalist' | 'csv'
+  params?: string
+  id: string
+  api?: string
+  data?: any[]
+  value?: string
+  watch?: string
+}
 
-  interface InputListProps {
-    className?: string
-    name: string
-    label: string
-    protect?: string[]
-    type: FormInputTypeProps
-    hide?: boolean
-    removeOnSubmit?: boolean
-    disabled?: boolean
-    lockData?: boolean
-    validator: any
-    value?: string | number | string[] 
-    listData?: {
-      title: string
-      value: number | string |boolean
-    }[]
-    onChange?: (e: any) => void
-    error?: string
-    option?: InputListOptionProps
-    component?: InputListProps[]
-  }
+interface InputListProps {
+  className?: string
+  name: string
+  label: string
+  protect?: string[]
+  type: FormInputTypeProps
+  hide?: boolean
+  removeOnSubmit?: boolean
+  disabled?: boolean
+  lockData?: boolean
+  validator: any
+  value?: string | number | string[] | boolean
+  listData?: {
+    title: string
+    value: number | string | boolean
+  }[]
+  onChange?: (e: any) => void
+  error?: string
+  option?: InputListOptionProps
+  component?: InputListProps[]
+}
 
 interface MenuItemProps {
   isheader?: boolean;
@@ -98,15 +100,16 @@ interface FilterProps {
 }
 
 interface TableDataProps {
-    title: string;
-    description?: string;
-    urlData?: string;
-    tableHeader: any;
-    dummyData?: any;
-    onSuccess?: (e: any) => void;
-    isActionAdd?: boolean;
-    filter?: InputListProps[] | undefined;
-    // children?: React.ReactNode;
+  title: string;
+  description?: string;
+  urlData?: string;
+  tableHeader: any;
+  dummyData?: any;
+  onSuccess?: (e: any) => void;
+  isActionAdd?: boolean;
+  filter?: InputListProps[] | undefined;
+  service: any
+  // children?: React.ReactNode;
 }
 
 interface PaginationProps {
@@ -120,7 +123,7 @@ interface PaginationProps {
 }
 
 interface ProductProps {
-  id: number;
+  id: string;
   name: string;
   description: string;
   price: number;
@@ -135,14 +138,14 @@ interface ProductProps {
 }
 
 interface OrderProps {
-  id: number;
+  id: string;
   quantity: number;
   total_price: number;
   status?: string;
   account?: string;
   createdAt: string;
 }
-interface CategoryProps  {
+interface CategoryProps {
   id: string;
   name: string;
 };
@@ -164,7 +167,6 @@ interface CourseProps {
   publised: string;
   createdAt: string;
 }
-
 
 export type {
   InputListProps,

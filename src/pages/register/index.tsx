@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import { signIn } from "next-auth/react";
 import { useSession } from "next-auth/react";
-import userServices from "@/services/user.service";
+import { userServices } from "@/services/serviceGenerator";
 
 export default function Register() {
   const [name, setName] = useState("");
@@ -22,7 +22,7 @@ export default function Register() {
     setIsLoading(true);
 
     try {
-      await userServices.addUser({
+      await userServices.addItem({
         id: '',
         name,
         email,

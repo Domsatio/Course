@@ -1,20 +1,22 @@
 'use client';
-import React, {useState} from "react";
+import React from "react";
 import { useRouter } from "next/router";
 import FormInput from "@/components/FormInput";
 import { FormInputList } from "../inputLayout";
+import { postServices } from "@/services/serviceGenerator";
 
+export default function Update() {
+  const { query: { id } } = useRouter()
 
-export default function tambah() {
-  const router = useRouter()  
-    
   return (
     <div>
-        <FormInput
-          inputList={FormInputList}
-          route={{ url: `/api/post`, query: {id:router.query.id || ""}, method: "PUT" }}
-          title="Update Post"
-        />
+      <FormInput
+        inputList={FormInputList}
+        service={postServices}
+        method="PUT"
+        id={id as string}
+        title="Update Post"
+      />
     </div>
   );
 }

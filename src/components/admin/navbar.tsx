@@ -96,7 +96,7 @@ function ProfileMenu() {
         <Button
           variant="text"
           //   color="blue-gray"
-          className="flex items-center justify-center gap-1 rounded-full py-0.5 pr-2 pl-0.5 lg:ml-auto"
+          className="flex items-center justify-center gap-1 rounded-full p-0.5 lg:ml-auto"
         >
           <Avatar
             variant="circular"
@@ -121,8 +121,8 @@ function ProfileMenu() {
               key={label}
               onClick={closeMenu}
               className={`flex items-center gap-2 rounded ${isLastItem
-                  ? "hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
-                  : ""
+                ? "hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
+                : ""
                 }`}
             >
               {React.createElement(icon, {
@@ -306,39 +306,6 @@ export default function AdminNavbar() {
               Log Out
             </ListItem>
           </List>
-          <Alert
-            open={openAlert}
-            className="mt-auto"
-            onClose={() => setOpenAlert(false)}
-          >
-            <CubeTransparentIcon className="mb-4 h-12 w-12" />
-            <Typography variant="h6" className="mb-1">
-              Upgrade to PRO
-            </Typography>
-            <Typography variant="small" className="font-normal opacity-80">
-              Upgrade to Material Tailwind PRO and get even more components,
-              plugins, advanced features and premium.
-            </Typography>
-            <div className="mt-4 flex gap-3">
-              <Typography
-                as="a"
-                href="#"
-                variant="small"
-                className="font-medium opacity-80"
-                onClick={() => setOpenAlert(false)}
-              >
-                Dismiss
-              </Typography>
-              <Typography
-                as="a"
-                href="#"
-                variant="small"
-                className="font-medium"
-              >
-                Upgrade Now
-              </Typography>
-            </div>
-          </Alert>
         </Card>
       </Drawer>
     </>

@@ -1,5 +1,5 @@
 import { Course, UpdateCourse } from "@/types/course.type";
-import { object, number, string, mixed, array, boolean } from "yup";
+import { object, string, array, boolean } from "yup";
 
 export const createCourseValidation = (payload: Course) => {
   const schema = object({
@@ -7,17 +7,15 @@ export const createCourseValidation = (payload: Course) => {
     title: string().required("Title is required"),
     description: string().required("Description is required"),
     image: array(
-      object().shape({
-        key: string().required(),
-        value: string().required(),
+      object({
+        image: string().required("Image is required"),
       })
     ).required("Image is required"),
-    video: object()
-      .shape({
-        key: string().required(),
-        value: string().required(),
+    video: array(
+      object({
+        video: string().required("Video is required"),
       })
-      .required("Video is required"),
+    ).required("Video is required"),
     published: boolean().required("Published is required"),
   });
 
@@ -31,21 +29,19 @@ export const createCourseValidation = (payload: Course) => {
 
 export const updateCourseValidation = (payload: UpdateCourse) => {
   const schema = object({
-    title: string().required("Title is required"),
-    description: string().required("Description is required"),
+    title: string().optional(),
+    description: string().optional(),
     image: array(
-      object().shape({
-        key: string().required(),
-        value: string().required(),
+      object({
+        image: string().required("Image is required"),
       })
-    ).required("Image is required"),
-    video: object()
-      .shape({
-        key: string().required(),
-        value: string().required(),
+    ).optional(),
+    video: array(
+      object({
+        video: string().required("Video is required"),
       })
-      .required("Video is required"),
-    published: boolean().required("Published is required"),
+    ).optional(),
+    published: boolean().optional(),
   });
 
   try {
