@@ -41,7 +41,7 @@ export default function Index() {
                 color="blue-gray"
                 className="font-normal"
               >
-                {NullProof({ input: category, params: "name" })}
+                {NullProof({ input: category, params: "title" })}
               </Typography>
             </td>
             <td className={classes}>
@@ -59,7 +59,7 @@ export default function Index() {
                 color="blue-gray"
                 className="font-normal"
               >
-                {NullProof({ input: category, params: "Published" })}
+                {NullProof({ input: category, params: "published", type:"html" })}
               </Typography>
             </td>
             <td className={classes}>

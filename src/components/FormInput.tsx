@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { useFormik } from "formik";
+import { FormikErrors, useFormik } from "formik";
 import * as Yup from "yup";
 import { InputListProps } from "@/helpers/typeProps";
 import { InputListRenderer } from "./InputTemplate";
@@ -60,16 +60,18 @@ export default function FormInput({
       if (item.type === "component") {
         acc[item.name] = Yup.array().of(
           Yup.object().shape(
-            (item.component || []).reduce((acc: Record<string, any>, component) => {
-              acc[component.name] = component.validator || Yup.string();
-              return acc;
-            }, {})
+            (item.component || []).reduce(
+              (acc: Record<string, any>, component) => {
+                acc[component.name] = component.validator || Yup.string();
+                return acc;
+              },
+              {}
+            )
           )
         );
       } else {
         acc[item.name] = item.validator || Yup.string();
       }
-      // acc[item.name] = item.validator || Yup.string(); // Default to Yup.string() if no validator is provided
       return acc;
     }, {})
   );
@@ -115,9 +117,6 @@ export default function FormInput({
   const handleChange = (e: any) => {
     const { name, value } = e.target;
     formik.setFieldValue(name, value);
-    // if (formik.touched[name]) {
-    //   formik.setFieldTouched(name, false);
-    // }
     if (isFilter) {
       router.push({
         pathname: router.pathname,
@@ -129,9 +128,9 @@ export default function FormInput({
     }
   };
 
-  useEffect(() => {
-    console.log("formik.values", formik.values);
-  }, [formik.values]);
+  // useEffect(() => {
+  //   console.log("formik.values", formik.values);
+  // }, [formik.values]);
 
   useEffect(() => {
     if (method === "PUT") {
@@ -149,30 +148,6 @@ export default function FormInput({
       console.error("Form submission error:", error);
     }
   };
-
-  //   const handleSubmit = async (e: any) => {
-  //     e.preventDefault();
-  //     try {
-  //       let response;
-  //       const url = new URL(route.url);
-  //       Object.keys(route.query).forEach((key) =>
-  //         url.searchParams.append(key, route.query[key])
-  //       );
-  //       if (route.method === "POST") {
-  //         response = await axios.post(url.toString(), formik.values);
-  //       } else if (route.method === "PUT") {
-  //         response = await axios.put(url.toString(), formik.values);
-  //       } else {
-  //         response = await axios.get(url.toString());
-  //       }
-
-  //       if (onSuccess) {
-  //         onSuccess(response.data.data);
-  //       }
-  //     } catch (error) {
-  //       console.log("error", error);
-  //     }
-  //   };
 
   const clearForm = () => {
     formik.resetForm();
@@ -194,9 +169,7 @@ export default function FormInput({
                         {...component}
                         value={item[component.name]}
                         onChange={(e: any) => {
-                          const { name, value } = e.target;
-                          console.log("name", name);
-                          console.log("value", value);
+                          const { value } = e.target;
                           const newValues = formik.values[input.name].map(
                             (pastValue: any, idx: number) => {
                               if (i === idx) {
@@ -207,7 +180,13 @@ export default function FormInput({
                           );
                           formik.setFieldValue(input.name, newValues);
                         }}
-                        error={formik.errors[component.name]?.toString() || ""}
+                        error={
+                          (formik.errors[input.name] as FormikErrors<any>[][0])
+                            ? (
+                                formik.errors[input.name] as FormikErrors<any>[]
+                              )[i]?.[component.name]?.toString()
+                            : ""
+                        }
                       />
                     ))}
                     <Button

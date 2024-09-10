@@ -5,7 +5,7 @@ export const FormInputListRenderer = ({ id }: { id: string }) => {
   const FormInputList: InputListProps[] = [
     {
       className: "",
-      name: "id",
+      name: "userId",
       label: "ID",
       type: "input",
       hide: true,
@@ -33,7 +33,7 @@ export const FormInputListRenderer = ({ id }: { id: string }) => {
     },
     {
       className: "input-text",
-      name: "category",
+      name: "categories",
       label: "Category",
       type: "multicheckbox",
       removeOnSubmit: false,
@@ -51,7 +51,7 @@ export const FormInputListRenderer = ({ id }: { id: string }) => {
       className: "",
       name: "published",
       label: "Published",
-      type: "select",
+      type: "checkbox",
       removeOnSubmit: false,
       validator: Yup.boolean().required("Published is required"),
       value: false,
@@ -94,16 +94,16 @@ export const FormInputList: InputListProps[] = [
   },
   {
     className: "input-text",
-    name: "category",
+    name: "categories",
     label: "Category",
-    type: "select",
+    type: "multicheckbox",
     removeOnSubmit: false,
-    validator: Yup.string().required("Category is required"),
+    validator: Yup.array().required("Category is required"),
     value: "",
     option: {
       id: "id",
       type: "select",
-      params: "id, name",
+      params: "name",
       api: "/api/category",
       data: [],
     }
@@ -112,7 +112,7 @@ export const FormInputList: InputListProps[] = [
     className: "",
     name: "published",
     label: "Published",
-    type: "select",
+    type: "checkbox",
     removeOnSubmit: false,
     validator: Yup.boolean().required("Published is required"),
     value: false,

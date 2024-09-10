@@ -2,6 +2,7 @@
 import React from 'react'
 import FormInput from '@/components/FormInput'
 import { FormInputList } from './inputLayout'
+import { productServices } from '@/services/serviceGenerator'
 
 export default function tambah() {
   return (
@@ -9,11 +10,8 @@ export default function tambah() {
       <FormInput
         title="Tambah Produk"
         inputList={FormInputList}
-        route={{
-          url: "/api/product",
-          query: {},
-          method: "POST",
-        }}
+        method='POST'
+        service={productServices}
       />
     </div>
   )

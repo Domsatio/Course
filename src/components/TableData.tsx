@@ -253,11 +253,12 @@ export default function TableData({
                   />
                   <FormInput
                     inputList={filter}
-                    route={{
-                      method: "POST",
-                      url: urlData,
-                      query: router.query,
-                    }}
+                    // route={{
+                    //   method: "POST",
+                    //   url: urlData,
+                    //   query: router.query,
+                    // }}
+                    method="POST"
                     service={service}
                     title="Filter"
                     asModal={{ isOpen: modalFilter, handler: setModalFilter }}

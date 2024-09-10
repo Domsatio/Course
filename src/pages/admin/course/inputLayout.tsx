@@ -58,7 +58,7 @@ export const FormInputList: InputListProps[] = [
     className: "",
     name: "published",
     label: "Dipublikasikan",
-    type: "select",
+    type: "checkbox",
     validator: Yup.string().required("Pilihan harus diisi"),
     value: "",
     listData: [
