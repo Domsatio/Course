@@ -136,7 +136,7 @@ export default function FormInput({
     if (method === "PUT") {
       fetchData();
     }
-  }, [method]);
+  }, [method, id]);
 
   const fetchData = async () => {
     try {
@@ -257,7 +257,7 @@ export default function FormInput({
           Cancel
         </Button>
         <Button type="submit" className="btn" color="green" disabled={disabled}>
-          Create
+          Submit
         </Button>
       </div>
     </>

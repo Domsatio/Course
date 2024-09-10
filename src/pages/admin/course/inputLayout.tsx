@@ -52,6 +52,14 @@ export const FormInputList: InputListProps[] = [
         validator: Yup.string().required("Vidio harus diisi"),
         value: "",
       },
+      {
+        className: "",
+        name: "description",
+        label: "Video Description",
+        type: "textarea",
+        validator: Yup.string().required("Vidio harus diisi"),
+        value: "",
+      },
     ]
   },
   {

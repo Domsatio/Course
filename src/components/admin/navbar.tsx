@@ -154,7 +154,7 @@ function ProfileMenu() {
   );
 }
 
-export default function AdminNavbar() {
+export default function AdminNavbar({ children }: { children: React.ReactNode }) {
   const [openAlert, setOpenAlert] = React.useState(true);
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
   const router = useRouter();
@@ -235,23 +235,14 @@ export default function AdminNavbar() {
     );
   };
 
-  return (
-    <>
-      <Navbar className="flex items-center justify-between mx-auto max-w-full px-4 py-2 lg:px-8 lg:py-4">
-        <IconButton variant="text" size="lg" onClick={openDrawer}>
-          {isDrawerOpen ? (
-            <XMarkIcon className="h-8 w-8 stroke-2" />
-          ) : (
-            <Bars3Icon className="h-8 w-8 stroke-2" />
-          )}
-        </IconButton>
-        <ProfileMenu />
-      </Navbar>
-      <Drawer open={isDrawerOpen} onClose={closeDrawer}>
-        <Card
+  const SideItem = ({
+    className = "",
+  }: {className?: string}) => {
+    return (
+      <Card
           color="transparent"
           shadow={false}
-          className="h-[calc(100vh-2rem)] w-full p-4"
+          className={`h-[calc(100vh-2rem)] w-full p-4 ${className}`}
         >
           <div className="mb-2 flex items-center gap-4 p-4">
             <img
@@ -271,43 +262,29 @@ export default function AdminNavbar() {
           </div>
           <List>
             <RouteItems routeList={routeList} padding={0} parentRoute="/admin" />
-            <hr className="my-2 border-blue-gray-50" />
-            <ListItem>
-              <ListItemPrefix>
-                <InboxIcon className="h-5 w-5" />
-              </ListItemPrefix>
-              Inbox
-              <ListItemSuffix>
-                <Chip
-                  value="14"
-                  size="sm"
-                  variant="ghost"
-                  color="blue-gray"
-                  className="rounded-full"
-                />
-              </ListItemSuffix>
-            </ListItem>
-            <ListItem>
-              <ListItemPrefix>
-                <UserCircleIcon className="h-5 w-5" />
-              </ListItemPrefix>
-              Profile
-            </ListItem>
-            <ListItem>
-              <ListItemPrefix>
-                <Cog6ToothIcon className="h-5 w-5" />
-              </ListItemPrefix>
-              Settings
-            </ListItem>
-            <ListItem>
-              <ListItemPrefix>
-                <PowerIcon className="h-5 w-5" />
-              </ListItemPrefix>
-              Log Out
-            </ListItem>
           </List>
         </Card>
-      </Drawer>
-    </>
+    )
+  }
+  return (
+    <div className="flex">
+      <SideItem className="w-64 min-h-screen hidden lg:block bg-white fixed" />
+      <div className="w-full lg:ml-64">
+        <Navbar className="rounded-none flex items-center justify-between mx-auto max-w-full px-4 py-2 lg:px-8 lg:py-4">
+          <IconButton variant="text" size="lg" onClick={openDrawer} className="lg:hidden">
+            {isDrawerOpen ? (
+              <XMarkIcon className="h-8 w-8 stroke-2" />
+            ) : (
+              <Bars3Icon className="h-8 w-8 stroke-2" />
+            )}
+          </IconButton>
+          <ProfileMenu />
+        </Navbar>
+          <Drawer open={isDrawerOpen} onClose={closeDrawer} className="lg:hidden">
+            <SideItem />
+          </Drawer>
+          <div className="p-4">{children}</div>
+      </div>
+    </div>
   );
 }

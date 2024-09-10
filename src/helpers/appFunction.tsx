@@ -1,8 +1,15 @@
 import { formatDistanceToNow, format, differenceInDays, parse } from "date-fns";
-import { id } from "date-fns/locale";
+import { da, id, se } from "date-fns/locale";
 import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  CardFooter,
+  Button,
+} from "@material-tailwind/react";
 
 type DateFnsProps = {
   date: string;
@@ -156,19 +163,13 @@ function NullProof({
 
 interface DetailPageProps {
   api: string;
-  onSusccess: (data: any) => void;
   onError?: (data: any) => void;
   id?: string;
-  children?: React.ReactNode; 
+  children?: React.ReactNode;
 }
-const DetailPage = ({
-  api,
-  onSusccess,
-  onError,
-  id,
-  children
-}: DetailPageProps) => {
+const DetailPage = ({ api, onError, id }: DetailPageProps) => {
   const router = useRouter();
+  const [data, setData] = React.useState<any>({});
 
   useEffect(() => {
     getData();
@@ -181,17 +182,62 @@ const DetailPage = ({
           id: id || router.query.id,
         },
       });
-      onSusccess?.(res.data.data);
+      setData(res.data.data);
     } catch (error) {
       onError?.(error);
     }
   };
 
-  return (
-    <React.Fragment>
-      {children}
-    </React.Fragment>
-  )
-}
+  const Page = ({
+    title = "",
+    children,
+  }: {
+    title: string;
+    children?: React.ReactNode;
+  }) => {
+    return (
+      <Card className="mt-6">
+        <CardHeader color="blue" className="p-5">
+          <h2 className="text-2xl">Detail {title}</h2>
+        </CardHeader>
+        <CardBody>{children}</CardBody>
+        <CardFooter>
+          <div className="flex justify-end">
+            <Button size="sm" onClick={() => router.back()}>
+              Back
+            </Button>
+          </div>
+        </CardFooter>
+      </Card>
+    );
+  };
+
+  const Label = ({
+    label,
+    children,
+    position,
+  }: {
+    label?: string;
+    children?: any;
+    position: "horizontal" | "vertikal";
+  }) => {
+    return (
+      <div className={`flex flex-wrap mb-1 ${position === 'horizontal' ? 'flex-row gap-2' : "flex-col"}`}>
+        <div>
+          <h3 className="font-bold">{label}{position === 'horizontal' ? ':' : ""}</h3>
+        </div>
+        <div>
+          {children}
+        </div>
+      </div>
+    );
+  };
+
+  return {
+    Page,
+    Label,
+    data,
+  };
+};
 
 export { NullProof, ConvertCurrency, formatDate, parseDate, DetailPage };
