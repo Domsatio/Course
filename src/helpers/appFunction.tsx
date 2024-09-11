@@ -1,15 +1,5 @@
 import { formatDistanceToNow, format, differenceInDays, parse } from "date-fns";
 import { da, id, se } from "date-fns/locale";
-import React, { useEffect } from "react";
-import { useRouter } from "next/router";
-import axios from "axios";
-import {
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  Button,
-} from "@material-tailwind/react";
 
 type DateFnsProps = {
   date: string;
@@ -161,83 +151,4 @@ function NullProof({
   }
 }
 
-interface DetailPageProps {
-  api: string;
-  onError?: (data: any) => void;
-  id?: string;
-  children?: React.ReactNode;
-}
-const DetailPage = ({ api, onError, id }: DetailPageProps) => {
-  const router = useRouter();
-  const [data, setData] = React.useState<any>({});
-
-  useEffect(() => {
-    getData();
-  }, [router.query.id]);
-
-  const getData = async () => {
-    try {
-      const res = await axios.get(`/api${api}`, {
-        params: {
-          id: id || router.query.id,
-        },
-      });
-      setData(res.data.data);
-    } catch (error) {
-      onError?.(error);
-    }
-  };
-
-  const Page = ({
-    title = "",
-    children,
-  }: {
-    title: string;
-    children?: React.ReactNode;
-  }) => {
-    return (
-      <Card className="mt-6">
-        <CardHeader color="blue" className="p-5">
-          <h2 className="text-2xl">Detail {title}</h2>
-        </CardHeader>
-        <CardBody>{children}</CardBody>
-        <CardFooter>
-          <div className="flex justify-end">
-            <Button size="sm" onClick={() => router.back()}>
-              Back
-            </Button>
-          </div>
-        </CardFooter>
-      </Card>
-    );
-  };
-
-  const Label = ({
-    label,
-    children,
-    position,
-  }: {
-    label?: string;
-    children?: any;
-    position: "horizontal" | "vertikal";
-  }) => {
-    return (
-      <div className={`flex flex-wrap mb-1 ${position === 'horizontal' ? 'flex-row gap-2' : "flex-col"}`}>
-        <div>
-          <h3 className="font-bold">{label}{position === 'horizontal' ? ':' : ""}</h3>
-        </div>
-        <div>
-          {children}
-        </div>
-      </div>
-    );
-  };
-
-  return {
-    Page,
-    Label,
-    data,
-  };
-};
-
-export { NullProof, ConvertCurrency, formatDate, parseDate, DetailPage };
+export { NullProof, ConvertCurrency, formatDate, parseDate };
