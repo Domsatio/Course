@@ -1,77 +1,53 @@
 import { InputListProps } from "@/helpers/typeProps";
-import { Form } from "formik";
 import * as Yup from "yup";
 
-const FormInputList: InputListProps[] = [
+export const FormInputList: InputListProps[] = [
   {
     className: "",
     name: "name",
-    label: "Nama",
+    label: "Name",
     type: "input",
-    validator: Yup.string().required("Nama harus diisi"),
+    validator: Yup.string().required("Name is required"),
     value: "",
   },
   {
     className: "",
     name: "description",
-    label: "Deskripsi",
+    label: "Description",
     type: "textarea",
-    validator: Yup.string().required("Deskripsi harus diisi"),
+    validator: Yup.string().required("Description is required"),
     value: "",
   },
   {
     className: "",
     name: "image",
-    label: "Gambar",
+    label: "Image",
     type: "image",
-    validator: Yup.mixed().required("Gambar harus diisi"),
+    validator: Yup.mixed().required("Image is required"),
     value: "",
   },
   {
     className: "",
     name: "price",
-    label: "Harga",
+    label: "Price",
     type: "currency",
-    validator: Yup.number().required("Harga harus diisi"),
+    validator: Yup.number().required("Price is required"),
     value: "",
   },
   {
     className: "",
     name: "quantity",
-    label: "Stok",
+    label: "Quantity",
     type: "number",
-    validator: Yup.number().typeError('Harus angka').required("Stok harus diisi"),
+    validator: Yup.number().typeError('Input should be a number').required("Quantity is required"),
     value: "",
   },
   {
     className: "",
     name: "discount",
-    label: "Diskon",
+    label: "Discount",
     type: "number",
-    validator: Yup.number().typeError('Harus angka'),
+    validator: Yup.number().typeError('Input should be a number').optional(),
     value: "",
   },
-
-  // {
-  //   className: "",
-  //   name: "date",
-  //   label: "Tanggal",
-  //   type: "date",
-  //   validator: Yup.date().required("Tanggal harus diisi"),
-  //   value: "",
-  // },
-  // {
-  //   className: "",
-  //   name: "published",
-  //   label: "Dipublikasikan",
-  //   type: "select",
-  //   validator: Yup.string().required("Pilihan harus diisi"),
-  //   value: "",
-  //   listData: [
-  //     { title: "Yes", value: "yes" },
-  //     { title: "No", value: "no" },
-  //   ],
-  // }
 ];
-
-export {FormInputList};

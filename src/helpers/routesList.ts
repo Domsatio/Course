@@ -1,22 +1,10 @@
 import {
-  PresentationChartBarIcon,
-  ShoppingBagIcon,
-  UserCircleIcon,
-  Cog6ToothIcon,
-  InboxIcon,
-  PowerIcon,
-  InboxArrowDownIcon,
-  CurrencyDollarIcon
+  ChartPieIcon,
+  ShoppingCartIcon,
+  DocumentTextIcon,
+  CurrencyDollarIcon,
+  VideoCameraIcon,
 } from "@heroicons/react/24/solid";
-import {
-  ChevronRightIcon,
-  ChevronDownIcon,
-  CubeTransparentIcon,
-  MagnifyingGlassIcon,
-  Bars3Icon,
-  XMarkIcon,
-  LifebuoyIcon,
-} from "@heroicons/react/24/outline";
 import { MenuItemProps } from "./typeProps";
 
 export const routeList: MenuItemProps[] = [
@@ -24,7 +12,7 @@ export const routeList: MenuItemProps[] = [
     isheader: true,
     label: "Dashboard",
     href: "/dashboard",
-    icon: PresentationChartBarIcon,
+    icon: ChartPieIcon,
     children: [
       {
         isPage: true,
@@ -47,13 +35,13 @@ export const routeList: MenuItemProps[] = [
     isPage: true,
     href: "/course",
     label: "Courses",
-    icon: CubeTransparentIcon,
+    icon: VideoCameraIcon,
   },
   {
     isheader: true,
     label: "Ecommerce",
     href: "/ecommerce",
-    icon: ShoppingBagIcon,
+    icon: ShoppingCartIcon,
     children: [
       {
         isPage: true,
@@ -89,7 +77,7 @@ export const routeList: MenuItemProps[] = [
     isheader: true,
     label: "Blog",
     href: "/blog",
-    icon: UserCircleIcon,
+    icon: DocumentTextIcon,
     children: [
       {
         isPage: true,
@@ -102,5 +90,5 @@ export const routeList: MenuItemProps[] = [
         label: "Category",
       },
     ],
-  }
+  },
 ];

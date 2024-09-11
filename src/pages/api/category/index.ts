@@ -128,12 +128,17 @@ export default async function handler(
       }
     } else {
       try {
-        const data = await getCategories();
+        const { skip, take } = req.query;
+        const { totalData, data } = await getCategories(
+          Number(skip),
+          Number(take)
+        );
         console.info("Get categories success");
         return res.status(200).send({
           status: true,
           statusCode: 200,
           message: "Get categories success",
+          totalData,
           data,
         });
       } catch (error) {

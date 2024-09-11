@@ -180,12 +180,17 @@ export default async function handler(
       }
 
       try {
-        const data = await getAllUsers();
+        const { skip, take } = req.query;
+        const { totalData, data } = await getAllUsers(
+          Number(skip),
+          Number(take)
+        );
         console.info("Get all users success");
         return res.status(200).send({
           status: true,
           statusCode: 200,
           message: "Get all users success",
+          totalData,
           data,
         });
       } catch (error) {

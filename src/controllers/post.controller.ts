@@ -1,15 +1,26 @@
 import prisma from "@/libs/prisma/db";
 import { Post, UpdatePost } from "@/types/post.type";
 
-export const getPosts = async () => {
-  return prisma.post.findMany({
-    include: {
-      categories: {
-        include: {
-          category: true,
+export const getPosts = async (skip: number = 0, take: number = 5) => {
+  return prisma.$transaction(async (tx) => {
+    const totalData = await tx.post.count();
+
+    const data = await tx.post.findMany({
+      skip,
+      take,
+      include: {
+        categories: {
+          include: {
+            category: true,
+          },
         },
       },
-    },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    return { totalData, data };
   });
 };
 
@@ -31,7 +42,6 @@ export const createPost = async ({
   userId,
   title,
   body,
-  published,
   categories,
   published,
 }: Post) => {

@@ -12,12 +12,9 @@ import {
   List,
   ListItem,
   ListItemPrefix,
-  ListItemSuffix,
-  Chip,
   Accordion,
   AccordionHeader,
   AccordionBody,
-  Alert,
   Input,
   Drawer,
   Menu,
@@ -29,23 +26,15 @@ import {
   Button,
 } from "@material-tailwind/react";
 import {
-  PresentationChartBarIcon,
-  ShoppingBagIcon,
   UserCircleIcon,
   Cog6ToothIcon,
-  InboxIcon,
   PowerIcon,
-  InboxArrowDownIcon,
-  CurrencyDollarIcon
 } from "@heroicons/react/24/solid";
 import {
-  ChevronRightIcon,
   ChevronDownIcon,
-  CubeTransparentIcon,
   MagnifyingGlassIcon,
   Bars3Icon,
   XMarkIcon,
-  LifebuoyIcon,
 } from "@heroicons/react/24/outline";
 
 const profileMenuItems: ProfileMenuItemProps[] = [
@@ -58,14 +47,6 @@ const profileMenuItems: ProfileMenuItemProps[] = [
     label: "Edit Profile",
     icon: Cog6ToothIcon,
     href: "/profile/edit",
-  },
-  {
-    label: "Inbox",
-    icon: InboxArrowDownIcon,
-  },
-  {
-    label: "Help",
-    icon: LifebuoyIcon,
   },
   {
     label: "Sign Out",
@@ -83,19 +64,11 @@ function ProfileMenu() {
   const profilePicture =
     "https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80";
 
-  const handleSignOut = async () => {
-    const isSuccesSignOut = await signOut({
-      redirect: true,
-      callbackUrl: "/admin/sign-in",
-    });
-  };
-
   return (
     <Menu open={isMenuOpen} handler={setIsMenuOpen} placement="bottom-end">
       <MenuHandler>
         <Button
           variant="text"
-          //   color="blue-gray"
           className="flex items-center justify-center gap-1 rounded-full p-0.5 lg:ml-auto"
         >
           <Avatar
@@ -105,12 +78,6 @@ function ProfileMenu() {
             className="border border-gray-900 "
             src={session?.user?.image ? session?.user?.image : profilePicture}
           />
-          {/* <ChevronDownIcon
-              strokeWidth={2.5}
-              className={`h-3 w-3 transition-transform ${
-                isMenuOpen ? "rotate-180" : ""
-              }`}
-            /> */}
         </Button>
       </MenuHandler>
       <MenuList className="p-1">
@@ -271,40 +238,6 @@ export default function AdminNavbar() {
           </div>
           <List>
             <RouteItems routeList={routeList} padding={0} parentRoute="/admin" />
-            <hr className="my-2 border-blue-gray-50" />
-            <ListItem>
-              <ListItemPrefix>
-                <InboxIcon className="h-5 w-5" />
-              </ListItemPrefix>
-              Inbox
-              <ListItemSuffix>
-                <Chip
-                  value="14"
-                  size="sm"
-                  variant="ghost"
-                  color="blue-gray"
-                  className="rounded-full"
-                />
-              </ListItemSuffix>
-            </ListItem>
-            <ListItem>
-              <ListItemPrefix>
-                <UserCircleIcon className="h-5 w-5" />
-              </ListItemPrefix>
-              Profile
-            </ListItem>
-            <ListItem>
-              <ListItemPrefix>
-                <Cog6ToothIcon className="h-5 w-5" />
-              </ListItemPrefix>
-              Settings
-            </ListItem>
-            <ListItem>
-              <ListItemPrefix>
-                <PowerIcon className="h-5 w-5" />
-              </ListItemPrefix>
-              Log Out
-            </ListItem>
           </List>
         </Card>
       </Drawer>

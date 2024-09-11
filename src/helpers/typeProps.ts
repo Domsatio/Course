@@ -1,4 +1,3 @@
-import { StringDecoder } from "string_decoder";
 import "next-auth";
 
 declare module "next-auth" {
@@ -102,39 +101,12 @@ interface FilterProps {
 interface TableDataProps {
   title: string;
   description?: string;
-  urlData?: string;
   tableHeader: any;
-  dummyData?: any;
   onSuccess?: (e: any) => void;
   isActionAdd?: boolean;
   filter?: InputListProps[] | undefined;
   service: any;
   // children?: React.ReactNode;
-}
-
-interface PaginationProps {
-  disabled?: boolean;
-  currentPage: number;
-  totalPages: number;
-  onPageChange: (page: number) => void;
-  handleLimit: (limit: number) => void;
-  maxButtons: number;
-  limit: number;
-}
-
-interface ProductProps {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  image: string;
-  status?: string;
-  category?: string;
-  rating: number;
-  quantity?: number;
-  discount?: number;
-  date?: string;
-  createdAt: string;
 }
 
 interface OrderProps {
@@ -148,11 +120,9 @@ interface OrderProps {
 
 export type {
   InputListProps,
-  ProductProps,
   OrderProps,
   MenuItemProps,
   ProfileMenuItemProps,
   RouteItemsProps,
-  PaginationProps,
   TableDataProps,
 };

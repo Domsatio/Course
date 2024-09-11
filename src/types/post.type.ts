@@ -28,4 +28,5 @@ export type GetPost = {
   body: string;
   published: boolean;
   categories: CategoryPost[];
+  createdAt: string;
 };

@@ -124,12 +124,17 @@ export default async function handler(
       }
     } else {
       try {
-        const data = await getCourses();
+        const { skip, take } = req.query;
+        const { totalData, data } = await getCourses(
+          Number(skip),
+          Number(take)
+        );
         console.info("Get courses success");
         return res.status(200).send({
           status: true,
           statusCode: 200,
           message: "Get courses success",
+          totalData,
           data,
         });
       } catch (error) {

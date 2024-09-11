@@ -7,23 +7,23 @@ import {
 } from "@material-tailwind/react";
 import { postServices } from "@/services/serviceGenerator";
 import { CategoryPost, GetPost } from "@/types/post.type";
+import { dateFormater } from "@/helpers/date";
 
-const TABLE_HEAD = ["Title", "Body", "Category(es)", "Published", "Action"];
+const TABLE_HEAD = ["Title", "Body", "Category(es)", "Published", "Date Created", "Action"];
 
 export default function Index() {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<GetPost[]>([]);
   const { Table, TableAction } = TableData({
     title: "Posts",
     description: "List of posts",
     tableHeader: TABLE_HEAD,
-    urlData: "/post",
     service: postServices,
-    onSuccess: (data) => setData(data),
+    onSuccess: (data: GetPost[]) => setData(data),
   });
 
   return (
     <Table>
-      {data?.map(({ id, title, body, categories, published }: GetPost, index: number) => {
+      {data?.map(({ id, title, body, categories, published, createdAt }: GetPost, index: number) => {
         const isLast = index === data.length - 1;
         const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
         return (
@@ -82,6 +82,17 @@ export default function Index() {
                   }
                 />
               </Typography>
+            </td>
+            <td className={classes}>
+              <div className="flex items-center gap-3">
+                <Typography
+                  variant="small"
+                  color="blue-gray"
+                  className="font-normal"
+                >
+                  {dateFormater(createdAt)}
+                </Typography>
+              </div>
             </td>
             <td className={classes}>
               <TableAction data={dataAction} id={id} />

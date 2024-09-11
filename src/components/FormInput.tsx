@@ -132,11 +132,6 @@ export default function FormInput({
   //   console.log("formik.values", formik.values);
   // }, [formik.values]);
 
-  useEffect(() => {
-    if (method === "PUT") {
-      fetchData();
-    }
-  }, [method]);
 
   const fetchData = async () => {
     try {
@@ -148,6 +143,13 @@ export default function FormInput({
       console.error("Form submission error:", error);
     }
   };
+
+  useEffect(() => {
+    if (method === "PUT") {
+      if (!id) return
+      fetchData();
+    }
+  }, [method, id]);
 
   const clearForm = () => {
     formik.resetForm();
@@ -183,8 +185,8 @@ export default function FormInput({
                         error={
                           (formik.errors[input.name] as FormikErrors<any>[][0])
                             ? (
-                                formik.errors[input.name] as FormikErrors<any>[]
-                              )[i]?.[component.name]?.toString()
+                              formik.errors[input.name] as FormikErrors<any>[]
+                            )[i]?.[component.name]?.toString()
                             : ""
                         }
                       />
@@ -257,7 +259,7 @@ export default function FormInput({
           Cancel
         </Button>
         <Button type="submit" className="btn" color="green" disabled={disabled}>
-          Create
+          {router.pathname.includes("update") ? "Update" : "Create"}
         </Button>
       </div>
     </>
