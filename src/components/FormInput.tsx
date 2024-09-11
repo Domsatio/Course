@@ -132,7 +132,6 @@ export default function FormInput({
   //   console.log("formik.values", formik.values);
   // }, [formik.values]);
 
-
   const fetchData = async () => {
     try {
       const { data: { data } } = await service.getItems({ id })
@@ -260,8 +259,8 @@ export default function FormInput({
         </Button>
         <Button type="submit" className="btn" color="green" disabled={disabled}>
           {router.pathname.includes("update") ? "Update" : "Create"}
-        </Button>
-      </div>
+        </Button >
+      </div >
     </>
   );
 
