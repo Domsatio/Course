@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useDebounce } from "use-debounce";
-import { Pagination } from "./Pagination";
+import Pagination from "./Pagination";
 import {
   MagnifyingGlassIcon,
   FunnelIcon,
@@ -17,14 +17,10 @@ import {
   Button,
   CardBody,
   Input,
-  Menu,
-  MenuHandler,
-  MenuList,
-  MenuItem,
   IconButton,
   Tooltip,
 } from "@material-tailwind/react";
-import { ProductProps, TableDataProps } from "@/helpers/typeProps";
+import { TableDataProps } from "@/helpers/typeProps";
 import FormInput from "@/components/FormInput";
 
 export interface TableActionProps {
@@ -36,12 +32,6 @@ export interface TableActionProps {
   };
 }
 
-const filterDataDummy = (data: any[], page: number, size: number) => {
-  const offset = Math.ceil(page - 1) * size || 0;
-  const filterDataWithPagination = data.slice(offset, offset + size) || [];
-  return filterDataWithPagination;
-};
-
 const TableHook = ({
   onSuccess,
   service
@@ -49,16 +39,61 @@ const TableHook = ({
   onSuccess?: (e: any) => void;
   service: any
 }) => {
-  const [data, setData] = useState<ProductProps[]>([]);
+  const [data, setData] = useState<any[]>([]);
   const [isLoad, setIsLoad] = useState(false);
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [activePage, setActivePage] = useState(1);
   const [limit, setlimit] = useState<number>(5);
   const [totalPages, setTotalPages] = useState(0);
+  const [totalData, setTotalData] = useState(0);
   const [debounceValue] = useDebounce(searchQuery, 1500);
   const [modalFilter, setModalFilter] = useState(false);
-  const [dummyData, setDummyData] = useState([]);
+
+  const handleSetLImit = (item: number) => {
+    setlimit(item);
+    setActivePage(1);
+  };
+
+  const getDataTable = async () => {
+    const params: {
+      skip: number;
+      take: number;
+      search?: string;
+      filter?: any;
+    } = {
+      skip: activePage * limit - limit,
+      take: limit,
+    };
+    if (searchQuery) {
+      params.search = debounceValue;
+    }
+    try {
+      setIsLoad(true);
+      const { data: { totalData, data } } = await service.getItems(params);
+      if (onSuccess) {
+        onSuccess(data);
+      }
+      setTotalData(totalData);
+      setTotalPages(Math.ceil(totalData / limit));
+      setData(data);
+    } catch (error) {
+      console.log("error", error);
+    } finally {
+      setIsLoad(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      const { data } = await service.deleteItem({ id: id });
+      if (data) {
+        getDataTable();
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -66,16 +101,7 @@ const TableHook = ({
       const params = Object.fromEntries(urlParams.entries());
       setSearchQuery(params.search || "");
     }
-    // setSearchQuery(search as string || '');
-    if (dummyData) {
-      const data = filterDataDummy(dummyData, activePage, limit);
-      if (onSuccess) {
-        onSuccess(data);
-      }
-      setTotalPages(Math.ceil(dummyData.length / limit));
-    } else {
-      getDataTable();
-    }
+    getDataTable();
   }, [limit, activePage]);
 
   useEffect(() => {
@@ -96,53 +122,6 @@ const TableHook = ({
     // }
   }, [debounceValue]);
 
-  const handleSetLImit = (item: number) => {
-    setlimit(item);
-    setActivePage(1);
-  };
-
-  const getDataTable = async () => {
-    const params: {
-      limit: number;
-      page: number;
-      search?: string;
-      filter?: any;
-    } = {
-      limit: limit,
-      page: activePage,
-    };
-    if (searchQuery) {
-      params.search = debounceValue;
-    }
-    try {
-      setIsLoad(true);
-      const { data: { data, totalPages } } = await service.getItems(params);
-      if (onSuccess) {
-        onSuccess(data);
-      }
-      setTotalPages(totalPages);
-      setData(data);
-    } catch (error) {
-      console.log("error", error);
-    } finally {
-      setIsLoad(false);
-    }
-  };
-
-  const handleDelete = async (id: string) => {
-    try {
-      // const response = await axios.delete("/api" + urlData, {
-      //   params: { id: id },
-      // });
-      const { data } = await service.deleteItem({ id: id });
-      if (data) {
-        getDataTable();
-      }
-    } catch (error) {
-      console.log("error", error);
-    }
-  };
-
   return {
     router,
     data,
@@ -155,6 +134,7 @@ const TableHook = ({
     setActivePage,
     limit,
     setlimit,
+    totalData,
     totalPages,
     setTotalPages,
     debounceValue,
@@ -163,14 +143,11 @@ const TableHook = ({
     handleSetLImit,
     getDataTable,
     handleDelete,
-    dummyData,
-    setDummyData,
   };
 };
 
 export default function TableData({
   tableHeader = [],
-  urlData = "",
   title = "",
   description = "",
   onSuccess,
@@ -190,6 +167,7 @@ export default function TableData({
     setActivePage,
     limit,
     setlimit,
+    totalData,
     totalPages,
     setTotalPages,
     debounceValue,
@@ -198,7 +176,6 @@ export default function TableData({
     handleSetLImit,
     getDataTable,
     handleDelete,
-    setDummyData,
   } = TableHook({ onSuccess: onSuccess, service: service });
 
   const Table = ({ children }: { children: React.ReactNode }) => {
@@ -253,11 +230,6 @@ export default function TableData({
                   />
                   <FormInput
                     inputList={filter}
-                    // route={{
-                    //   method: "POST",
-                    //   url: urlData,
-                    //   query: router.query,
-                    // }}
                     method="POST"
                     service={service}
                     title="Filter"
@@ -294,7 +266,7 @@ export default function TableData({
         </CardBody>
         <Pagination
           currentPage={activePage}
-          maxButtons={5}
+          totalData={totalData}
           totalPages={totalPages}
           limit={limit}
           handleLimit={handleSetLImit}

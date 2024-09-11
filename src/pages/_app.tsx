@@ -1,4 +1,3 @@
-
 import "@/styles/globals.css";
 import { useRouter } from "next/router";
 import { SessionProvider } from "next-auth/react";

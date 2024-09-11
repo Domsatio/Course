@@ -23,8 +23,19 @@ const getThumbnail = async (video: any[]) => {
     return ArrayVideo
 }
 
-export const getCourses = async () => {
-  return prisma.course.findMany({
+export const getCourses = async (skip: number = 0, take: number = 5) => {
+  return prisma.$transaction(async (tx) => {
+    const totalData = await tx.course.count();
+
+    const data = await tx.course.findMany({
+      skip,
+      take,
+      orderBy: {
+        title: "asc",
+      },
+    });
+
+    return { totalData, data };
   });
 };
 

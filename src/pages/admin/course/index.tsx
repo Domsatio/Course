@@ -1,14 +1,8 @@
 import React, { useState, useEffect } from "react";
 import TableData from "@/components/TableData";
 import { TableActionProps } from "@/components/TableData";
-import { CategoryProps } from "@/helpers/typeProps";
 import { NullProof } from "@/helpers/appFunction";
-import {
-  Typography,
-  IconButton,
-  Tooltip,
-} from "@material-tailwind/react";
-import { useRouter } from "next/router";
+import { Typography } from "@material-tailwind/react";
 import { courseServices } from "@/services/serviceGenerator";
 import { Category } from "@/types/category.type";
 
@@ -16,13 +10,11 @@ const TABLE_HEAD = ["Title", "Description", "Publised", "Action"];
 
 export default function Index() {
   const [data, setData] = useState([]);
-  const router = useRouter();
 
   const { Table, TableAction } = TableData({
     title: "Courses",
     description: "List of courses",
     tableHeader: TABLE_HEAD,
-    urlData: "/course",
     service: courseServices,
     onSuccess: (data: any) => setData(data),
   })
@@ -59,7 +51,7 @@ export default function Index() {
                 color="blue-gray"
                 className="font-normal"
               >
-                {NullProof({ input: category, params: "published", type:"html" })}
+                {NullProof({ input: category, params: "published", type: "html" })}
               </Typography>
             </td>
             <td className={classes}>

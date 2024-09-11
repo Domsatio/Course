@@ -71,12 +71,17 @@ export default async function handler(
       }
     } else {
       try {
-        const data = await getProducts();
+        const { skip, take } = req.query;
+        const { totalData, data } = await getProducts(
+          Number(skip),
+          Number(take)
+        );
         console.info("Get all products success");
         return res.status(200).send({
           status: true,
           statusCode: 200,
           message: "Get all products success",
+          totalData,
           data,
         });
       } catch (error) {

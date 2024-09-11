@@ -1,8 +1,20 @@
 import prisma from "@/libs/prisma/db";
 import { Product, UpdateProduct } from "@/types/product.type";
 
-export const getProducts = async () => {
-  return prisma.product.findMany();
+export const getProducts = async (skip: number = 0, take: number = 5) => {
+  return prisma.$transaction(async (tx) => {
+    const totalData = await tx.product.count();
+
+    const data = await tx.product.findMany({
+      skip,
+      take,
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    return { totalData, data };
+  });
 };
 
 export const getProduct = async (id: string) => {

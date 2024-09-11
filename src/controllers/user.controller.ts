@@ -30,8 +30,20 @@ export const getOneUser = async (id: string) => {
   });
 };
 
-export const getAllUsers = async () => {
-  return prisma.user.findMany();
+export const getAllUsers = async (skip: number = 0, take: number = 5) => {
+  return prisma.$transaction(async (tx) => {
+    const totalData = await tx.user.count();
+
+    const data = await tx.user.findMany({
+      skip,
+      take,
+      orderBy: {
+        name: "asc",
+      },
+    });
+
+    return { totalData, data };
+  });
 };
 
 export const loginUser = async (data: User) => {
