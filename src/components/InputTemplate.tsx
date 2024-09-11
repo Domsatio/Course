@@ -32,7 +32,6 @@ import CurrencyInput from "react-currency-input-field";
 import { format, set } from "date-fns";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { UploadButton } from "@/libs/uploadThing";
 import { FormInputHooks } from "./FormInput";
 import { se } from "date-fns/locale";
 
@@ -89,22 +88,7 @@ export const InputListRenderer = ({
   const [search, setSearch] = useState<string>("");
   const [debounceValue] = useDebounce(search, 1500);
   const param = option?.params?.split(/\s*,\s*/) || [];
-  
-
   const { setDisabled, disabled: formDisabled } = FormInputHooks();
-  useEffect(() => {
-    if (option?.api) {
-      getDataApi();
-    } else {
-      setData(listData);
-      setIsLoading(false);
-    }
-    if (type === "image" && typeof value === "string") {
-      setPreviewImage(value);
-    }
-  }, [debounceValue]);
-
-
 
   const getDataApi = async () => {
     setIsLoading(true);
@@ -121,6 +105,18 @@ export const InputListRenderer = ({
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (option?.api) {
+      getDataApi();
+    } else {
+      setData(listData);
+      setIsLoading(false);
+    }
+    if (type === "image" && typeof value === "string") {
+      setPreviewImage(value);
+    }
+  }, [debounceValue]);
 
   const handleChangeCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { checked, value: selectedValue, name } = e.target;
@@ -224,7 +220,7 @@ export const InputListRenderer = ({
       {type === "select" && (
         <Select
           className={className}
-          label={`Pilih ${label}`}
+          label={`Choose ${label}`}
           name={name}
           onChange={(e) => {
             console.log(e);
@@ -298,22 +294,22 @@ export const InputListRenderer = ({
                 onChange={
                   option?.api
                     ? (e) => {
-                        onChange?.({
-                          target: {
-                            name,
-                            value: e.target.checked
-                              ? data[option.id]
-                              : "",
-                          },
-                        });
-                      }
+                      onChange?.({
+                        target: {
+                          name,
+                          value: e.target.checked
+                            ? data[option.id]
+                            : "",
+                        },
+                      });
+                    }
                     : (e) => {
-                        onChange?.({
-                          target: {
-                            name,
-                            value: e.target.checked ? data.value : "",
-                          },
-                        });
+                      onChange?.({
+                        target: {
+                          name,
+                          value: e.target.checked ? data.value : "",
+                        },
+                      });
                     }
                 }
                 disabled={disabled}

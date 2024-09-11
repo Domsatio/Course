@@ -1,12 +1,23 @@
 import prisma from "@/libs/prisma/db";
 import { Order, UpdateOrder } from "@/types/order.type";
 
-export const getOrders = async () => {
-  return prisma.order.findMany({
-    include: {
-      product: true,
-      user: true,
-    },
+export const getOrders = async (skip: number = 0, take: number = 5) => {
+  return prisma.$transaction(async (tx) => {
+    const totalData = await tx.order.count();
+
+    const data = await tx.order.findMany({
+      skip,
+      take,
+      include: {
+        product: true,
+        user: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    return { totalData, data };
   });
 };
 

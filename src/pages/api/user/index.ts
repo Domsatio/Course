@@ -69,6 +69,11 @@ export default async function handler(
 
     const { id } = req.query;
 
+    if (token.id !== id) {
+      res.status(401).json({ message: "Forbidden" });
+      return;
+    }
+
     const { validatedData, errors } = updateUserValidation(req.body);
 
     if (errors) {
@@ -108,6 +113,11 @@ export default async function handler(
 
     const { id } = req.query;
 
+    if (token.id !== id) {
+      res.status(401).json({ message: "Forbidden" });
+      return;
+    }
+
     try {
       const result = await deleteUser(id as string);
 
@@ -139,6 +149,11 @@ export default async function handler(
     if (req.query.id) {
       const { id } = req.query;
 
+      if (token.id !== id) {
+        res.status(401).json({ message: "Forbidden" });
+        return;
+      }
+
       if (typeof id !== "string") {
         return res.status(400).json({ message: "Invalid id parameter" });
       }
@@ -165,12 +180,17 @@ export default async function handler(
       }
 
       try {
-        const data = await getAllUsers();
+        const { skip, take } = req.query;
+        const { totalData, data } = await getAllUsers(
+          Number(skip),
+          Number(take)
+        );
         console.info("Get all users success");
         return res.status(200).send({
           status: true,
           statusCode: 200,
           message: "Get all users success",
+          totalData,
           data,
         });
       } catch (error) {

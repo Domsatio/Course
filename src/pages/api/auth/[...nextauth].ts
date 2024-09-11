@@ -41,7 +41,7 @@ export const authOptions: NextAuthOptions = {
           email: string;
           password: string;
         };
-        const user = await existingUser(email);
+        const user: any = await existingUser(email);
         if (user) {
           const passwordConfirm = await bcrypt.compare(password, user.password);
           if (passwordConfirm) return user;

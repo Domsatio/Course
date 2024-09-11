@@ -1,4 +1,3 @@
-import { PaginationProps } from "@/helpers/typeProps";
 import {
   Button,
   CardFooter,
@@ -7,96 +6,151 @@ import {
   MenuItem,
   MenuList,
   MenuHandler,
-  Typography,
-  Input,
+  Popover,
+  PopoverHandler,
+  PopoverContent,
 } from "@material-tailwind/react";
 import {
   ChevronDownIcon,
   ChevronRightIcon,
   ChevronLeftIcon,
 } from "@heroicons/react/24/solid";
+import { FC, useState } from "react";
 
-export const Pagination: React.FC<PaginationProps> = ({
+interface PaginationProps {
+  disabled?: boolean;
+  currentPage: number;
+  totalData: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+  handleLimit: (limit: number) => void;
+  limit: number;
+}
+
+const Pagination: FC<PaginationProps> = ({
   disabled = false,
   currentPage,
+  totalData,
   totalPages,
   onPageChange,
   handleLimit,
-  maxButtons,
   limit,
 }) => {
-  const rangeStart = Math.max(1, currentPage - Math.floor(maxButtons / 2));
-  const rangeEnd = Math.min(totalPages, rangeStart + maxButtons - 1);
-  const pageNumbers = Array.from(
+  const [pageValue, setPageValue] = useState<number>(0);
+  const maxButtons = 5
+  const rangeStart: number = Math.max(1, currentPage - Math.floor(maxButtons / 2));
+  const rangeEnd: number = Math.min(totalPages, rangeStart + maxButtons - 1);
+  const pageNumbers: number[] = Array.from(
     { length: rangeEnd - rangeStart + 1 },
     (_, index) => rangeStart + index
   );
 
+  const handlePageChange = () => {
+    if (pageValue > 0 && pageValue <= totalPages) {
+      onPageChange(pageValue);
+    }
+  }
+
   return (
-    <CardFooter className="flex flex-col border-t border-blue-gray-50 p-4">
-      <div className="flex justify-between items-center">
-        <p>Showing {limit} data per page</p>
+    <CardFooter className="flex border-t border-blue-gray-50 p-4 justify-between items-center">
+      <div className="flex items-center gap-3">
+        <p>Showing</p>
         <Menu>
           <MenuHandler>
             <Button
               size="sm"
               variant="outlined"
-              className="flex items-center justify-between gap-4"
+              className="flex items-center justify-between gap-2 px-3 border-gray-400"
             >
-              {limit} per page
+              {limit}
               <ChevronDownIcon strokeWidth={3} className="h-3 w-3" />
             </Button>
           </MenuHandler>
           <MenuList>
-            {[5, 10, 20, 50].map((item) => (
+            {[5, 10, 20, 50].map((item: number) => (
               <MenuItem key={item} onClick={() => handleLimit(item)}>
                 {item}
               </MenuItem>
             ))}
           </MenuList>
         </Menu>
+        <p>of {totalData} items per page</p>
       </div>
       {totalPages > 1 && (
-        <div className="w-full flex justify-center items-center gap-2">
+        <div className="flex items-center gap-4">
           <Button
-            variant="outlined"
-            disabled={currentPage - 1 === 0 ? true : false}
+            variant="text"
             size="sm"
+            disabled={currentPage - 1 === 0 ? true : false}
+            className="flex items-center gap-2"
             onClick={() => onPageChange(currentPage - 1)}
           >
-            <ChevronLeftIcon strokeWidth={3} className="h-3 w-3" />
+            <ChevronLeftIcon strokeWidth={2} className="h-3 w-3" /> Previous
           </Button>
-          <div className="flex items-center gap-2 mx-4">
+          <div className="flex items-center gap-2">
             {rangeStart > 1 && (
               <IconButton
-                variant="text"
                 size="sm"
+                variant="text"
                 onClick={() => onPageChange(1)}
               >
                 1
               </IconButton>
             )}
-            {rangeStart > 2 && <Typography color="gray">...</Typography>}
-            {pageNumbers.map((pageNumber) => (
+            {rangeStart > 2 && (
+              <Popover>
+                <PopoverHandler>
+                  <IconButton variant="text" size="sm">...</IconButton>
+                </PopoverHandler>
+                <PopoverContent className="p-2 flex justify-between gap-2">
+                  <input
+                    className="outline-none w-20 border border-gray-400 rounded-md text-center py-1.5"
+                    type="number"
+                    placeholder="..."
+                    max={totalPages}
+                    min={1}
+                    onChange={(e) => setPageValue(parseInt(e.target.value))}
+                  />
+                  <Button size="sm" onClick={handlePageChange}>
+                    Go
+                  </Button>
+                </PopoverContent>
+              </Popover>
+            )}
+            {pageNumbers.map((pageNumber: number) => (
               <IconButton
                 key={pageNumber}
                 disabled={disabled}
-                variant={pageNumber === currentPage ? "filled" : "text"}
-                type="button"
                 size="sm"
+                variant={pageNumber === currentPage ? "filled" : "text"}
                 onClick={() => onPageChange(pageNumber)}
               >
                 {pageNumber}
               </IconButton>
             ))}
             {rangeEnd < totalPages - 1 && (
-              <Typography className="page-link">...</Typography>
+              <Popover>
+                <PopoverHandler>
+                  <IconButton variant="text" size="sm">...</IconButton>
+                </PopoverHandler>
+                <PopoverContent className="p-2 flex justify-between gap-2">
+                  <input
+                    className="outline-none w-20 border border-gray-400 rounded-md text-center py-1.5"
+                    type="number"
+                    placeholder="..."
+                    max={totalPages}
+                    min={1}
+                    onChange={(e) => setPageValue(parseInt(e.target.value))}
+                  />
+                  <Button size="sm" onClick={handlePageChange}>
+                    Go
+                  </Button>
+                </PopoverContent>
+              </Popover>
             )}
             {rangeEnd < totalPages && (
               <IconButton
                 disabled={disabled}
-                variant="text"
-                type="button"
                 size="sm"
                 onClick={() => onPageChange(totalPages)}
               >
@@ -105,29 +159,18 @@ export const Pagination: React.FC<PaginationProps> = ({
             )}
           </div>
           <Button
-            variant="outlined"
-            disabled={currentPage === totalPages ? true : false}
+            variant="text"
             size="sm"
-            className=""
+            disabled={currentPage === totalPages ? true : false}
+            className="flex items-center gap-2"
             onClick={() => onPageChange(currentPage + 1)}
           >
-            <ChevronRightIcon strokeWidth={3} className="h-3 w-3" />
+            Next <ChevronRightIcon strokeWidth={2} className="h-3 w-3" />
           </Button>
-          <input
-            // placeholder="page"
-            className="w-14 outline-none border border-black mx-3 rounded-md text-center py-1"
-            type="number"
-            max={totalPages}
-            min={1}
-            onChange={(e) => {
-              const value = parseInt(e.target.value);
-              if (value > 0 && value <= totalPages) {
-                onPageChange(value);
-              }
-            }}
-          />
         </div>
       )}
     </CardFooter>
   );
 };
+
+export default Pagination;

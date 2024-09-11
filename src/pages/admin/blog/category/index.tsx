@@ -8,14 +8,13 @@ import { categoryServices } from "@/services/serviceGenerator";
 const TABLE_HEAD = ["Name", "Total Post(s)", "Action"];
 
 const Index: FC = () => {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<GetCategory[]>([]);
   const { Table, TableAction } = TableData({
     title: "Categories",
     description: "List of categories",
     tableHeader: TABLE_HEAD,
-    urlData: "/category",
     service: categoryServices,
-    onSuccess: (data) => setData(data),
+    onSuccess: (data: GetCategory[]) => setData(data),
   });
 
   return (
