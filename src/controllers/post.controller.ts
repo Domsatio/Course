@@ -31,6 +31,7 @@ export const createPost = async ({
   userId,
   title,
   body,
+  published,
   categories,
   published,
 }: Post) => {

@@ -18,6 +18,7 @@ type FormInputTypeProps =
   | "number"
   | "url"
   | "select"
+  | "checkbox"
   | "multicheckbox"
   | "datalist"
   | "textarea"
@@ -122,7 +123,7 @@ interface PaginationProps {
 }
 
 interface ProductProps {
-  id: number;
+  id: string;
   name: string;
   description: string;
   price: number;
@@ -137,7 +138,7 @@ interface ProductProps {
 }
 
 interface OrderProps {
-  id: number;
+  id: string;
   quantity: number;
   total_price: number;
   status?: string;

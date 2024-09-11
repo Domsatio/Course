@@ -13,6 +13,7 @@ import {
   rating,
 } from "@material-tailwind/react";
 import { NullProof } from "@/helpers/appFunction";
+import { productServices } from "@/services/serviceGenerator";
 
 const TABLE_HEAD = [
   "Name",
@@ -55,8 +56,9 @@ export default function index() {
     title: "Products",
     description: "List of products",
     tableHeader: TABLE_HEAD,
-    urlData: "/product",
+    // urlData: "/product",
     onSuccess: (data) => setData(data),
+    service: productServices,
   });
   return (
     <Table>
@@ -119,7 +121,7 @@ export default function index() {
               </Typography>
             </td>
             <td className={classes}>
-              <TableAction data={dataAction} id={product.id} />
+              <TableAction data={dataAction} id={product.id.toString()} />
             </td>
           </tr>
         );
