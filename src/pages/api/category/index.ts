@@ -131,7 +131,7 @@ export default async function handler(
         const { skip, take } = req.query;
         const { totalData, data } = await getCategories(
           Number(skip),
-          Number(take)
+          take ? (take as string) : 5
         );
         console.info("Get categories success");
         return res.status(200).send({
