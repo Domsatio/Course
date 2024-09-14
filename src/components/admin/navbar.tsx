@@ -1,4 +1,3 @@
-"use client";
 import React from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/router";
@@ -221,22 +220,16 @@ export default function AdminNavbar({ children }: { children: React.ReactNode })
               Sidebar
             </Typography>
           </div>
-          <div className="p-2">
-            <Input
-              icon={<MagnifyingGlassIcon className="h-5 w-5" />}
-              label="Search"
-            />
-          </div>
-          <List>
+          <List className="relative">
             <RouteItems routeList={routeList} padding={0} parentRoute="/admin" />
           </List>
         </Card>
     )
   }
   return (
-    <div className="flex">
+    <div className="flex relative">
       <SideItem className="w-64 min-h-screen hidden lg:block bg-white fixed" />
-      <div className="w-full lg:ml-64">
+      <div className="w-full min-h-screen lg:pl-64">
         <Navbar className="rounded-none flex items-center justify-between mx-auto max-w-full px-4 py-2 lg:px-8 lg:py-4">
           <IconButton variant="text" size="lg" onClick={openDrawer} className="lg:hidden">
             {isDrawerOpen ? (
@@ -250,7 +243,9 @@ export default function AdminNavbar({ children }: { children: React.ReactNode })
           <Drawer open={isDrawerOpen} onClose={closeDrawer} className="lg:hidden">
             <SideItem />
           </Drawer>
-          <div className="p-4">{children}</div>
+          <div className="p-4 overflow-auto">
+            {children}
+          </div>
       </div>
     </div>
   );

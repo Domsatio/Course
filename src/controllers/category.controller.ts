@@ -1,13 +1,14 @@
 import prisma from "@/libs/prisma/db";
 import { Category, UpdateCategory } from "@/types/category.type";
 
-export const getCategories = async (skip: number = 0, take: number = 5) => {
+export const getCategories = async (skip: number = 0, take: number|string = 5) => {
   return prisma.$transaction(async (tx) => {
     const totalData = await tx.category.count();
+    const takeNumber = take === "all" ? totalData : Number(take);
 
     const data = await tx.category.findMany({
       skip,
-      take,
+      take: takeNumber,
       include: {
         posts: {
           include: {

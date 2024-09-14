@@ -19,6 +19,7 @@ import {
   DialogHeader,
   DialogBody,
   DialogFooter,
+  Chip,
 } from "@material-tailwind/react";
 import { useDebounce } from "use-debounce";
 import {
@@ -33,7 +34,6 @@ import { format, set } from "date-fns";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FormInputHooks } from "./FormInput";
-import { se } from "date-fns/locale";
 
 type FileViewerProps = {
   file: string | null;
@@ -82,7 +82,7 @@ export const InputListRenderer = ({
     .describe()
     .tests?.find((item: { name: string }) => item.name === "required");
   const [data, setData] = useState<any[]>(listData || []);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [preview, setPreview] = useState<boolean>(false);
   const [search, setSearch] = useState<string>("");
@@ -93,7 +93,7 @@ export const InputListRenderer = ({
   const getDataApi = async () => {
     setIsLoading(true);
     try {
-      const dataApi = await axios.get(option?.api || "", {
+      const dataApi = await axios.get(option?.api + `?${option?.query}` || "", {
         params: {
           search: debounceValue.toLocaleLowerCase(),
         },
@@ -294,63 +294,92 @@ export const InputListRenderer = ({
                 onChange={
                   option?.api
                     ? (e) => {
-                      onChange?.({
-                        target: {
-                          name,
-                          value: e.target.checked
-                            ? data[option.id]
-                            : "",
-                        },
-                      });
-                    }
+                        onChange?.({
+                          target: {
+                            name,
+                            value: e.target.checked ? data[option.id] : "",
+                          },
+                        });
+                      }
                     : (e) => {
+                        onChange?.({
+                          target: {
+                            name,
+                            value: e.target.checked ? data.value : "",
+                          },
+                        });
+                      }
+                }
+                disabled={disabled}
+                crossOrigin={undefined}
+                checked={value === (option?.api ? data[option.id] : data.value)}
+              />
+              <Typography color="blue-gray" className="font-medium">
+                {option?.api
+                  ? param.map((item) => data[item]).join(" | ")
+                  : data.title}
+              </Typography>
+            </div>
+          ))}
+        </div>
+      )}
+      {type === "multicheckbox" &&
+        (!isLoading ? (
+          <div>
+            <div className="flex flex-wrap gap-3 rounded-md borde p-3">
+            {data?.map((item: any, index: number) => {
+              const checked = Array.isArray(value) && value.includes(option?.api ? item[option.id] : item.value);
+              if (checked) {
+                return (
+                  <Chip
+                    key={index}
+                    className="cursor-pointer"
+                    onClose={() => {
+                      const updatedValues = value.filter((val) => val !== (option?.api ? item[option.id] : item.value));
                       onChange?.({
                         target: {
                           name,
-                          value: e.target.checked ? data.value : "",
+                          value: updatedValues,
                         },
                       });
+                    }}
+                    value={option?.api
+                      ? param.map((key: string) => item[key]).join(" | ")
+                      : item.title}
+                  >
+                  </Chip>
+                )
+              }
+              return null
+            })}
+            </div>
+            <div className="flex flex-wrap gap-3">
+              {data?.map((item: any, index: number) => (
+                <div key={index} className="flex items-center gap-2">
+                  <Checkbox
+                    name={name}
+                    value={option?.api ? item[option.id] : item.value}
+                    onChange={handleChangeCheckbox}
+                    disabled={disabled}
+                    crossOrigin={undefined}
+                    checked={
+                      Array.isArray(value) &&
+                      value.includes(option?.api ? item[option.id] : item.value)
                     }
-                }
-                disabled={disabled}
-                crossOrigin={undefined}
-                checked={
-                  value === (option?.api ? data[option.id] : data.value)
-                }
-              />
-              <Typography color="blue-gray" className="font-medium">
-                {option?.api
-                  ? param.map((item) => data[item]).join(" | ")
-                  : data.title}
-              </Typography>
+                  />
+                  <Typography color="blue-gray" className="font-medium">
+                    {option?.api
+                      ? param.map((key: string) => item[key]).join(" | ")
+                      : item.title}
+                  </Typography>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      )}
-      {type === "multicheckbox" && (
-        <div className="flex flex-wrap gap-3">
-          {data?.map((data: any, index) => (
-            <div key={index} className="flex items-center gap-2">
-              <Checkbox
-                name={name}
-                value={option?.api ? data[option.id] : data.value}
-                onChange={handleChangeCheckbox}
-                disabled={disabled}
-                crossOrigin={undefined}
-                checked={
-                  Array.isArray(value) &&
-                  value.includes(option?.api ? data[option.id] : data.value)
-                }
-              />
-              <Typography color="blue-gray" className="font-medium">
-                {option?.api
-                  ? param.map((item) => data[item]).join(" | ")
-                  : data.title}
-              </Typography>
-            </div>
-          ))}
-        </div>
-      )}
+          </div>
+        ) : (
+          <div>...Loading</div>
+        ))}
+
       {type === "label" && (
         <label className={`form-label ${className}`}>{value}</label>
       )}
@@ -437,8 +466,10 @@ export const InputListRenderer = ({
             Array.isArray(value)
               ? new Date()
               : value
-                ? typeof value === 'string' || typeof value === 'number' ? new Date(value) : null
-                : new Date()
+              ? typeof value === "string" || typeof value === "number"
+                ? new Date(value)
+                : null
+              : new Date()
           }
           onChange={(date) => {
             onChange?.({ target: { name, value: date } });

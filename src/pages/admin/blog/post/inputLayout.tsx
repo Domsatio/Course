@@ -42,6 +42,7 @@ export const FormInputListRenderer = ({ id }: { id: string }) => {
       option: {
         id: "id",
         type: "multicheckbox",
+        query: "skip=0&take=all",
         params: "name",
         api: "/api/category",
         data: [],
@@ -100,9 +101,11 @@ export const FormInputList: InputListProps[] = [
     removeOnSubmit: false,
     validator: Yup.array().required("Category is required"),
     value: "",
+    valueID: "categoryId",
     option: {
       id: "id",
-      type: "select",
+      type: "multicheckbox",
+      query: "skip=0&take=30",
       params: "name",
       api: "/api/category",
       data: [],

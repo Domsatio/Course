@@ -12,6 +12,22 @@ declare module "next-auth" {
   }
 }
 
+// declare module "next-auth" {
+//   interface Session {
+//     accessToken?: string;
+//   }
+
+//   interface User {
+//     accessToken?: string;
+//   }
+// }
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    accessToken?: string;
+  }
+}
+
 type FormInputTypeProps =
   | "input"
   | "number"
@@ -34,6 +50,7 @@ type FormInputTypeProps =
 interface InputListOptionProps {
   type: "select" | "multicheckbox" | "datalist" | "csv";
   params?: string;
+  query?: string;
   id: string;
   api?: string;
   data?: any[];
@@ -53,6 +70,7 @@ interface InputListProps {
   lockData?: boolean;
   validator: any;
   value?: string | number | string[] | boolean;
+  valueID?: string
   listData?: {
     title: string;
     value: number | string | boolean;
@@ -106,6 +124,7 @@ interface TableDataProps {
   isActionAdd?: boolean;
   filter?: InputListProps[] | undefined;
   service: any;
+  realtimeTable?: string;
   // children?: React.ReactNode;
 }
 
