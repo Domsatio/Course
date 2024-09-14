@@ -1,4 +1,4 @@
-import { ProductProps, PostProps, CategoryProps } from "./typeProps";
+// import { ProductProps, PostProps, CategoryProps } from "./typeProps";
 // const DATA_PRODUCTS: ProductProps[] = [
 //     {
 //       id: 1,
