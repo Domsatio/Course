@@ -136,7 +136,17 @@ export default function FormInput({
     try {
       const { data: { data } } = await service.getItems({ id })
       Object.keys(data).forEach((key) => {
-        inputList.filter((input) => input.name === key).length > 0 && formik.setFieldValue(key, data[key]);
+        const input = inputList.filter((input) => input.name === key)
+        const isOnInputList = input.length > 0
+        if(isOnInputList && !input[0].valueID) {
+          formik.setFieldValue(key, data[key]);
+        }else if(isOnInputList && input[0].valueID) {
+          const ArrayValue = data[key].map((item:any) => {
+            const value = input[0].valueID ? item[input[0].valueID] : null
+            return value
+          })
+          formik.setFieldValue(key, ArrayValue);
+        }
       })
     } catch (error) {
       console.error("Form submission error:", error);
@@ -258,7 +268,7 @@ export default function FormInput({
           Cancel
         </Button>
         <Button type="submit" className="btn" color="green" disabled={disabled}>
-          {router.pathname.includes("update") ? "Update" : "Create"}
+          {method === 'PUT' ? "Update" : "Create"}
         </Button >
       </div >
     </>

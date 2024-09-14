@@ -9,27 +9,10 @@ import { MenuItemProps } from "./typeProps";
 
 export const routeList: MenuItemProps[] = [
   {
-    isheader: true,
+    isPage: true,
     label: "Dashboard",
     href: "/dashboard",
     icon: ChartPieIcon,
-    children: [
-      {
-        isPage: true,
-        href: "/analytics",
-        label: "Analytics",
-      },
-      {
-        isPage: true,
-        href: "/reporting",
-        label: "Reporting",
-      },
-      {
-        isPage: true,
-        href: "/projects",
-        label: "Projects",
-      },
-    ],
   },
   {
     isPage: true,

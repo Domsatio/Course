@@ -1,4 +1,3 @@
-"use client";
 import React from "react";
 import NextTopLoader from "nextjs-toploader";
 import AdminNavbar from "@/components/admin/navbar";
