@@ -24,6 +24,54 @@ export const getPosts = async (skip: number = 0, take: number = 5) => {
   });
 };
 
+export const getPublishedPosts = async (
+  skip: number,
+  take: number,
+  categoryId: string
+) => {
+  return prisma.$transaction(async (tx) => {
+    const totalData = await tx.post.count({
+      where: {
+        published: true,
+        categories: {
+          some: {
+            category: {
+              id: categoryId,
+            },
+          },
+        },
+      },
+    });
+
+    const data = await tx.post.findMany({
+      where: {
+        published: true,
+        categories: {
+          some: {
+            category: {
+              id: categoryId,
+            },
+          },
+        },
+      },
+      skip,
+      take,
+      include: {
+        categories: {
+          include: {
+            category: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    return { totalData, data };
+  });
+};
+
 export const getPost = async (id: string) => {
   return prisma.post.findUnique({
     where: { id },
@@ -41,6 +89,7 @@ export const createPost = async ({
   id,
   userId,
   title,
+  slug,
   body,
   categories,
   published,
@@ -50,6 +99,7 @@ export const createPost = async ({
       id,
       userId,
       title,
+      slug,
       body,
       published,
       categories: {
@@ -65,12 +115,13 @@ export const createPost = async ({
 
 export const updatePost = async (
   id: string,
-  { title, body, categories, published }: UpdatePost
+  { title, slug, body, categories, published }: UpdatePost
 ) => {
   return prisma.post.update({
     where: { id },
     data: {
       title,
+      slug,
       body,
       published,
       categories: {

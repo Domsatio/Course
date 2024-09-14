@@ -7,8 +7,6 @@ import { postServices } from "@/services/serviceGenerator";
 
 export default function Create() {
   const { data: session, status } = useSession();
-  console.log(session);
-  
 
   return (
     <>

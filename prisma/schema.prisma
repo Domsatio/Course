@@ -90,6 +90,7 @@ model Post {
   id         String              @id @default(uuid())
   userId     String
   title      String
+  slug       String              @unique
   body       String
   createdAt  DateTime            @default(now())
   updatedAt  DateTime            @updatedAt
@@ -104,7 +105,7 @@ model Category {
   id        String              @id @default(uuid())
   name      String
   createdAt DateTime            @default(now())
-  updatedAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
   posts     CategoriesOnPosts[]
 }
 

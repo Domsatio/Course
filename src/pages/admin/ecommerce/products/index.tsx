@@ -2,15 +2,7 @@
 import React, { useState } from "react";
 import TableData from "@/components/TableData";
 import { TableActionProps } from "@/components/TableData";
-import { PencilIcon } from "@heroicons/react/24/solid";
-import {
-  Typography,
-  Chip,
-  Avatar,
-  IconButton,
-  Tooltip,
-  rating,
-} from "@material-tailwind/react";
+import { Typography, Avatar } from "@material-tailwind/react";
 import { NullProof } from "@/helpers/appFunction";
 import { productServices } from "@/services/serviceGenerator";
 import { GetProduct } from "@/types/product.type";
@@ -35,6 +27,7 @@ export default function Index() {
     onSuccess: (data: GetProduct[]) => setData(data),
     service: productServices,
   });
+
   return (
     <Table>
       {data?.map((product: GetProduct, index: number) => {
@@ -116,5 +109,3 @@ const dataAction: TableActionProps[] = [
     action: "delete",
   },
 ];
-
-

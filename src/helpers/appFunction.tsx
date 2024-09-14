@@ -29,17 +29,17 @@ const formatDate = (data: DateFnsProps) => {
       data.date == "now"
         ? format(new Date(), data.dateFormat, { locale: id })
         : data.dateFormat == "now"
-        ? formatDistanceToNow(parseDate(data.date), {
+          ? formatDistanceToNow(parseDate(data.date), {
             locale: id,
             addSuffix: data.suffix,
           })
-        : data.dateFormat == "range"
-        ? differenceInDays(
-            parseDate(data.targetDate || ""),
-            parseDate(data.date)
-          )
-        : format(parseDate(data.date), data.dateFormat, { locale: id });
-  } catch (_) {}
+          : data.dateFormat == "range"
+            ? differenceInDays(
+              parseDate(data.targetDate || ""),
+              parseDate(data.date)
+            )
+            : format(parseDate(data.date), data.dateFormat, { locale: id });
+  } catch (_) { }
   return result;
 };
 
@@ -122,9 +122,8 @@ function NullProof({
       //   return isLabel ? (label ? `${label}` : '_') : null
       // }
       if (limitCh > 0) {
-        json = `${result.substring(0, limitCh)}${
-          result.length > limitCh ? "..." : ""
-        }`;
+        json = `${result.substring(0, limitCh)}${result.length > limitCh ? "..." : ""
+          }`;
       }
       if (type === "html") {
         json = <div dangerouslySetInnerHTML={{ __html: json }}></div>;
@@ -171,10 +170,6 @@ const DetailPage = ({ api, onError, id }: DetailPageProps) => {
   const router = useRouter();
   const [data, setData] = React.useState<any>({});
 
-  useEffect(() => {
-    getData();
-  }, [router.query.id]);
-
   const getData = async () => {
     try {
       const res = await axios.get(`/api${api}`, {
@@ -187,6 +182,10 @@ const DetailPage = ({ api, onError, id }: DetailPageProps) => {
       onError?.(error);
     }
   };
+
+  useEffect(() => {
+    getData();
+  }, [router.query.id]);
 
   const Page = ({
     title = "",
