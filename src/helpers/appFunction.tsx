@@ -151,7 +151,21 @@ function NullProof({
   }
 }
 
-const numberlistPagination = ({n, p = 1, t = 10}: {n: number; p?: number; t?: number}) => {
-  return n + 1 + ((p || 1) - 1) * t
-}
-export { NullProof, ConvertCurrency, formatDate, parseDate, numberlistPagination };
+const numberlistPagination = ({
+  n,
+  p = 1,
+  t = 10,
+}: {
+  n: number;
+  p?: number;
+  t?: number;
+}) => {
+  return n + 1 + ((p || 1) - 1) * t;
+};
+export {
+  NullProof,
+  ConvertCurrency,
+  formatDate,
+  parseDate,
+  numberlistPagination,
+};

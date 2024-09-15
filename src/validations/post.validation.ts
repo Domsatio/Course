@@ -6,6 +6,7 @@ export const createPostValidation = (payload: Post) => {
     id: string().required("ID is required"),
     userId: string().required("User ID is required"),
     title: string().required("Title is required"),
+    slug: string().required("Slug is required"),
     body: string().required("Body is required"),
     published: boolean().optional().default(false),
     categories: array().optional(),
@@ -22,6 +23,7 @@ export const createPostValidation = (payload: Post) => {
 export const updatePostValidation = (payload: UpdatePost) => {
   const schema = object({
     title: string().optional(),
+    slug: string().optional(),
     body: string().optional(),
     published: boolean().optional(),
     categories: array().optional(),

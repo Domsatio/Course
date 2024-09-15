@@ -55,7 +55,7 @@ const profileMenuItems: ProfileMenuItemProps[] = [
 
 function ProfileMenu() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-  const router = useRouter();
+  const { push } = useRouter();
   const { data: session } = useSession();
 
   const closeMenu = () => setIsMenuOpen(false);
@@ -80,7 +80,7 @@ function ProfileMenu() {
         </Button>
       </MenuHandler>
       <MenuList className="p-1">
-        {profileMenuItems.map(({ label, icon, href }, key) => {
+        {profileMenuItems.map(({ label, icon, href }) => {
           const isLastItem = label === "Sign Out";
           return (
             <MenuItem
@@ -107,7 +107,7 @@ function ProfileMenu() {
                         redirect: true,
                         callbackUrl: "localhost:3000/admin/sign-in",
                       })
-                    : () => router.push(href || "")
+                    : () => push(href || "")
                 }
               >
                 {label}
@@ -121,9 +121,7 @@ function ProfileMenu() {
 }
 
 export default function AdminNavbar({ children }: { children: React.ReactNode }) {
-  const [openAlert, setOpenAlert] = React.useState(true);
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
-  const router = useRouter();
   const routeLoader = topLoader();
 
   const openDrawer = () => setIsDrawerOpen(true);
@@ -132,7 +130,6 @@ export default function AdminNavbar({ children }: { children: React.ReactNode })
   const onClickMenuItem = (href: string) => {
     closeDrawer();
     routeLoader.push(href);
-    // router.push(href);
   }
 
   const RouteItems: React.FC<RouteItemsProps> = ({
@@ -144,6 +141,7 @@ export default function AdminNavbar({ children }: { children: React.ReactNode })
     const handleOpen = (value: React.SetStateAction<string>) => {
       setOpen(open === value ? 'nothing' : value);
     };
+
     return (
       <div className={`ps-${padding}`}>
         {routeList?.map(({ isheader = false, href = '', label, icon, children }: MenuItemProps) => {
@@ -203,29 +201,30 @@ export default function AdminNavbar({ children }: { children: React.ReactNode })
 
   const SideItem = ({
     className = "",
-  }: {className?: string}) => {
+  }: { className?: string }) => {
     return (
       <Card
-          color="transparent"
-          shadow={false}
-          className={`h-[calc(100vh-2rem)] w-full p-4 ${className}`}
-        >
-          <div className="mb-2 flex items-center gap-4 p-4">
-            <img
-              src="https://docs.material-tailwind.com/img/logo-ct-dark.png"
-              alt="brand"
-              className="h-8 w-8"
-            />
-            <Typography variant="h5" color="blue-gray">
-              Sidebar
-            </Typography>
-          </div>
-          <List className="relative">
-            <RouteItems routeList={routeList} padding={0} parentRoute="/admin" />
-          </List>
-        </Card>
+        color="transparent"
+        shadow={false}
+        className={`h-[calc(100vh-2rem)] w-full p-4 ${className}`}
+      >
+        <div className="mb-2 flex items-center gap-4 p-4">
+          <img
+            src="https://docs.material-tailwind.com/img/logo-ct-dark.png"
+            alt="brand"
+            className="h-8 w-8"
+          />
+          <Typography variant="h5" color="blue-gray">
+            Sidebar
+          </Typography>
+        </div>
+        <List className="relative">
+          <RouteItems routeList={routeList} padding={0} parentRoute="/admin" />
+        </List>
+      </Card>
     )
   }
+
   return (
     <div className="flex relative">
       <SideItem className="w-64 min-h-screen hidden lg:block bg-white fixed" />
@@ -240,12 +239,12 @@ export default function AdminNavbar({ children }: { children: React.ReactNode })
           </IconButton>
           <ProfileMenu />
         </Navbar>
-          <Drawer open={isDrawerOpen} onClose={closeDrawer} className="lg:hidden">
-            <SideItem />
-          </Drawer>
-          <div className="p-4 overflow-auto">
-            {children}
-          </div>
+        <Drawer open={isDrawerOpen} onClose={closeDrawer} className="lg:hidden">
+          <SideItem />
+        </Drawer>
+        <div className="p-4 overflow-auto">
+          {children}
+        </div>
       </div>
     </div>
   );
