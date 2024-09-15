@@ -1,4 +1,4 @@
-import PostCard from '@/components/client/postCard'
+import PostCard from '@/components/client/PostCard'
 import { categoryServices, postServices } from '@/services/serviceGenerator'
 import { GetCategory } from '@/types/category.type'
 import { GetPost } from '@/types/post.type'
@@ -23,8 +23,8 @@ const ClientView = () => {
 
   useEffect(() => {
     const postParams: Params = {
-      skip: activePage * 3 - 3,
-      take: 3,
+      skip: activePage * 12 - 12,
+      take: 12,
       where: activeCategory !== null ? activeCategory : undefined,
     }
 
@@ -35,7 +35,7 @@ const ClientView = () => {
 
     postServices.getItems(postParams).then(({ data: { totalData, data } }) => {
       setPosts(data)
-      setTotalPages(Math.ceil(totalData / 3))
+      setTotalPages(Math.ceil(totalData / 12))
     })
 
     categoryServices.getItems(categoryParams).then(({ data: { data } }) => {
@@ -45,7 +45,7 @@ const ClientView = () => {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between pt-24">
-      <section className="flex container flex-col justify-center flex-wrap gap-10 py-10 px-24">
+      <section className="flex container flex-col justify-center flex-wrap gap-10 pt-10 pb-32 px-24">
         <Typography variant="h2" color="black" placeholder='Blog Page'>
           Blog Page
         </Typography>

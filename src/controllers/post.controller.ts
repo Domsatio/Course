@@ -72,9 +72,11 @@ export const getPublishedPosts = async (
   });
 };
 
-export const getPost = async (id: string) => {
-  return prisma.post.findUnique({
-    where: { id },
+export const getPost = async (param: string) => {
+  return prisma.post.findFirst({
+    where: {
+      OR: [{ id: param }, { slug: param }],
+    },
     include: {
       categories: {
         include: {

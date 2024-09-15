@@ -13,6 +13,7 @@ import {
 import type { NextApiRequest, NextApiResponse } from "next";
 import { v4 as uuidv4 } from "uuid";
 import { getToken } from "next-auth/jwt";
+import { stringToSlug } from "@/helpers/slug";
 
 export default async function handler(
   req: NextApiRequest,
@@ -27,7 +28,7 @@ export default async function handler(
     }
 
     req.body.id = uuidv4();
-    req.body.slug = req.body.title.toLowerCase().replace(/ /g, "-");
+    req.body.slug = stringToSlug(req.body.title);
 
     const { validatedData, errors } = createPostValidation(req.body);
 
@@ -59,7 +60,7 @@ export default async function handler(
     }
 
     const { id } = req.query;
-    req.body.slug = req.body.title.toLowerCase().replace(/ /g, "-");
+    req.body.slug = stringToSlug(req.body.title);
 
     const { validatedData, errors } = updatePostValidation(req.body);
 
@@ -111,11 +112,11 @@ export default async function handler(
         .send({ status: false, statusCode: 500, message: error });
     }
   } else if (req.method === "GET") {
-    if (req.query.id) {
-      const { id } = req.query;
+    if (req.query.id || req.query.slug) {
+      const { id, slug } = req.query;
 
       try {
-        const data = await getPost(id as string);
+        const data = await getPost((id as string) || (slug as string));
         console.info("Get post success");
         return res.status(200).send({
           status: true,

@@ -100,9 +100,8 @@ export default function Index() {
                 value={post.published ? "Published" : "Draft"}
                 icon={
                   <span
-                    className={`mx-auto mt-1 block h-2 w-2 rounded-full content-[''] ${
-                      post.published ? "bg-green-900" : "bg-red-900"
-                    }`}
+                    className={`mx-auto mt-1 block h-2 w-2 rounded-full content-[''] ${post.published ? "bg-green-900" : "bg-red-900"
+                      }`}
                   />
                 }
               />
@@ -115,7 +114,7 @@ export default function Index() {
                 color="blue-gray"
                 className="font-normal"
               >
-                {dateFormater(post.createdAt)}
+                {dateFormater(post.createdAt, "short")}
               </Typography>
             </div>
           </td>

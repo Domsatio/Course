@@ -45,7 +45,7 @@ const PostCard: FC<Omit<GetPost, 'id' | 'published' | 'createdAt'>> = ({ title, 
             ))}
           </div>
           <Typography
-            variant="h4"
+            variant="h5"
             color="black"
             className="group-hover:text-black/70"
           >

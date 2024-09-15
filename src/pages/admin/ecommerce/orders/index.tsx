@@ -57,7 +57,7 @@ export default function Index() {
                 color="blue-gray"
                 className="font-normal"
               >
-                {dateFormater(createdAt)}
+                {dateFormater(createdAt, "short")}
               </Typography>
             </td>
             <td className={`${classes} flex gap-4 items-center`}>

@@ -1,5 +1,4 @@
 import axios from "axios";
-import Cookie from 'js-cookie';
 
 export const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
