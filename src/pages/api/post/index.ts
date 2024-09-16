@@ -3,6 +3,7 @@ import {
   deletePost,
   getPost,
   getPosts,
+  getPublishedPosts,
   updatePost,
 } from "@/controllers/post.controller";
 import {
@@ -12,6 +13,7 @@ import {
 import type { NextApiRequest, NextApiResponse } from "next";
 import { v4 as uuidv4 } from "uuid";
 import { getToken } from "next-auth/jwt";
+import { stringToSlug } from "@/helpers/slug";
 
 export default async function handler(
   req: NextApiRequest,
@@ -21,11 +23,12 @@ export default async function handler(
 
   if (req.method === "POST") {
     if (!token || token.role !== "ADMIN") {
-      res.status(401).json({ message: "Forbidden" });
+      res.status(403).json({ message: "Forbidden" });
       return;
     }
 
     req.body.id = uuidv4();
+    req.body.slug = stringToSlug(req.body.title);
 
     const { validatedData, errors } = createPostValidation(req.body);
 
@@ -47,16 +50,17 @@ export default async function handler(
     } catch (error) {
       console.error("ERR: post - create = ", error);
       return res
-        .status(422)
-        .send({ status: false, statusCode: 422, message: error });
+        .status(500)
+        .send({ status: false, statusCode: 500, message: error });
     }
   } else if (req.method === "PUT") {
     if (!token || token.role !== "ADMIN") {
-      res.status(401).json({ message: "Forbidden" });
+      res.status(403).json({ message: "Forbidden" });
       return;
     }
 
     const { id } = req.query;
+    req.body.slug = stringToSlug(req.body.title);
 
     const { validatedData, errors } = updatePostValidation(req.body);
 
@@ -78,12 +82,12 @@ export default async function handler(
     } catch (error) {
       console.error("ERR: post update = ", error);
       return res
-        .status(422)
-        .send({ status: false, statusCode: 422, message: error });
+        .status(500)
+        .send({ status: false, statusCode: 500, message: error });
     }
   } else if (req.method === "DELETE") {
     if (!token || token.role !== "ADMIN") {
-      res.status(401).json({ message: "Forbidden" });
+      res.status(403).json({ message: "Forbidden" });
       return;
     }
 
@@ -104,15 +108,15 @@ export default async function handler(
     } catch (error) {
       console.error("ERR: post - delete = ", error);
       return res
-        .status(422)
-        .send({ status: false, statusCode: 422, message: error });
+        .status(500)
+        .send({ status: false, statusCode: 500, message: error });
     }
   } else if (req.method === "GET") {
-    if (req.query.id) {
-      const { id } = req.query;
+    if (req.query.id || req.query.slug) {
+      const { id, slug } = req.query;
 
       try {
-        const data = await getPost(id as string);
+        const data = await getPost((id as string) || (slug as string));
         console.info("Get post success");
         return res.status(200).send({
           status: true,
@@ -128,7 +132,21 @@ export default async function handler(
       }
     } else {
       try {
-        const { skip, take } = req.query;
+        const { skip, take, categoryId } = req.query;
+        if (token?.role !== "ADMIN") {
+          const { totalData, data } = await getPublishedPosts(
+            Number(skip),
+            Number(take),
+            categoryId as string
+          );
+          return res.status(200).send({
+            status: true,
+            statusCode: 200,
+            message: "Get posts success",
+            totalData,
+            data,
+          });
+        }
         const { totalData, data } = await getPosts(Number(skip), Number(take));
         console.info("Get posts success");
         return res.status(200).send({

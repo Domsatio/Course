@@ -21,7 +21,7 @@ export default async function handler(
 
   if (req.method === "POST") {
     if (!token || token.role !== "ADMIN") {
-      res.status(401).json({ message: "Forbidden" });
+      res.status(403).json({ message: "Forbidden" });
       return;
     }
 
@@ -47,8 +47,8 @@ export default async function handler(
     } catch (error) {
       console.error("ERR: product - create = ", error);
       return res
-        .status(422)
-        .send({ status: false, statusCode: 422, message: error });
+        .status(500)
+        .send({ status: false, statusCode: 500, message: error });
     }
   } else if (req.method === "GET") {
     if (req.query.id) {
@@ -93,7 +93,7 @@ export default async function handler(
     }
   } else if (req.method === "PUT") {
     if (!token || token.role !== "ADMIN") {
-      res.status(401).json({ message: "Forbidden" });
+      res.status(403).json({ message: "Forbidden" });
       return;
     }
 
@@ -119,12 +119,12 @@ export default async function handler(
     } catch (error) {
       console.error("ERR: product - update = ", error);
       return res
-        .status(422)
-        .send({ status: false, statusCode: 422, message: error });
+        .status(500)
+        .send({ status: false, statusCode: 500, message: error });
     }
   } else if (req.method === "DELETE") {
     if (!token || token.role !== "ADMIN") {
-      res.status(401).json({ message: "Forbidden" });
+      res.status(403).json({ message: "Forbidden" });
       return;
     }
 
@@ -141,8 +141,8 @@ export default async function handler(
     } catch (error) {
       console.error("ERR: product - delete = ", error);
       return res
-        .status(422)
-        .send({ status: false, statusCode: 422, message: error });
+        .status(500)
+        .send({ status: false, statusCode: 500, message: error });
     }
   }
 }
