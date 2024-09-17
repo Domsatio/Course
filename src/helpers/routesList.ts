@@ -4,6 +4,7 @@ import {
   DocumentTextIcon,
   CurrencyDollarIcon,
   VideoCameraIcon,
+  UserCircleIcon,
 } from "@heroicons/react/24/solid";
 import { MenuItemProps } from "./typeProps";
 
