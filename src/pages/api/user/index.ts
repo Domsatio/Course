@@ -58,19 +58,19 @@ export default async function handlerUser(
     } catch (error) {
       console.error("ERR: user - create = ", error);
       return res
-        .status(422)
-        .send({ status: false, statusCode: 422, message: error });
+        .status(500)
+        .send({ status: false, statusCode: 500, message: error });
     }
   } else if (req.method === "PUT") {
     if (!token) {
-      res.status(401).json({ message: "Forbidden" });
+      res.status(403).json({ message: "Forbidden" });
       return;
     }
 
     const { id } = req.query;
 
     if (token.id !== id) {
-      res.status(401).json({ message: "Forbidden" });
+      res.status(403).json({ message: "Forbidden" });
       return;
     }
 
@@ -102,19 +102,19 @@ export default async function handlerUser(
     } catch (error) {
       console.error("ERR: user - update = ", error);
       return res
-        .status(422)
-        .send({ status: false, statusCode: 422, message: error });
+        .status(500)
+        .send({ status: false, statusCode: 500, message: error });
     }
   } else if (req.method === "DELETE") {
     if (!token) {
-      res.status(401).json({ message: "Forbidden" });
+      res.status(403).json({ message: "Forbidden" });
       return;
     }
 
     const { id } = req.query;
 
     if (token.id !== id) {
-      res.status(401).json({ message: "Forbidden" });
+      res.status(403).json({ message: "Forbidden" });
       return;
     }
 
@@ -137,12 +137,12 @@ export default async function handlerUser(
     } catch (error) {
       console.error("ERR: user - delete = ", error);
       return res
-        .status(422)
-        .send({ status: false, statusCode: 422, message: error });
+        .status(500)
+        .send({ status: false, statusCode: 500, message: error });
     }
   } else if (req.method === "GET") {
     if (!token) {
-      res.status(401).json({ message: "Forbidden" });
+      res.status(403).json({ message: "Forbidden" });
       return;
     }
 
@@ -150,7 +150,7 @@ export default async function handlerUser(
       const { id } = req.query;
 
       if (token.id !== id) {
-        res.status(401).json({ message: "Forbidden" });
+        res.status(403).json({ message: "Forbidden" });
         return;
       }
 
@@ -175,7 +175,7 @@ export default async function handlerUser(
       }
     } else {
       if (token.role !== "ADMIN") {
-        res.status(401).json({ message: "Forbidden" });
+        res.status(403).json({ message: "Forbidden" });
         return;
       }
 

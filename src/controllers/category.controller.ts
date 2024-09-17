@@ -1,8 +1,11 @@
 import prisma from "@/libs/prisma/db";
 import { Category, UpdateCategory } from "@/types/category.type";
-import { ca } from "date-fns/locale";
 
-export const getCategories = async (skip: number = 0, take: number|string = 5, search: string = "") => {
+export const getCategories = async (
+  skip: number = 0,
+  take: number | string = 5,
+  search: string = ""
+) => {
   let whereCondition: any = {
     OR: [
       {

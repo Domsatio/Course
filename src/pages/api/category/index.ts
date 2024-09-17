@@ -21,7 +21,7 @@ export default async function handlerCategory(
 
   if (req.method === "POST") {
     if (!token || token.role !== "ADMIN") {
-      res.status(401).json({ message: "Forbidden" });
+      res.status(403).json({ message: "Forbidden" });
       return;
     }
 
@@ -47,12 +47,12 @@ export default async function handlerCategory(
     } catch (error) {
       console.error("ERR: category - create = ", error);
       return res
-        .status(422)
-        .send({ status: false, statusCode: 422, message: error });
+        .status(500)
+        .send({ status: false, statusCode: 500, message: error });
     }
   } else if (req.method === "PUT") {
     if (!token || token.role !== "ADMIN") {
-      res.status(401).json({ message: "Forbidden" });
+      res.status(403).json({ message: "Forbidden" });
       return;
     }
 
@@ -78,12 +78,12 @@ export default async function handlerCategory(
     } catch (error) {
       console.error("ERR: category update = ", error);
       return res
-        .status(422)
-        .send({ status: false, statusCode: 422, message: error });
+        .status(500)
+        .send({ status: false, statusCode: 500, message: error });
     }
   } else if (req.method === "DELETE") {
     if (!token || token.role !== "ADMIN") {
-      res.status(401).json({ message: "Forbidden" });
+      res.status(403).json({ message: "Forbidden" });
       return;
     }
 
@@ -100,8 +100,8 @@ export default async function handlerCategory(
     } catch (error) {
       console.error("ERR: category - delete = ", error);
       return res
-        .status(422)
-        .send({ status: false, statusCode: 422, message: error });
+        .status(500)
+        .send({ status: false, statusCode: 500, message: error });
     }
   } else if (req.method === "GET") {
     if (req.query.id) {
@@ -123,8 +123,8 @@ export default async function handlerCategory(
       } catch (error) {
         console.error("ERR: category - get = ", error);
         return res
-          .status(422)
-          .send({ status: false, statusCode: 422, message: error });
+          .status(500)
+          .send({ status: false, statusCode: 500, message: error });
       }
     } else {
       try {
@@ -145,8 +145,8 @@ export default async function handlerCategory(
       } catch (error) {
         console.error("ERR: categories - get = ", error);
         return res
-          .status(422)
-          .send({ status: false, statusCode: 422, message: error });
+          .status(500)
+          .send({ status: false, statusCode: 500, message: error });
       }
     }
   } else {

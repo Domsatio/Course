@@ -4,6 +4,7 @@ export type Post = {
   id: string;
   userId: string;
   title: string;
+  slug: string;
   body: string;
   published: boolean;
   categories?: string[];
@@ -11,6 +12,7 @@ export type Post = {
 
 export type UpdatePost = {
   title?: string;
+  slug?: string;
   body?: string;
   published?: boolean;
   categories?: string[];
@@ -25,6 +27,7 @@ export type CategoryPost = {
 export type GetPost = {
   id: string;
   title: string;
+  slug: string;
   body: string;
   published: boolean;
   categories: CategoryPost[];
