@@ -3,15 +3,27 @@ import { Category, UpdateCategory } from "@/types/category.type";
 
 export const getCategories = async (
   skip: number = 0,
-  take: number | string = 5
+  take: number | string = 5,
+  search: string = ""
 ) => {
+  let whereCondition: any = {
+    OR: [
+      {
+        name: {
+          contains: search,
+          mode: "insensitive",
+        },
+      },
+    ],
+  };
   return prisma.$transaction(async (tx) => {
-    const totalData = await tx.category.count();
+    const totalData = await tx.category.count({
+      where: whereCondition,
+    });
     const takeNumber = take === "all" ? totalData : Number(take);
 
     const data = await tx.category.findMany({
-      skip,
-      take: takeNumber,
+      where: whereCondition,
       include: {
         posts: {
           include: {
@@ -19,6 +31,8 @@ export const getCategories = async (
           },
         },
       },
+      skip,
+      take: takeNumber,
       orderBy: {
         name: "asc",
       },

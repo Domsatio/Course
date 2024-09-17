@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useRouter as topLoader } from "nextjs-toploader/app";
@@ -18,7 +18,6 @@ import {
   Accordion,
   AccordionHeader,
   AccordionBody,
-  Input,
   Drawer,
   Menu,
   MenuHandler,
@@ -58,7 +57,7 @@ const profileMenuItems: ProfileMenuItemProps[] = [
 ];
 
 function ProfileMenu() {
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const router = useRouter();
   const { data: session } = useSession();
 
@@ -90,7 +89,7 @@ function ProfileMenu() {
             <MenuItem
               key={label}
               onClick={() => {
-                closeMenu;
+                closeMenu
                 if (isLastItem) {
                   signOut({
                     redirect: true,
@@ -100,11 +99,10 @@ function ProfileMenu() {
                   router.push(href || "");
                 }
               }}
-              className={`flex items-center gap-2 rounded ${
-                isLastItem
-                  ? "hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
-                  : ""
-              }`}
+              className={`flex items-center gap-2 rounded ${isLastItem
+                ? "hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
+                : ""
+                }`}
             >
               {React.createElement(icon, {
                 className: `h-4 w-4 ${isLastItem ? "text-red-500" : ""}`,
@@ -127,12 +125,8 @@ function ProfileMenu() {
   );
 }
 
-export default function AdminNavbar({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
+export default function AdminNavbar({ children }: { children: React.ReactNode }) {
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const routeLoader = topLoader();
 
   const openDrawer = () => setIsDrawerOpen(true);

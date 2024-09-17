@@ -15,6 +15,7 @@ const Index: FC = () => {
     description: "List of categories",
     tableHeader: TABLE_HEAD,
     service: categoryServices,
+    realtimeTable: "Category",
     onSuccess: (data: GetCategory[]) => setData(data),
   });
 

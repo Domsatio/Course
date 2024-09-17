@@ -1,13 +1,58 @@
 import prisma from "@/libs/prisma/db";
 import { Post, UpdatePost } from "@/types/post.type";
+import { convertStringToBoolean } from "@/helpers/appFunction";
+// Removed import for QueryMode as it is not exported by @prisma/client
 
-export const getPosts = async (skip: number = 0, take: number = 5) => {
+export const getPosts = async (
+  skip: number = 0,
+  take: number = 5,
+  search: string = "",
+  category: string = "",
+  published: boolean|string|undefined = undefined
+) => {
+  let whereCondition: any = {
+    OR: [
+      {
+        title: {
+          contains: search,
+          mode: "insensitive",
+        },
+      },
+      {
+        body: {
+          contains: search,
+          mode: "insensitive",
+        },
+      },
+    ],
+  };
+  const unjoinedCategory = category.split(",");
+  console.log("unjoinedCategory", unjoinedCategory);
+  
+  if (category !== "") {
+    whereCondition = {
+      categories: {
+        some: {
+          category: {
+            name: {
+              in: unjoinedCategory, 
+            },
+          },
+        },
+      },
+    };
+  }
+  if (published) {
+    whereCondition.published = convertStringToBoolean(published as string);
+  }
+
   return prisma.$transaction(async (tx) => {
-    const totalData = await tx.post.count();
+    const totalData = await tx.post.count({
+      where: whereCondition,
+    });
 
     const data = await tx.post.findMany({
-      skip,
-      take,
+      where: whereCondition,
       include: {
         categories: {
           include: {
@@ -15,13 +60,15 @@ export const getPosts = async (skip: number = 0, take: number = 5) => {
           },
         },
       },
+      skip,
+      take,
       orderBy: {
         createdAt: "desc",
       },
     });
 
     return { totalData, data };
-  });
+  }, { maxWait: 5000, timeout: 20000 });
 };
 
 export const getPublishedPosts = async (

@@ -9,6 +9,7 @@ import DataDetailPage, {
 import { courseServices } from "@/services/serviceGenerator";
 import EmblaCarousel from "@/components/EmblaCarousel";
 import { EmblaOptionsType } from "embla-carousel";
+import { Button } from "@material-tailwind/react";
 
 export default function view() {
   const OPTIONS: EmblaOptionsType = {};
@@ -17,6 +18,7 @@ export default function view() {
     video: "",
     thumbnailUrl: "",
     description: "",
+    file: "",
   });
   const { data } = DataDetailPage({ service: courseServices });
 
@@ -58,7 +60,7 @@ export default function view() {
               />
             )}
             onScroll={(i) => {
-              if(data.video){
+              if (data.video) {
                 setVideoUrl(data.video[i]);
               }
             }}
@@ -67,13 +69,22 @@ export default function view() {
             <LabelDetailPage label="Description">
               {NullProof({ input: videoUrl, params: "description" })}
             </LabelDetailPage>
+            {videoUrl.file && (
+              <LabelDetailPage label="Materi PDF">
+                <Button>
+                  <a href={videoUrl.file} target="_blank" rel="noreferrer">
+                    See File
+                  </a>
+                </Button>
+              </LabelDetailPage>
+            )}
           </div>
         </div>
         <div>
           <LabelDetailPage label="Title">
             {NullProof({ input: data, params: "title" })}
           </LabelDetailPage>
-          <LabelDetailPage label="Deacription">
+          <LabelDetailPage label="Description">
             {NullProof({ input: data, params: "description" })}
           </LabelDetailPage>
           <LabelDetailPage label="Published">
@@ -88,9 +99,8 @@ export default function view() {
   );
 }
 
-
-
-{/* <EmblaCarousel slides={data.image} options={OPTIONS} PreviewChild={
+{
+  /* <EmblaCarousel slides={data.image} options={OPTIONS} PreviewChild={
               ({ item }) => (
                 <img
                   className="h-[315px] w-[550px] max-w-full rounded-lg object-cover object-center"
@@ -110,5 +120,8 @@ export default function view() {
                 />
               )
             }
-            /> */}
-        {/* Video */}
+            /> */
+}
+{
+  /* Video */
+}
