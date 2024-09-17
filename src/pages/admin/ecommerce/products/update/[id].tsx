@@ -10,7 +10,6 @@ export default function Update() {
 
   return (
     <div>
-<<<<<<< HEAD
       <FormInput
         inputList={FormInputList}
         service={productServices}
@@ -18,16 +17,6 @@ export default function Update() {
         id={id as string}
         title="Update Product"
       />
-=======
-        <FormInput
-          inputList={FormInputList}
-          method="PUT"
-          id={router.query.id as string}
-          service={productServices}
-          title="Update Product"
-        />
->>>>>>> 9a46efe0347f00c4c583a2399b37b70f6bc8e967
     </div>
   );
 }
-

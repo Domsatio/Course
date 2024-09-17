@@ -5,7 +5,7 @@ import AdminNavbar from "@/components/admin/navbar";
 export default function LayoutAdmin({ children }) {
   return (
     <div className="min-h-screen bg-gray-100">
-      <NextTopLoader showSpinner={false} height={4} />
+      {/* <NextTopLoader showSpinner={false} height={4} /> */}
       <AdminNavbar children={children}/>
     </div>
   );

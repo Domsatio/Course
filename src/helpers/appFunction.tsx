@@ -151,7 +151,42 @@ function NullProof({
   }
 }
 
-const numberlistPagination = ({n, p = 1, t = 10}: {n: number; p?: number; t?: number}) => {
-  return n + 1 + ((p || 1) - 1) * t
-}
-export { NullProof, ConvertCurrency, formatDate, parseDate, numberlistPagination };
+const numberlistPagination = ({
+  n,
+  p = 1,
+  t = 10,
+}: {
+  n: number;
+  p?: number;
+  t?: number;
+}) => {
+  return n + 1 + ((p || 1) - 1) * t;
+};
+
+const getQueryParams = () => {
+  if (typeof window !== "undefined") {
+    const urlParams = new URLSearchParams(window.location.search);
+    const params = Object.fromEntries(urlParams.entries());
+    return params;
+  }
+  return {}
+};
+
+const convertStringToBoolean = (value: string): boolean | string => {
+  if (value.toLowerCase() === 'true') {
+    return true;
+  } else if (value.toLowerCase() === 'false') {
+    return false;
+  }
+  return ""; // Return null for invalid inputs
+};
+
+export {
+  NullProof,
+  ConvertCurrency,
+  formatDate,
+  parseDate,
+  numberlistPagination,
+  getQueryParams,
+  convertStringToBoolean,
+};

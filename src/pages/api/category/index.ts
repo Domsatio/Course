@@ -13,7 +13,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { v4 as uuidv4 } from "uuid";
 import { getToken } from "next-auth/jwt";
 
-export default async function handler(
+export default async function handlerCategory(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
@@ -128,10 +128,11 @@ export default async function handler(
       }
     } else {
       try {
-        const { skip, take } = req.query;
-        const { totalData, data } = await getCategories(
+        const { skip, take, search } = req.query;
+        const { totalData, data} = await getCategories(
           Number(skip),
-          take ? (take as string) : 5
+          take ? (take as string) : 5,
+          search as string
         );
         console.info("Get categories success");
         return res.status(200).send({

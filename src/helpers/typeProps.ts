@@ -43,6 +43,7 @@ type FormInputTypeProps =
   | "date"
   | "currency"
   | "image"
+  | "file"
   | "multipleImage"
   | "multipleInput"
   | "checkbox";
@@ -71,6 +72,7 @@ interface InputListProps {
   validator: any;
   value?: string | number | string[] | boolean;
   valueID?: string
+  useRiset?: boolean;
   listData?: {
     title: string;
     value: number | string | boolean;

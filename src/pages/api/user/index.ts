@@ -15,7 +15,7 @@ import {
 import { getToken } from "next-auth/jwt";
 import { v4 as uuidv4 } from "uuid";
 
-export default async function handler(
+export default async function handlerUser(
   req: NextApiRequest,
   res: NextApiResponse
 ) {

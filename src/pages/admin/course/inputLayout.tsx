@@ -60,6 +60,14 @@ export const FormInputList: InputListProps[] = [
         validator: Yup.string().required("Vidio harus diisi"),
         value: "",
       },
+      {
+        className: "",
+        name: "file",
+        label: "Materi PDF",
+        type: "file",
+        validator: Yup.string().required("Gambar harus diisi"),
+        value: "",
+      },
     ]
   },
   {
@@ -74,4 +82,20 @@ export const FormInputList: InputListProps[] = [
       { title: "No", value: false },
     ],
   }
+];
+
+export const FilterInputList: InputListProps[] = [
+  {
+    className: "",
+    name: "published",
+    label: "Dipublikasikan",
+    type: "checkbox",
+    validator: Yup.string(),
+    value: "",
+    useRiset: true,
+    listData: [
+      { title: "Yes", value: true },
+      { title: "No", value: false },
+    ],
+  },
 ];

@@ -13,7 +13,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { v4 as uuidv4 } from "uuid";
 import { getToken } from "next-auth/jwt";
 
-export default async function handler(
+export default async function handlerPost(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
@@ -128,8 +128,14 @@ export default async function handler(
       }
     } else {
       try {
-        const { skip, take } = req.query;
-        const { totalData, data } = await getPosts(Number(skip), Number(take));
+        const { skip, take, search = "", category = "", published } = req.query;
+        const { totalData, data } = await getPosts(
+          Number(skip),
+          Number(take),
+          search.toLocaleString() as string,
+          category as string,
+          published as any
+        );
         console.info("Get posts success");
         return res.status(200).send({
           status: true,

@@ -1,4 +1,3 @@
-import React from "react";
 import { NullProof } from "@/helpers/appFunction";
 import { DetailPage, LabelDetailPage } from "@/components/DetailPage";
 import { CategoryPost } from "@/types/post.type";
