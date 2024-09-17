@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import TableData from "@/components/TableData";
 import { TableActionProps } from "@/components/TableData";
 import { NullProof, numberlistPagination } from "@/helpers/appFunction";
 import { Typography } from "@material-tailwind/react";
 import { courseServices } from "@/services/serviceGenerator";
 import { Course } from "@/types/course.type";
+import { Chip } from "@material-tailwind/react";
+import { FilterInputList } from "./inputLayout";
 
 const TABLE_HEAD = ["No", "Title", "Description", "Publised", "Action"];
 
@@ -15,12 +17,13 @@ export default function Index() {
     description: "List of courses",
     tableHeader: TABLE_HEAD,
     service: courseServices,
+    realtimeTable: "Course",
     onSuccess: (data: any) => setData(data),
+    filter: FilterInputList,
   });
 
   return Table(
-    <React.Fragment>
-      {NullProof({
+      NullProof({
         input: data,
         params: "data",
         isMap: true,
@@ -52,35 +55,36 @@ export default function Index() {
                 {NullProof({ input: course, params: "title" })}
               </Typography>
             </td>
-            <td className={classes}>
-              <Typography
-                variant="small"
-                color="blue-gray"
-                className="font-normal"
-              >
-                {NullProof({ input: course, params: "description" })}
-              </Typography>
+            <td className={`${classes} max-w-[370px] max-h-min`}>
+              <p className="line-clamp-2 text-sm">{NullProof({ input: course, params: "description" })}</p>
             </td>
             <td className={classes}>
-              <Typography
-                variant="small"
-                color="blue-gray"
-                className="font-normal"
-              >
-                {NullProof({
-                  input: course,
-                  params: "published",
-                  type: "html",
-                })}
-              </Typography>
-            </td>
+            <Typography
+              variant="small"
+              color="blue-gray"
+              className="font-normal flex"
+            >
+              <Chip
+                variant="ghost"
+                color={course.published ? "green" : "red"}
+                size="sm"
+                value={course.published ? "Published" : "Draft"}
+                icon={
+                  <span
+                    className={`mx-auto mt-1 block h-2 w-2 rounded-full content-[''] ${
+                      course.published ? "bg-green-900" : "bg-red-900"
+                    }`}
+                  />
+                }
+              />
+            </Typography>
+          </td>
             <td className={classes}>
               <TableAction data={dataAction} id={course.id} />
             </td>
           </tr>
         );
-      })}
-    </React.Fragment>
+      })
   );
 }
 

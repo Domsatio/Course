@@ -6,6 +6,7 @@ import { postServices } from "@/services/serviceGenerator";
 import { CategoryPost, GetPost } from "@/types/post.type";
 import { dateFormater } from "@/helpers/date";
 import { NullProof, numberlistPagination } from "@/helpers/appFunction";
+import { FilterInputList } from "./inputLayout";
 
 const TABLE_HEAD = [
   "No",
@@ -26,6 +27,7 @@ export default function Index() {
     service: postServices,
     realtimeTable: "Post",
     onSuccess: (data: GetPost[]) => setData(data),
+    filter: FilterInputList,
   });
 
   return Table(

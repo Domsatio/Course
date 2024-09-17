@@ -14,8 +14,9 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { v4 as uuidv4 } from "uuid";
 import { getToken } from "next-auth/jwt";
 import { stringToSlug } from "@/helpers/slug";
+import { ca } from "date-fns/locale";
 
-export default async function handler(
+export default async function handlerPost(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
@@ -132,7 +133,8 @@ export default async function handler(
       }
     } else {
       try {
-        const { skip, take, categoryId } = req.query;
+        const { skip, take, search= '', categoryId, category = "", published } = req.query;
+        console.log("req.query", req.query);
         if (token?.role !== "ADMIN") {
           const { totalData, data } = await getPublishedPosts(
             Number(skip),
@@ -146,16 +148,24 @@ export default async function handler(
             totalData,
             data,
           });
+        } else {
+          console.log("category", category);
+          const { totalData, data } = await getPosts(
+            Number(skip),
+            Number(take),
+            search as string,
+            category as string,
+            published as any
+          );
+          console.info("Get posts success");
+          return res.status(200).send({
+            status: true,
+            statusCode: 200,
+            message: "Get posts success",
+            totalData,
+            data,
+          });
         }
-        const { totalData, data } = await getPosts(Number(skip), Number(take));
-        console.info("Get posts success");
-        return res.status(200).send({
-          status: true,
-          statusCode: 200,
-          message: "Get posts success",
-          totalData,
-          data,
-        });
       } catch (error) {
         console.error("ERR: posts - get = ", error);
         return res

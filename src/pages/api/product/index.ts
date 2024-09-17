@@ -13,7 +13,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { getToken } from "next-auth/jwt";
 import { v4 as uuidv4 } from "uuid";
 
-export default async function handler(
+export default async function handlerProduct(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
@@ -71,10 +71,11 @@ export default async function handler(
       }
     } else {
       try {
-        const { skip, take } = req.query;
+        const { skip, take, search } = req.query;
         const { totalData, data } = await getProducts(
           Number(skip),
-          Number(take)
+          Number(take),
+          search as string
         );
         console.info("Get all products success");
         return res.status(200).send({

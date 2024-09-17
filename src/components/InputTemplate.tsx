@@ -36,23 +36,39 @@ import "react-datepicker/dist/react-datepicker.css";
 import { FormInputHooks } from "./FormInput";
 
 type FileViewerProps = {
-  file: string | null;
+  file: string;
+  isImage: boolean;
   isOpen: boolean;
   handleOpen: (value: boolean) => void;
 };
 
-const FileViewer = ({ file, isOpen, handleOpen }: FileViewerProps) => {
+const FileViewer = ({
+  file = "",
+  isImage = true,
+  isOpen,
+  handleOpen,
+}: FileViewerProps) => {
   return (
-    <Dialog size="sm" open={isOpen} handler={() => handleOpen(false)}>
+    <Dialog size={isImage ? "sm" : 'md'} open={isOpen} handler={() => handleOpen(false)}>
       <DialogHeader className="border-b">Preview</DialogHeader>
       <DialogBody className="h-[500px]">
         <div className="relative h-full w-full">
-          <Image
-            src={file || ""}
-            className="object-contain"
-            alt="Preview image"
-            fill={true}
-          />
+          {isImage ? (
+            <Image
+              src={file || ""}
+              className="object-contain"
+              alt="Preview image"
+              fill={true}
+            />
+          ) : (
+            <iframe
+              src={file}
+              width="650"
+              height="480"
+              style={{ border: "1px solid #ccc" }}
+              title="PDF Preview"
+            />
+          )}
         </div>
       </DialogBody>
       <DialogFooter>
@@ -77,6 +93,7 @@ export const InputListRenderer = ({
   error,
   hide = false,
   option,
+  useRiset = false,
 }: InputListProps) => {
   const isRequired = validator
     .describe()
@@ -90,6 +107,7 @@ export const InputListRenderer = ({
   const param = option?.params?.split(/\s*,\s*/) || [];
   const { setDisabled, disabled: formDisabled } = FormInputHooks();
 
+  // a function to fetch data if the data option on the input is from an API
   const getDataApi = async () => {
     setIsLoading(true);
     try {
@@ -118,7 +136,7 @@ export const InputListRenderer = ({
     }
   }, [debounceValue]);
 
-  const handleChangeCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeMultipleCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { checked, value: selectedValue, name } = e.target;
     let updatedValues = Array.isArray(value) ? [...value] : [];
     if (checked) {
@@ -151,6 +169,7 @@ export const InputListRenderer = ({
   //   }
   // };
 
+  // a function to handle image upload to upladthing
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     setDisabled(true);
@@ -158,7 +177,7 @@ export const InputListRenderer = ({
     if (files) {
       try {
         const { data } = await axios.post(
-          "/api/uploadthing?actionType=upload&slug=imageUploader",
+          `/api/uploadThing?actionType=upload&slug=${type === "image" ? "imageUploader" : "pdfUploader"}`,
           {
             files: [{ name: files.name, type: files.type, size: files.size }],
           }
@@ -185,7 +204,6 @@ export const InputListRenderer = ({
             },
           });
           setPreviewImage(fileUrl);
-          console.log("File uploaded successfully!");
         } else {
           console.error("Upload failed:", response.data);
         }
@@ -223,7 +241,6 @@ export const InputListRenderer = ({
           label={`Choose ${label}`}
           name={name}
           onChange={(e) => {
-            console.log(e);
             const data = {
               target: {
                 name,
@@ -327,31 +344,37 @@ export const InputListRenderer = ({
         (!isLoading ? (
           <div>
             <div className="flex flex-wrap gap-3 rounded-md borde p-3">
-            {data?.map((item: any, index: number) => {
-              const checked = Array.isArray(value) && value.includes(option?.api ? item[option.id] : item.value);
-              if (checked) {
-                return (
-                  <Chip
-                    key={index}
-                    className="cursor-pointer"
-                    onClose={() => {
-                      const updatedValues = value.filter((val) => val !== (option?.api ? item[option.id] : item.value));
-                      onChange?.({
-                        target: {
-                          name,
-                          value: updatedValues,
-                        },
-                      });
-                    }}
-                    value={option?.api
-                      ? param.map((key: string) => item[key]).join(" | ")
-                      : item.title}
-                  >
-                  </Chip>
-                )
-              }
-              return null
-            })}
+              {data?.map((item: any, index: number) => {
+                const checked =
+                  Array.isArray(value) &&
+                  value.includes(option?.api ? item[option.id] : item.value);
+                if (checked) {
+                  return (
+                    <Chip
+                      key={index}
+                      className="cursor-pointer"
+                      onClose={() => {
+                        const updatedValues = value.filter(
+                          (val) =>
+                            val !== (option?.api ? item[option.id] : item.value)
+                        );
+                        onChange?.({
+                          target: {
+                            name,
+                            value: updatedValues,
+                          },
+                        });
+                      }}
+                      value={
+                        option?.api
+                          ? param.map((key: string) => item[key]).join(" | ")
+                          : item.title
+                      }
+                    ></Chip>
+                  );
+                }
+                return null;
+              })}
             </div>
             <div className="flex flex-wrap gap-3">
               {data?.map((item: any, index: number) => (
@@ -359,9 +382,10 @@ export const InputListRenderer = ({
                   <Checkbox
                     name={name}
                     value={option?.api ? item[option.id] : item.value}
-                    onChange={handleChangeCheckbox}
+                    onChange={handleChangeMultipleCheckbox}
                     disabled={disabled}
                     crossOrigin={undefined}
+                    color="blue"
                     checked={
                       Array.isArray(value) &&
                       value.includes(option?.api ? item[option.id] : item.value)
@@ -384,11 +408,12 @@ export const InputListRenderer = ({
         <label className={`form-label ${className}`}>{value}</label>
       )}
       {type === "component" && <div className={className}>{value}</div>}
-      {type === "image" && (
+      {(type === "image" || type === "file") && (
         <React.Fragment>
           {value && (
             <FileViewer
               file={value.toLocaleString()}
+              isImage={type === "image" ? true : false} 
               isOpen={preview}
               handleOpen={setPreview}
             />
@@ -397,7 +422,7 @@ export const InputListRenderer = ({
             <input
               name={name}
               type="file"
-              accept="image/*"
+              // accept="image/*"
               onChange={(e) => {
                 // handleImageChange(e);
                 handleImageUpload(e);
@@ -445,18 +470,6 @@ export const InputListRenderer = ({
               </Tooltip>
             </div>
           )}
-          {/* <UploadButton
-            endpoint="imageUploader"
-            onClientUploadComplete={(res) => {
-             
-              console.log("Files: ", res);
-              alert("Upload Completed");
-            }}
-            onUploadError={(error: Error) => {
-              // Do something with the error.
-              alert(`ERROR! ${error.message}`);
-            }}
-          /> */}
         </React.Fragment>
       )}
       {type === "date" && (
@@ -495,6 +508,23 @@ export const InputListRenderer = ({
           decimalSeparator="."
           min={0}
         />
+      )}
+      {useRiset && (
+        <Button
+          color="red"
+          size="sm"
+          className="p-2 max-w-min"
+          onClick={() => {
+            onChange?.({
+              target: {
+                name,
+                value: type === "multicheckbox" ? [] : "",
+              },
+            });
+          }}
+          >
+          Reset
+        </Button>
       )}
       {error && (
         <Typography color="red" className="text-sm">
