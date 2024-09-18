@@ -7,20 +7,10 @@ declare module "next-auth" {
       email: string;
       name: string;
       image: string;
-      role: string; // add any custom fields here
+      role: string;
     };
   }
 }
-
-// declare module "next-auth" {
-//   interface Session {
-//     accessToken?: string;
-//   }
-
-//   interface User {
-//     accessToken?: string;
-//   }
-// }
 
 declare module "next-auth/jwt" {
   interface JWT {
@@ -72,7 +62,7 @@ interface InputListProps {
   lockData?: boolean;
   validator: any;
   value?: string | number | string[] | boolean;
-  valueID?: string
+  valueID?: string;
   useRiset?: boolean;
   listData?: {
     title: string;
@@ -120,32 +110,4 @@ interface FilterProps {
   error?: string;
 }
 
-interface TableDataProps {
-  title: string;
-  description?: string;
-  tableHeader: any;
-  onSuccess?: (e: any) => void;
-  isActionAdd?: boolean;
-  filter?: InputListProps[] | undefined;
-  service: any;
-  realtimeTable?: string;
-  // children?: React.ReactNode;
-}
-
-interface OrderProps {
-  id: string;
-  quantity: number;
-  total_price: number;
-  status?: string;
-  account?: string;
-  createdAt: string;
-}
-
-export type {
-  InputListProps,
-  OrderProps,
-  MenuItemProps,
-  ProfileMenuItemProps,
-  RouteItemsProps,
-  TableDataProps,
-};
+export type { MenuItemProps, ProfileMenuItemProps, RouteItemsProps };

@@ -1,4 +1,4 @@
-import { InputListProps } from "@/helpers/typeProps";
+import { InputListProps } from "@/types/form.type";
 import * as Yup from "yup";
 
 export const FormInputList: InputListProps[] = [

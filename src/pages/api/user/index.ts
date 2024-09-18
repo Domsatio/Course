@@ -83,6 +83,35 @@ export default async function handlerUser(
         .send({ status: false, statusCode: 422, message: errors });
     }
 
+    if (validatedData.newPassword) {
+      const user = await getOneUser(id as string);
+
+      if (!user) {
+        console.error("Data not found");
+        return res
+          .status(404)
+          .send({ status: false, statusCode: 404, message: "Data not found" });
+      }
+
+      if (user.password && validatedData.currentPassword) {
+        const isPasswordMatch = await bcrypt.compare(
+          validatedData.currentPassword,
+          user.password
+        );
+
+        if (!isPasswordMatch) {
+          return res.status(403).send({
+            status: false,
+            statusCode: 403,
+            message: "Old password is incorrect",
+          });
+        }
+      }
+
+      const hashedPassword = await bcrypt.hash(validatedData.newPassword, 10);
+      validatedData.newPassword = hashedPassword;
+    }
+
     try {
       const result = await updateUser(id as string, validatedData);
 

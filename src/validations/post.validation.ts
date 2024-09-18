@@ -8,7 +8,7 @@ export const createPostValidation = (payload: Post) => {
     title: string().required("Title is required"),
     slug: string().required("Slug is required"),
     body: string().required("Body is required"),
-    published: boolean().optional().default(false),
+    published: boolean().required().default(false),
     categories: array().optional(),
   });
 
@@ -25,7 +25,7 @@ export const updatePostValidation = (payload: UpdatePost) => {
     title: string().optional(),
     slug: string().optional(),
     body: string().optional(),
-    published: boolean().optional(),
+    published: boolean().required(),
     categories: array().optional(),
   });
 

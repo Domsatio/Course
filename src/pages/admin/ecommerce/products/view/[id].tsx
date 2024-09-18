@@ -1,7 +1,7 @@
 import React, { use, useEffect } from "react";
 import Image from "next/image";
 import { NullProof } from "@/helpers/appFunction";
-import { LabelDetailPage, DetailPage } from "@/components/DetailPage";
+import { LabelDetailPage, DetailPage } from "@/components/admin/DetailPage";
 import { GetServerSideProps } from "next";
 import { productServices } from "@/services/serviceGenerator";
 import axios from "axios";

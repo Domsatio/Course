@@ -3,8 +3,8 @@ import { GetServerSideProps } from "next";
 import { courseServices } from "@/services/serviceGenerator";
 import { Course } from "@/types/course.type";
 import { NullProof } from "@/helpers/appFunction";
-import { LabelDetailPage } from "@/components/DetailPage";
-import EmblaCarousel from "@/components/EmblaCarousel";
+import { LabelDetailPage } from "@/components/admin/DetailPage";
+import EmblaCarousel from "@/components/admin/EmblaCarousel";
 import { EmblaOptionsType } from "embla-carousel";
 import { Button, Typography } from "@material-tailwind/react";
 

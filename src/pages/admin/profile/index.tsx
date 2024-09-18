@@ -1,7 +1,7 @@
 import Image from "next/image";
 import React from "react";
 import { Card } from "@material-tailwind/react";
-import FormInput from "@/components/FormInput";
+import FormInput from "@/components/admin/FormInput";
 import { FormInputList } from "./inputLayout";
 import { userServices } from "@/services/serviceGenerator";
 import { useSession } from "next-auth/react";

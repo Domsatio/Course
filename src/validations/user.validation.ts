@@ -4,9 +4,9 @@ import { object, string } from "yup";
 export const createUserValidation = (payload: User) => {
   const schema = object({
     id: string().required("ID is required"),
+    name: string().required("Name is required"),
     email: string().required("Email is required"),
     password: string().required("Password is required"),
-    name: string().required("Name is required"),
   });
 
   try {
@@ -19,9 +19,10 @@ export const createUserValidation = (payload: User) => {
 
 export const updateUserValidation = (payload: UpdateUser) => {
   const schema = object({
-    email: string().optional(),
-    password: string().optional(),
     name: string().optional(),
+    email: string().optional(),
+    currentPassword: string().optional(),
+    newPassword: string().optional(),
   });
 
   try {

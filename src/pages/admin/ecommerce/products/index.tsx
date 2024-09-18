@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
-import TableData from "@/components/TableData";
-import { TableActionProps } from "@/components/TableData";
+import TableData from "@/components/admin/TableData";
+import { TableActionProps } from "@/components/admin/TableData";
 import { PencilIcon } from "@heroicons/react/24/solid";
 import {
   Typography,

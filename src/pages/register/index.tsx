@@ -1,11 +1,10 @@
 "use client";
-import React, { useEffect } from "react";
+import React from "react";
 import { Input, Button, Typography } from "@material-tailwind/react";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { signIn } from "next-auth/react";
-import { useSession } from "next-auth/react";
 import { userServices } from "@/services/serviceGenerator";
 
 export default function Register() {
@@ -13,9 +12,7 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
   const { push } = useRouter();
-  const { data: session } = useSession();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,12 +42,6 @@ export default function Register() {
       alert(signInData.error);
     }
   };
-
-  useEffect(() => {
-    if (session?.user) {
-      push("/");
-    }
-  }, [session, push]);
 
   return (
     <section className="flex gap-4 justify-center min-h-screen items-center">

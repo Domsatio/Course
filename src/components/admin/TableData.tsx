@@ -23,9 +23,9 @@ import {
   DialogHeader,
   DialogFooter,
 } from "@material-tailwind/react";
-import TableSkeleton from "./Skeleton/TableSkeleton";
-import { TableDataProps } from "@/helpers/typeProps";
-import FormInput from "@/components/FormInput";
+import TableSkeleton from "../Skeleton/TableSkeleton";
+import { TableDataProps } from "@/types/table.type";
+import FormInput from "@/components/admin/FormInput";
 import { supabase } from "@/libs/supabase";
 import { getQueryParams } from "@/helpers/appFunction";
 import { paginationHook } from "@/hook/paginationHook";
@@ -320,8 +320,8 @@ export default function TableData({
                 action === "custom"
                   ? onClick
                   : action === "delete"
-                  ? () => setIsOpen(true)
-                  : () => router.push(router.pathname + `/${action}/` + id)
+                    ? () => setIsOpen(true)
+                    : () => router.push(router.pathname + `/${action}/` + id)
               }
             >
               {action === "custom" ? (

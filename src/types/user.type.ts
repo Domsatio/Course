@@ -1,14 +1,13 @@
 export type User = {
   id: string;
+  name: string;
   email: string;
   password: string;
-  name: string;
-  image?: string;
 };
 
 export type UpdateUser = {
-  email?: string;
-  password?: string;
   name?: string;
-  image?: string;
+  email?: string;
+  currentPassword?: string;
+  newPassword?: string;
 };

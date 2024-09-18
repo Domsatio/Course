@@ -1,5 +1,5 @@
 import * as Yup from "yup";
-import { InputListProps } from "@/helpers/typeProps";
+import { InputListProps } from "@/types/form.type";
 
 export const FormInputListRenderer = ({ id }: { id: string }) => {
   const FormInputList: InputListProps[] = [
@@ -9,7 +9,6 @@ export const FormInputListRenderer = ({ id }: { id: string }) => {
       label: "ID",
       type: "input",
       hide: true,
-      removeOnSubmit: true,
       validator: Yup.string().required("Id is required"),
       value: id,
     },
@@ -18,7 +17,6 @@ export const FormInputListRenderer = ({ id }: { id: string }) => {
       name: "title",
       label: "Title",
       type: "input",
-      removeOnSubmit: false,
       validator: Yup.string().required("Title is required"),
       value: "",
     },
@@ -27,7 +25,6 @@ export const FormInputListRenderer = ({ id }: { id: string }) => {
       name: "body",
       label: "Body",
       type: "textarea",
-      removeOnSubmit: false,
       validator: Yup.string().required("Body is required"),
       value: "",
     },
@@ -36,7 +33,6 @@ export const FormInputListRenderer = ({ id }: { id: string }) => {
       name: "categories",
       label: "Category",
       type: "multicheckbox",
-      removeOnSubmit: false,
       validator: Yup.array().required("Category is required"),
       value: [],
       option: {

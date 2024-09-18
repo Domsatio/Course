@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { FormikErrors, useFormik } from "formik";
 import * as Yup from "yup";
-import { InputListProps } from "@/helpers/typeProps";
+import { InputListProps } from "@/types/form.type";
 import { InputListRenderer } from "./InputTemplate";
 import {
   Button,
@@ -154,7 +154,7 @@ export default function FormInput({
     validateOnBlur: false,
   });
 
-  const handleChange = (e: any) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     formik.setFieldValue(name, value);
   };
@@ -294,10 +294,10 @@ export default function FormInput({
                               input.name
                             ] as FormikErrors<any>[][0])
                               ? (
-                                  formik.errors[
-                                    input.name
-                                  ] as FormikErrors<any>[]
-                                )[i]?.[component.name]?.toString()
+                                formik.errors[
+                                input.name
+                                ] as FormikErrors<any>[]
+                              )[i]?.[component.name]?.toString()
                               : ""
                           }
                         />

@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { InputListProps } from "@/helpers/typeProps";
+import { InputListProps } from "@/types/form.type";
 import * as Yup from "yup";
 import axios from "axios";
 import Image from "next/image";
@@ -220,7 +220,7 @@ export const InputListRenderer = ({
     <div className={`flex flex-col gap-2 mb-3 ${hide && "hidden"}`}>
       <label className="form-label">
         {label}
-        {isRequired && <span className="text-red-600">*</span>}
+        {isRequired && <span className="text-red-600"> *</span>}
       </label>
       {(type === "input" || type === "number" || type === "url") && (
         <Input
@@ -228,7 +228,7 @@ export const InputListRenderer = ({
           label={label}
           className={className}
           name={name}
-          value={value.toString()} // Convert the value to a string
+          value={value.toString()}
           onChange={onChange}
           disabled={disabled}
           inputMode={
@@ -253,13 +253,6 @@ export const InputListRenderer = ({
           }}
           disabled={disabled}
         >
-          {/* <Input
-          icon={<MagnifyingGlassIcon className="h-5 w-5" />}
-          onChange={(e) => {
-            setSearch(e.target.value)
-            setIsLoading(true)
-          }}
-        /> */}
           {!isLoading ? (
             data?.map((selectData: any, index) => (
               <Option
@@ -313,21 +306,21 @@ export const InputListRenderer = ({
                 onChange={
                   option?.api
                     ? (e) => {
-                        onChange?.({
-                          target: {
-                            name,
-                            value: e.target.checked ? data[option.id] : "",
-                          },
-                        });
-                      }
+                      onChange?.({
+                        target: {
+                          name,
+                          value: e.target.checked ? data[option.id] : "",
+                        },
+                      });
+                    }
                     : (e) => {
-                        onChange?.({
-                          target: {
-                            name,
-                            value: e.target.checked ? data.value : "",
-                          },
-                        });
-                      }
+                      onChange?.({
+                        target: {
+                          name,
+                          value: e.target.checked ? data.value : "",
+                        },
+                      });
+                    }
                 }
                 disabled={disabled}
                 crossOrigin={undefined}
@@ -393,7 +386,7 @@ export const InputListRenderer = ({
                       value.includes(option?.api ? item[option.id] : item.value)
                     }
                   />
-                  <Typography color="blue-gray" className="font-medium">
+                  <Typography color="blue-gray" className="font-medium capitalize">
                     {option?.api
                       ? param.map((key: string) => item[key]).join(" | ")
                       : item.title}
@@ -415,7 +408,7 @@ export const InputListRenderer = ({
           {value && (
             <FileViewer
               file={value.toLocaleString()}
-              isImage={type === "image" ? true : false} 
+              isImage={type === "image" ? true : false}
               isOpen={preview}
               handleOpen={setPreview}
             />
@@ -481,10 +474,10 @@ export const InputListRenderer = ({
             Array.isArray(value)
               ? new Date()
               : value
-              ? typeof value === "string" || typeof value === "number"
-                ? new Date(value)
-                : null
-              : new Date()
+                ? typeof value === "string" || typeof value === "number"
+                  ? new Date(value)
+                  : null
+                : new Date()
           }
           onChange={(date) => {
             onChange?.({ target: { name, value: date } });
@@ -524,7 +517,7 @@ export const InputListRenderer = ({
               },
             });
           }}
-          >
+        >
           Reset
         </Button>
       )}

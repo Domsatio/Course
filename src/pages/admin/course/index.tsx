@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import TableData from "@/components/TableData";
-import { TableActionProps } from "@/components/TableData";
+import TableData from "@/components/admin/TableData";
+import { TableActionProps } from "@/components/admin/TableData";
 import { NullProof, numberlistPagination } from "@/helpers/appFunction";
 import { Typography } from "@material-tailwind/react";
 import { courseServices } from "@/services/serviceGenerator";

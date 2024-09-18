@@ -6,7 +6,9 @@ export default function LayoutAdmin({ children }: { children: React.ReactNode })
   return (
     <div className="min-h-screen bg-gray-100">
       <NextTopLoader showSpinner={false} height={4} />
-      <AdminNavbar children={children} />
+      <AdminNavbar>
+        {children}
+      </AdminNavbar>
     </div>
   );
 }
