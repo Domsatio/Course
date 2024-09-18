@@ -1,9 +1,13 @@
 import React, {useState} from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/router";
-import { useRouter as topLoader } from 'nextjs-toploader/app';
+import { useRouter as topLoader } from "nextjs-toploader/app";
 import { routeList } from "@/helpers/routesList";
-import { MenuItemProps, ProfileMenuItemProps, RouteItemsProps } from "@/helpers/typeProps";
+import {
+  MenuItemProps,
+  ProfileMenuItemProps,
+  RouteItemsProps,
+} from "@/helpers/typeProps";
 import {
   Navbar,
   IconButton,
@@ -79,7 +83,7 @@ function ProfileMenu() {
         </Button>
       </MenuHandler>
       <MenuList className="p-1">
-        {profileMenuItems.map(({ label, icon, href }) => {
+        {profileMenuItems.map(({ label, icon, href }, key) => {
           const isLastItem = label === "Sign Out";
           return (
             <MenuItem
@@ -116,6 +120,7 @@ function ProfileMenu() {
           );
         })}
       </MenuList>
+        
     </Menu>
   );
 }
@@ -130,7 +135,7 @@ export default function AdminNavbar({ children }: { children: React.ReactNode })
   const onClickMenuItem = (href: string) => {
     closeDrawer();
     routeLoader.push(href);
-  }
+  };
 
   const RouteItems: React.FC<RouteItemsProps> = ({
     routeList = [],
@@ -139,69 +144,87 @@ export default function AdminNavbar({ children }: { children: React.ReactNode })
   }) => {
     const [open, setOpen] = React.useState("");
     const handleOpen = (value: React.SetStateAction<string>) => {
-      setOpen(open === value ? 'nothing' : value);
+      setOpen(open === value ? "nothing" : value);
     };
 
     return (
       <div className={`ps-${padding}`}>
-        {routeList?.map(({ isheader = false, href = '', label, icon, children }: MenuItemProps) => {
-          const childrenPadding = padding + 2;
-          const currentRoute = parentRoute + href;
-          if (isheader) {
-            return (
-              <Accordion
-                key={label}
-                open={open === label}
-                icon={
-                  <ChevronDownIcon
-                    strokeWidth={2.5}
-                    className={`mx-auto h-4 w-4 transition-transform ${open === label ? "rotate-180" : ""
+        {routeList?.map(
+          ({
+            isheader = false,
+            href = "",
+            label,
+            icon,
+            children,
+          }: MenuItemProps) => {
+            const childrenPadding = padding + 2;
+            const currentRoute = parentRoute + href;
+            if (isheader) {
+              return (
+                <Accordion
+                  key={label}
+                  open={open === label}
+                  icon={
+                    <ChevronDownIcon
+                      strokeWidth={2.5}
+                      className={`mx-auto h-4 w-4 transition-transform ${
+                        open === label ? "rotate-180" : ""
                       }`}
-                  />
-                }
-              >
-                <ListItem className="p-0" selected={open === label}>
-                  <AccordionHeader
-                    onClick={() => handleOpen(label)}
-                    className="border-b-0 p-3"
-                  >
-                    <ListItemPrefix>
-                      {React.createElement(icon, {
-                        className: "h-5 w-5",
-                      })}
-                    </ListItemPrefix>
-                    <Typography color="blue-gray" className="mr-auto font-normal">
-                      {label}
-                    </Typography>
-                  </AccordionHeader>
+                    />
+                  }
+                >
+                  <ListItem className="p-0" selected={open === label}>
+                    <AccordionHeader
+                      onClick={() => handleOpen(label)}
+                      className="border-b-0 p-3"
+                    >
+                      <ListItemPrefix>
+                        {React.createElement(icon, {
+                          className: "h-5 w-5",
+                        })}
+                      </ListItemPrefix>
+                      <Typography
+                        color="blue-gray"
+                        className="mr-auto font-normal"
+                      >
+                        {label}
+                      </Typography>
+                    </AccordionHeader>
+                  </ListItem>
+                  <AccordionBody className="py-1">
+                    <List className="p-0">
+                      <>
+                        <RouteItems
+                          routeList={children}
+                          padding={childrenPadding}
+                          parentRoute={currentRoute}
+                        />
+                      </>
+                    </List>
+                  </AccordionBody>
+                </Accordion>
+              );
+            } else {
+              return (
+                <ListItem
+                  key={label}
+                  onClick={() => onClickMenuItem(currentRoute ?? "")}
+                >
+                  {icon &&
+                    React.createElement(icon, {
+                      className: "h-5 w-5 mr-4",
+                    })}
+                  {label}
                 </ListItem>
-                <AccordionBody className="py-1">
-                  <List className="p-0">
-                    <>
-                      <RouteItems routeList={children} padding={childrenPadding} parentRoute={currentRoute} />
-                    </>
-                  </List>
-                </AccordionBody>
-              </Accordion>
-            );
-          } else {
-            return (
-              <ListItem key={label} onClick={() => onClickMenuItem(currentRoute ?? '')}>
-                {icon && React.createElement(icon, {
-                  className: "h-5 w-5 mr-4",
-                })}
-                {label}
-              </ListItem>
-            );
+              );
+            }
           }
-        })}
+        )}
       </div>
     );
   };
 
-  const SideItem = ({
-    className = "",
-  }: { className?: string }) => {
+  const SideItem = ({ className = "" }: { className?: string }) => {
     return (
       <Card
         color="transparent"
@@ -222,15 +245,20 @@ export default function AdminNavbar({ children }: { children: React.ReactNode })
           <RouteItems routeList={routeList} padding={0} parentRoute="/admin" />
         </List>
       </Card>
-    )
-  }
+    );
+  };
 
   return (
     <div className="flex relative">
       <SideItem className="w-64 min-h-screen hidden lg:block bg-white fixed" />
       <div className="w-full min-h-screen lg:pl-64">
         <Navbar className="rounded-none flex items-center justify-between mx-auto max-w-full px-4 py-2 lg:px-8 lg:py-4">
-          <IconButton variant="text" size="lg" onClick={openDrawer} className="lg:hidden">
+          <IconButton
+            variant="text"
+            size="lg"
+            onClick={openDrawer}
+            className="lg:hidden"
+          >
             {isDrawerOpen ? (
               <XMarkIcon className="h-8 w-8 stroke-2" />
             ) : (
@@ -242,9 +270,7 @@ export default function AdminNavbar({ children }: { children: React.ReactNode })
         <Drawer open={isDrawerOpen} onClose={closeDrawer} className="lg:hidden">
           <SideItem />
         </Drawer>
-        <div className="p-4 overflow-auto">
-          {children}
-        </div>
+        <div className="p-4 overflow-auto">{children}</div>
       </div>
     </div>
   );
