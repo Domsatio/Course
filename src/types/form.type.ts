@@ -15,7 +15,8 @@ export type FormInputTypeProps =
   | "image"
   | "multipleImage"
   | "multipleInput"
-  | "checkbox";
+  | "checkbox"
+  | "file"
 
 export type InputListOptionProps = {
   type: "select" | "multicheckbox" | "datalist" | "csv";
@@ -49,4 +50,6 @@ export type InputListProps = {
   error?: string;
   option?: InputListOptionProps;
   component?: InputListProps[];
+  useRiset?: boolean;
+  watch?: string;
 };

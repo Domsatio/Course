@@ -74,4 +74,20 @@ export const FilterInputList: InputListProps[] = [
       { title: "No", value: false },
     ],
   },
+  {
+    className: "",
+    name: "category",
+    label: "Category",
+    type: "select",
+    validator: Yup.string(),
+    value: "",
+    option: {
+      id: "name",
+      params: "name",
+      query: "skip=0&take=all&published=published",
+      type: "select",
+      api: "/api/category",
+    },
+    watch: "published",
+  }
 ];

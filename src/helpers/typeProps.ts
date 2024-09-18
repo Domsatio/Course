@@ -20,6 +20,7 @@ declare module "next-auth/jwt" {
 
 type FormInputTypeProps =
   | "input"
+  | "password"
   | "number"
   | "url"
   | "select"
@@ -39,7 +40,7 @@ type FormInputTypeProps =
   | "checkbox";
 
 interface InputListOptionProps {
-  type: "select" | "multicheckbox" | "datalist" | "csv";
+  type: "select" | "checkbox" | "multicheckbox" | "datalist" | "csv";
   params?: string;
   query?: string;
   id: string;
@@ -71,6 +72,7 @@ interface InputListProps {
   error?: string;
   option?: InputListOptionProps;
   component?: InputListProps[];
+  watch?: string;
 }
 
 interface MenuItemProps {

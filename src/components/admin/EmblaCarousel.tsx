@@ -97,7 +97,7 @@ const EmblaCarousel: React.FC<PropTypeUmblaCarousel> = (props) => {
   }, [slides, emblaMainApi, emblaThumbsApi])
 
   return (
-    <div className="max-w-[34rem] m-auto">
+    <div className="max-w-[40rem] m-auto">
       {SlideMemo}
     </div>
   );

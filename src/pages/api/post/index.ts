@@ -133,13 +133,13 @@ export default async function handlerPost(
       }
     } else {
       try {
-        const { skip, take, search= '', categoryId, category = "", published } = req.query;
+        const { skip, take, search= '',  category = "", published } = req.query;
         console.log("req.query", req.query);
         if (token?.role !== "ADMIN") {
           const { totalData, data } = await getPublishedPosts(
             Number(skip),
             Number(take),
-            categoryId as string
+            category as string
           );
           return res.status(200).send({
             status: true,

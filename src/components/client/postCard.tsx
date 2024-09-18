@@ -1,4 +1,3 @@
-import { GetPost } from "@/types/post.type";
 import {
   Card,
   CardHeader,
@@ -7,11 +6,30 @@ import {
 } from "@material-tailwind/react";
 import Image from "next/image";
 import Link from "next/link";
-import { FC, Fragment } from "react";
 
-const PostCard: FC<Omit<GetPost, 'id' | 'published' | 'createdAt'>> = ({ title, slug, body, categories }) => {
+type typeProps = {
+  title: string;
+  body?: string;
+  img?: string;
+  description?: string;
+  href: string;
+};
+
+type typeCard = {
+  props: typeProps
+  category?: React.ReactNode;
+};
+
+interface PostCardProps<T> {
+  props: T;
+  category: React.ReactNode;
+}
+
+// const PostCard: FC<Omit<GetPost, "id" | "published" | "createdAt"> > = ({ title, slug, body, categories}) => {
+const PostCard = ({props, category}: typeCard) => {
   return (
-    <Link href={`/club/${slug}`} className="group cursor-pointer">
+    // <Link href={`/club/${slug}`} className="group cursor-pointer">
+    <Link href={props.href||""} className="group cursor-pointer">
       <Card className="max-w-[357px] overflow-hidden shadow-none">
         <CardHeader
           floated={false}
@@ -29,7 +47,8 @@ const PostCard: FC<Omit<GetPost, 'id' | 'published' | 'createdAt'>> = ({ title, 
           />
         </CardHeader>
         <CardBody className="space-y-2 px-0 py-3">
-          <div className="flex flex-wrap gap-2">
+          {category}
+          {/* <div className="flex flex-wrap gap-2">
             {categories.map(({ category }, i) => (
               <Fragment key={category.id}>
                 <Typography
@@ -39,25 +58,27 @@ const PostCard: FC<Omit<GetPost, 'id' | 'published' | 'createdAt'>> = ({ title, 
                   {category.name}
                 </Typography>
                 {i !== categories.length - 1 && (
-                  <span className="text-[#c28833] group-hover:[#c28833]/80">•</span>
+                  <span className="text-[#c28833] group-hover:[#c28833]/80">
+                    •
+                  </span>
                 )}
               </Fragment>
             ))}
-          </div>
+          </div> */}
           <Typography
             variant="h5"
             color="black"
             className="group-hover:text-black/70"
           >
-            {title}
+            {props.title}
           </Typography>
           <p className="line-clamp-3 text-black hover:text-black/70 text-sm leading-6">
-            {body}
+            {props.body ? props.body : props.description}
           </p>
         </CardBody>
       </Card>
     </Link>
   );
-}
+};
 
-export default PostCard
+export default PostCard;
