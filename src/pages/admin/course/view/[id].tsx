@@ -13,7 +13,6 @@ import { Button } from "@material-tailwind/react";
 
 export default function view() {
   const OPTIONS: EmblaOptionsType = {};
-  const [imgUrl, setImgUrl] = useState("");
   const [videoUrl, setVideoUrl] = useState({
     video: "",
     thumbnailUrl: "",
@@ -23,9 +22,6 @@ export default function view() {
   const { data } = DataDetailPage({ service: courseServices });
 
   useEffect(() => {
-    if (data.image?.length > 0) {
-      setImgUrl(data.image[0].image);
-    }
     if (data.video?.length > 0) {
       setVideoUrl(data.video[0]);
     }

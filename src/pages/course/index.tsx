@@ -1,14 +1,12 @@
 import PostCard from "@/components/client/postCard";
-import { postServices } from "@/services/serviceGenerator";
-import { GetPost } from "@/types/post.type";
+import { courseServices } from "@/services/serviceGenerator";
+import { Course } from "@/types/course.type";
 import { Typography } from "@material-tailwind/react";
 import React, { useEffect, useState } from "react";
 import { paginationHook } from "@/hook/paginationHook";
 import { fetchDataHook } from "@/hook/fetchDataHook";
 import Pagination from "@/components/client/pagination";
 import CardSkeleton from "@/components/Skeleton/CardSkeleton";
-import { se } from "date-fns/locale";
-import { get } from "https";
 
 type Params = {
   skip: number;
@@ -19,9 +17,7 @@ type Params = {
 };
 
 const ClientCourses = () => {
-  const [posts, setPosts] = useState<
-    Omit<GetPost, "published" | "createdAt">[]
-  >([]);
+  const [posts, setPosts] = useState<Course[]>([]);
   const { isLoad, setIsLoad } = fetchDataHook();
   const { activePage, totalPages, take, setActivePage, handleSetTotalPages } =
     paginationHook({ initLimit: 12 });
@@ -33,7 +29,7 @@ const ClientCourses = () => {
     };
     const getData = async () => {
       setIsLoad(true);
-      await postServices
+      await courseServices
         .getItems(postParams)
         .then(({ data: { totalData, data } }) => {
           setPosts(data);
@@ -61,7 +57,7 @@ const ClientCourses = () => {
           ) : (
             <React.Fragment>
               {posts.map(
-                (data: Omit<GetPost, "published" | "createdAt">, index) => (
+                (data: Course, index) => (
                   <PostCard
                     key={index}
                     props={{ ...data, href: `/course/${data.id}` }}

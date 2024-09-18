@@ -10,7 +10,6 @@ import { fetchDataHook } from "@/hook/fetchDataHook";
 import Pagination from "@/components/client/pagination";
 import { getQueryParams } from "@/helpers/appFunction";
 import { useRouter } from "next/router";
-import { ca } from "date-fns/locale";
 
 type Params = {
   skip: number;
