@@ -12,34 +12,37 @@ import {
   Collapse,
 } from "@material-tailwind/react";
 import {
-  CubeTransparentIcon,
   UserCircleIcon,
-  CodeBracketSquareIcon,
   Cog6ToothIcon,
   PowerIcon,
   Bars2Icon,
+  ChevronDownIcon,
 } from "@heroicons/react/24/solid";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/router";
 
-const profileMenuItems = [
-  {
-    label: "My Profile",
-    icon: UserCircleIcon,
-    href: "/profile",
-  },
-  {
-    label: "Edit Profile",
-    icon: Cog6ToothIcon,
-    href: "/profile/edit",
-  },
-  {
-    label: "Sign Out",
-    icon: PowerIcon,
-    href: "#"
-  },
-];
+const profileMenuItems: {
+  label: string;
+  icon: React.ReactElement;
+  href: string;
+}[] = [
+    {
+      label: "My Account",
+      icon: <UserCircleIcon className="h-4 w-4" />,
+      href: "/account/orders",
+    },
+    {
+      label: "Edit Account",
+      icon: <Cog6ToothIcon className="h-4 w-4" />,
+      href: "/account/settings",
+    },
+    {
+      label: "Sign Out",
+      icon: <PowerIcon color="red" className="h-4 w-4" />,
+      href: "#"
+    },
+  ];
 
 function ProfileMenu() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -48,50 +51,46 @@ function ProfileMenu() {
 
   const closeMenu = () => setIsMenuOpen(false);
 
-  const profilePicture =
-    "https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80";
+  if (session?.user.role === "ADMIN") {
+    return (
+      <Button size="sm" variant="outlined" className="rounded-full">
+        <Link href="/admin/dashboard">
+          Admin Panel
+        </Link>
+      </Button>
+    )
+  }
 
   return (
     <Menu open={isMenuOpen} handler={setIsMenuOpen} placement="bottom-end">
       <MenuHandler>
-        <Button variant="text" className="rounded-full p-0.5">
-          <Avatar
-            variant="circular"
-            size="md"
-            alt={session?.user?.name}
-            className="border border-gray-900 "
-            loading="lazy"
-            src={session?.user?.image ? session?.user?.image : profilePicture}
-          />
+        <Button variant="outlined" className="flex items-center gap-3 py-2 px-4 rounded-full capitalize">
+          {session?.user.name}
+          <ChevronDownIcon className="h-3 w-3" />
         </Button>
       </MenuHandler>
       <MenuList className="p-1">
-        {profileMenuItems.map(({ label, icon, href }) => {
-          return (
-            <MenuItem
-              key={label}
-              onClick={closeMenu}
-              className={`flex items-center gap-2 rounded ${label === "Sign Out"
-                ? "hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
-                : ""
-                }`}
+        {profileMenuItems.map(({ label, icon, href }) =>
+          <MenuItem
+            key={label}
+            onClick={closeMenu}
+            className={`flex items-center gap-2 rounded ${label === "Sign Out"
+              ? "hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
+              : ""
+              }`}
+          >
+            {icon}
+            <Typography
+              as="span"
+              variant="small"
+              className="font-normal"
+              color={label === "Sign Out" ? "red" : "inherit"}
+              onClick={label === "Sign Out" ? () => signOut() : () => push(href)}
             >
-              {React.createElement(icon, {
-                className: `h-4 w-4 ${label === "Sign Out" ? "text-red-500" : ""}`,
-                strokeWidth: 2,
-              })}
-              <Typography
-                as="span"
-                variant="small"
-                className="font-normal"
-                color={label === "Sign Out" ? "red" : "inherit"}
-                onClick={label === "Sign Out" ? () => signOut() : () => push(href)}
-              >
-                {label}
-              </Typography>
-            </MenuItem>
-          );
-        })}
+              {label}
+            </Typography>
+          </MenuItem>
+        )}
       </MenuList>
     </Menu>
   );
@@ -101,27 +100,22 @@ const navListItems = [
   {
     label: "Home",
     href: "/",
-    icon: UserCircleIcon,
   },
   {
     label: "Club",
     href: "/club",
-    icon: UserCircleIcon,
   },
   {
     label: "Course",
     href: "/course",
-    icon: UserCircleIcon,
   },
   {
     label: "Store",
     href: "/store",
-    icon: CubeTransparentIcon,
   },
   {
     label: "About",
     href: "/about",
-    icon: CodeBracketSquareIcon,
   },
 ];
 

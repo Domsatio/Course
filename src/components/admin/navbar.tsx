@@ -2,7 +2,7 @@ import React from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useRouter as topLoader } from 'nextjs-toploader/app';
-import { routeList } from "@/helpers/routesList";
+import { adminRoutes } from "@/constants/admin/adminRoutes";
 import { MenuItemProps, ProfileMenuItemProps, RouteItemsProps } from "@/helpers/typeProps";
 import {
   Navbar,
@@ -219,7 +219,7 @@ export default function AdminNavbar({ children }: { children: React.ReactNode })
           </Typography>
         </div>
         <List className="relative">
-          <RouteItems routeList={routeList} padding={0} parentRoute="/admin" />
+          <RouteItems routeList={adminRoutes} padding={0} parentRoute="/admin" />
         </List>
       </Card>
     )

@@ -11,10 +11,17 @@ export const existingUser = async (email: string) => {
   });
 };
 
-export const updateUser = async (id: string, data: UpdateUser) => {
+export const updateUser = async (
+  id: string,
+  { name, email, newPassword }: UpdateUser
+) => {
   return prisma.user.update({
     where: { id },
-    data,
+    data: {
+      name: name,
+      email: email,
+      password: newPassword,
+    },
   });
 };
 

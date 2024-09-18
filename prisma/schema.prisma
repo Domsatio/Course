@@ -41,13 +41,13 @@ model User {
   email         String    @unique
   password      String?
   emailVerified DateTime?
-  image         String?
   name          String
   role          UserRole  @default(USER)
   accounts      Account[]
   orders        Order[]
   posts         Post[]
   sessions      Session[]
+  address       Address?
 }
 
 model VerificationToken {
@@ -58,12 +58,30 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+model Address {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  name      String
+  country   String
+  address   String
+  city      String
+  state     String
+  zip       String
+  phone     String
+  email     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
 model Product {
   id          String   @id @default(uuid())
   name        String
   description String
   price       Float
-  discount    Int?     @default(0)
+  discount    Float?     @default(0)
   image       String
   quantity    Int      @default(0)
   createdAt   DateTime @default(now())

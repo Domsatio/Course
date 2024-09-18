@@ -7,78 +7,15 @@ declare module "next-auth" {
       email: string;
       name: string;
       image: string;
-      role: string; // add any custom fields here
+      role: string;
     };
   }
 }
-
-// declare module "next-auth" {
-//   interface Session {
-//     accessToken?: string;
-//   }
-
-//   interface User {
-//     accessToken?: string;
-//   }
-// }
 
 declare module "next-auth/jwt" {
   interface JWT {
     accessToken?: string;
   }
-}
-
-type FormInputTypeProps =
-  | "input"
-  | "number"
-  | "url"
-  | "select"
-  | "checkbox"
-  | "multicheckbox"
-  | "datalist"
-  | "textarea"
-  | "label"
-  | "component"
-  | "csv"
-  | "date"
-  | "currency"
-  | "image"
-  | "multipleImage"
-  | "multipleInput"
-  | "checkbox";
-
-interface InputListOptionProps {
-  type: "select" | "multicheckbox" | "datalist" | "csv";
-  params?: string;
-  query?: string;
-  id: string;
-  api?: string;
-  data?: any[];
-  value?: string;
-  watch?: string;
-}
-
-interface InputListProps {
-  className?: string;
-  name: string;
-  label: string;
-  protect?: string[];
-  type: FormInputTypeProps;
-  hide?: boolean;
-  removeOnSubmit?: boolean;
-  disabled?: boolean;
-  lockData?: boolean;
-  validator: any;
-  value?: string | number | string[] | boolean;
-  valueID?: string
-  listData?: {
-    title: string;
-    value: number | string | boolean;
-  }[];
-  onChange?: (e: any) => void;
-  error?: string;
-  option?: InputListOptionProps;
-  component?: InputListProps[];
 }
 
 interface MenuItemProps {
@@ -116,32 +53,4 @@ interface FilterProps {
   error?: string;
 }
 
-interface TableDataProps {
-  title: string;
-  description?: string;
-  tableHeader: any;
-  onSuccess?: (e: any) => void;
-  isActionAdd?: boolean;
-  filter?: InputListProps[] | undefined;
-  service: any;
-  realtimeTable?: string;
-  // children?: React.ReactNode;
-}
-
-interface OrderProps {
-  id: string;
-  quantity: number;
-  total_price: number;
-  status?: string;
-  account?: string;
-  createdAt: string;
-}
-
-export type {
-  InputListProps,
-  OrderProps,
-  MenuItemProps,
-  ProfileMenuItemProps,
-  RouteItemsProps,
-  TableDataProps,
-};
+export type { MenuItemProps, ProfileMenuItemProps, RouteItemsProps };

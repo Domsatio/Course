@@ -25,8 +25,8 @@ import {
   DialogHeader,
   DialogFooter,
 } from "@material-tailwind/react";
-import { TableDataProps } from "@/helpers/typeProps";
-import FormInput from "@/components/FormInput";
+import { TableDataProps } from "@/types/table.type";
+import FormInput from "@/components/admin/FormInput";
 import { supabase } from "@/libs/supabase";
 
 export interface TableActionProps {
@@ -108,22 +108,23 @@ export default function TableData({
   };
 
   useEffect(() => {
-    if(realtimeTable) {
-    const channels = supabase
-      .channel("custom-all-channel")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: realtimeTable },
-        (payload) => {
-          console.log("Change received!", payload);
-          getDataTable();
-        }
-      )
-      .subscribe();
+    if (realtimeTable) {
+      const channels = supabase
+        .channel("custom-all-channel")
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: realtimeTable },
+          (payload) => {
+            console.log("Change received!", payload);
+            getDataTable();
+          }
+        )
+        .subscribe();
 
-    return () => {
-      channels.unsubscribe();
-    }}
+      return () => {
+        channels.unsubscribe();
+      }
+    }
   }, []);
 
   useEffect(() => {
@@ -144,7 +145,7 @@ export default function TableData({
       undefined,
       { shallow: true }
     );
-    if(debounceValue) {
+    if (debounceValue) {
       getDataTable();
     }
     // if (search) {
@@ -303,8 +304,8 @@ export default function TableData({
                 action === "custom"
                   ? onClick
                   : action === "delete"
-                  ? () => setIsOpen(true)
-                  : () => router.push(router.pathname + `/${action}/` + id)
+                    ? () => setIsOpen(true)
+                    : () => router.push(router.pathname + `/${action}/` + id)
               }
             >
               {action === "custom" ? (

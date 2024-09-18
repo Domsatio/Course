@@ -3,14 +3,18 @@ import { NextResponse } from "next/server";
 
 export default withAuth(async function middleware(req: NextRequestWithAuth) {
   const {
-    nextUrl,
+    nextUrl: { pathname },
     nextauth: { token },
   } = req;
 
-  const pathname = nextUrl.pathname.split("/")[1];
-
-  if (pathname === "admin") {
+  if (pathname.startsWith("/admin")) {
     if (!token || token?.role !== "ADMIN") {
+      return NextResponse.redirect(new URL("/sign-in", req.url));
+    }
+  }
+
+  if (pathname.startsWith("/account")) {
+    if (!token || token?.role !== "USER") {
       return NextResponse.redirect(new URL("/sign-in", req.url));
     }
   }
@@ -18,4 +22,4 @@ export default withAuth(async function middleware(req: NextRequestWithAuth) {
   return NextResponse.next();
 });
 
-export const config = { matcher: ["/admin/:path*"] };
+export const config = { matcher: ["/admin/:path*", "/account/:path*"] };

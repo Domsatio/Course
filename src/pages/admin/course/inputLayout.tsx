@@ -1,5 +1,5 @@
 import * as Yup from "yup";
-import { InputListProps } from "@/helpers/typeProps";
+import { InputListProps } from "@/types/form.type";
 
 export const FormInputList: InputListProps[] = [
   {
@@ -7,7 +7,7 @@ export const FormInputList: InputListProps[] = [
     name: "title",
     label: "Title",
     type: "input",
-    validator: Yup.string().required("Nama harus diisi"),
+    validator: Yup.string().required("Name is required"),
     value: "",
   },
   {
@@ -15,7 +15,7 @@ export const FormInputList: InputListProps[] = [
     name: "description",
     label: "Description",
     type: "textarea",
-    validator: Yup.string().required("Deskripsi harus diisi"),
+    validator: Yup.string().required("Description is required"),
     value: "",
   },
   {
@@ -23,7 +23,7 @@ export const FormInputList: InputListProps[] = [
     name: "image",
     label: "Image",
     type: "component",
-    validator: Yup.array().required("Nama harus diisi"),
+    validator: Yup.array().required("Image is required"),
     value: "",
     component: [
       {
@@ -31,7 +31,7 @@ export const FormInputList: InputListProps[] = [
         name: "image",
         label: "Image",
         type: "image",
-        validator: Yup.string().required("Gambar harus diisi"),
+        validator: Yup.string().required("Image description is required"),
         value: "",
       },
     ]
@@ -41,7 +41,7 @@ export const FormInputList: InputListProps[] = [
     name: "video",
     label: "Video",
     type: "component",
-    validator: Yup.array().required("Nama harus diisi"),
+    validator: Yup.array().required("Video is required"),
     value: "",
     component: [
       {
@@ -49,7 +49,7 @@ export const FormInputList: InputListProps[] = [
         name: "video",
         label: "Video",
         type: "input",
-        validator: Yup.string().required("Vidio harus diisi"),
+        validator: Yup.string().required("Video is required"),
         value: "",
       },
       {
@@ -57,7 +57,7 @@ export const FormInputList: InputListProps[] = [
         name: "description",
         label: "Video Description",
         type: "textarea",
-        validator: Yup.string().required("Vidio harus diisi"),
+        validator: Yup.string().required("Video description is required"),
         value: "",
       },
     ]
@@ -65,9 +65,9 @@ export const FormInputList: InputListProps[] = [
   {
     className: "",
     name: "published",
-    label: "Dipublikasikan",
+    label: "Published",
     type: "checkbox",
-    validator: Yup.string().required("Pilihan harus diisi"),
+    validator: Yup.string().required("Published is required"),
     value: "",
     listData: [
       { title: "Yes", value: true },

@@ -5,9 +5,9 @@ import {
   CurrencyDollarIcon,
   VideoCameraIcon,
 } from "@heroicons/react/24/solid";
-import { MenuItemProps } from "./typeProps";
+import { MenuItemProps } from "@/helpers/typeProps";
 
-export const routeList: MenuItemProps[] = [
+export const adminRoutes: MenuItemProps[] = [
   {
     isPage: true,
     label: "Dashboard",

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { FormikErrors, useFormik } from "formik";
 import * as Yup from "yup";
-import { InputListProps } from "@/helpers/typeProps";
+import { InputListProps } from "@/types/form.type";
 import { InputListRenderer } from "./InputTemplate";
 import {
   Button,
@@ -114,7 +114,7 @@ export default function FormInput({
     validateOnBlur: false,
   });
 
-  const handleChange = (e: any) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     formik.setFieldValue(name, value);
     if (isFilter) {
@@ -138,10 +138,10 @@ export default function FormInput({
       Object.keys(data).forEach((key) => {
         const input = inputList.filter((input) => input.name === key)
         const isOnInputList = input.length > 0
-        if(isOnInputList && !input[0].valueID) {
+        if (isOnInputList && !input[0].valueID) {
           formik.setFieldValue(key, data[key]);
-        }else if(isOnInputList && input[0].valueID) {
-          const ArrayValue = data[key].map((item:any) => {
+        } else if (isOnInputList && input[0].valueID) {
+          const ArrayValue = data[key].map((item: any) => {
             const value = input[0].valueID ? item[input[0].valueID] : null
             return value
           })

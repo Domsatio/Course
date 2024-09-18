@@ -1,7 +1,7 @@
 'use client';
 import React from "react";
 import { useRouter } from "next/router";
-import FormInput from "@/components/FormInput";
+import FormInput from "@/components/admin/FormInput";
 import { FormInputList } from "../inputLayout";
 import { categoryServices } from "@/services/serviceGenerator";
 

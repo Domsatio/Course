@@ -1,6 +1,6 @@
 'use client';
 import React from "react";
-import FormInput from "@/components/FormInput";
+import FormInput from "@/components/admin/FormInput";
 import { FormInputListRenderer } from "./inputLayout";
 import { useSession } from "next-auth/react";
 import { postServices } from "@/services/serviceGenerator";
