@@ -1,7 +1,5 @@
-"use client";
-import React, { memo, useMemo, useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { useDebounce } from "use-debounce";
 import Pagination from "./Pagination";
 import {
   MagnifyingGlassIcon,
@@ -25,10 +23,14 @@ import {
   DialogHeader,
   DialogFooter,
 } from "@material-tailwind/react";
+import TableSkeleton from "./Skeleton/TableSkeleton";
 import { TableDataProps } from "@/helpers/typeProps";
 import FormInput from "@/components/FormInput";
 import { supabase } from "@/libs/supabase";
 import { getQueryParams } from "@/helpers/appFunction";
+import { paginationHook } from "@/hook/paginationHook";
+import { fetchDataHook } from "@/hook/fetchDataHook";
+import { searchHook } from "@/hook/searchHook";
 
 export interface TableActionProps {
   action: "update" | "delete" | "view" | "custom";
@@ -49,31 +51,34 @@ export default function TableData({
   service,
   realtimeTable,
 }: TableDataProps) {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [debounceValue] = useDebounce(searchQuery, 1500);
-  const [isLoad, setIsLoad] = useState(false);
-  const [isError, setIsError] = useState(false);
+  const [modalFilter, setModalFilter] = useState<boolean>(false);
+  const { debounceValue, searchQuery, setSearchQuery} = searchHook({});
+  const { isLoad, isError, setIsLoad, setIsError } = fetchDataHook();
+  const {
+    activePage,
+    setActivePage,
+    totalPages,
+    take,
+    setTake,
+    totalData,
+    handleSetTotalPages,
+  } = paginationHook({});
   const router = useRouter();
-  const [activePage, setActivePage] = useState(1);
-  const [limit, setlimit] = useState<number>(5);
-  const [totalPages, setTotalPages] = useState(0);
-  const [totalData, setTotalData] = useState(0);
-  const [modalFilter, setModalFilter] = useState(false);
 
   const handleSetLimit = (item: number) => {
-    setlimit(item);
+    setTake(item);
     setActivePage(1);
   };
 
   const getDataTable = async () => {
-    const skip = activePage * limit - limit;
+    const skip = activePage * take - take;
     const params: {
       skip: number;
       take: number;
       search?: string;
     } = {
       skip: skip,
-      take: limit,
+      take,
       ...getQueryParams(),
     };
     if (searchQuery) {
@@ -85,16 +90,15 @@ export default function TableData({
       const {
         data: { totalData, data },
       } = await service.getItems(params);
-      onSuccess?.({ data: data, page: activePage, size: limit });
-      setTotalData(totalData);
-      setTotalPages(Math.ceil(totalData / limit));
+      onSuccess?.({ data: data, page: activePage, size: take });
+      handleSetTotalPages(totalData);
     } catch (error) {
       console.log("error", error);
       setIsError(true);
     } finally {
       setIsLoad(false);
     }
-  }
+  };
 
   const handleDelete = async (id: string) => {
     try {
@@ -110,14 +114,14 @@ export default function TableData({
   useEffect(() => {
     const params: any = getQueryParams();
     setSearchQuery(params.search || "");
-    if(!params.search || params.search === "") {
+    if (!params.search || params.search === "") {
       getDataTable();
     }
     // set realtime data on table
     if (realtimeTable) {
       const channels = supabase
-      .channel("custom-all-channel")
-      .on(
+        .channel("custom-all-channel")
+        .on(
           "postgres_changes",
           { event: "*", schema: "public", table: realtimeTable },
           (payload) => {
@@ -126,15 +130,15 @@ export default function TableData({
           }
         )
         .subscribe();
-        
-        return () => {
-          channels.unsubscribe();
-        };
-      }
-    }, []);
-  
+
+      return () => {
+        channels.unsubscribe();
+      };
+    }
+  }, []);
+
   // a function to handle set query parameter and get data table
-  const handleSetQuery = async() =>{
+  const handleSetQuery = async () => {
     const res = await router.push(
       {
         pathname: router.pathname,
@@ -146,11 +150,11 @@ export default function TableData({
     if (!isLoad && res) {
       getDataTable();
     }
-  }
-  
+  };
+
   useEffect(() => {
-    handleSetQuery()
-  }, [debounceValue, limit, activePage]);
+    handleSetQuery();
+  }, [debounceValue, take, activePage]);
 
   // table component
   const Table = (children: React.ReactNode) => (
@@ -206,7 +210,7 @@ export default function TableData({
                   className="h-6 w-6"
                   cursor="pointer"
                   onClick={() => setModalFilter(true)}
-                />                                    
+                />
                 <FormInput
                   inputList={filter}
                   method="GET"
@@ -260,12 +264,12 @@ export default function TableData({
         currentPage={activePage}
         totalData={totalData}
         totalPages={totalPages}
-        limit={limit}
+        limit={take}
         handleLimit={handleSetLimit}
         onPageChange={async (e: any) => {
           if (activePage !== e) {
-            setActivePage(e)
-          };
+            setActivePage(e);
+          }
         }}
       />
     </Card>
@@ -342,58 +346,4 @@ export default function TableData({
   };
 }
 
-const TableSkeleton = ({
-  long,
-  isLoading,
-  isError,
-  onRefresh,
-}: {
-  long: number;
-  isLoading: boolean;
-  isError: boolean;
-  onRefresh: () => void;
-}) => {
-  return (
-    <React.Fragment>
-      {[...Array(!isError ? 5 : 7)].map((_, i) => (
-        <tr key={i}>
-          {[...Array(long)].map((_, ii) => (
-            <td
-              key={ii}
-              className={`${isLoading && "border-y border-blue-gray-100"} p-4`}
-            >
-              {isLoading && (
-                <Typography
-                  variant="small"
-                  color="blue-gray"
-                  className="font-normal leading-none opacity-70"
-                >
-                  <Typography as="div" className="h-5 rounded-full bg-gray-300">
-                    {" "}
-                    &nbsp;
-                  </Typography>
-                </Typography>
-              )}
-              {!isLoading && i === 2 && (
-                <div className="absolute w-full text-center right-0 left-0 flex flex-col">
-                  <Typography>
-                    {isError ? "Something when wrong" : "Data is empty"}
-                  </Typography>
-                  {isError && (
-                    <Button
-                      color="blue"
-                      className="max-w-min self-center"
-                      onClick={onRefresh}
-                    >
-                      Refresh
-                    </Button>
-                  )}
-                </div>
-              )}
-            </td>
-          ))}
-        </tr>
-      ))}
-    </React.Fragment>
-  );
-};
+

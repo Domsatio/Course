@@ -11,6 +11,9 @@ export default function Create() {
       method="POST"
       service={categoryServices}
       title="Create Category"
+      onChange={(e) => {
+        console.log(e);
+      }}
     />
   );
 }

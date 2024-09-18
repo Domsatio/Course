@@ -15,6 +15,7 @@ import {
 } from "@material-tailwind/react";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { getQueryParams, convertStringToBoolean } from "@/helpers/appFunction";
+import { children } from "@material-tailwind/react/types/components/accordion";
 
 interface FormInputProps {
   title: string;
@@ -24,12 +25,17 @@ interface FormInputProps {
   service: any;
   onSubmit?: (data?: any) => void;
   onSuccess?: (data: any) => void;
+  onChange?: (e: any) => void;
   asModal?: {
     isOpen: boolean;
     handler: (value: boolean) => void | undefined;
   };
   isFilter?: boolean;
   redirect?: string;
+  isUseHeader?: boolean;
+  customCard?: (children: children) => JSX.Element;
+  isUseCencelButton?: boolean;
+  customButtonSubmit?: JSX.Element;
 }
 
 export const FormInputHooks = () => {
@@ -45,9 +51,14 @@ export default function FormInput({
   id = "",
   onSubmit,
   onSuccess,
+  onChange,
   asModal,
   isFilter = false,
   redirect,
+  isUseHeader = true,
+  customCard,
+  isUseCencelButton = true,
+  customButtonSubmit,
 }: FormInputProps) {
   const { disabled } = FormInputHooks();
   const router = useRouter();
@@ -82,23 +93,30 @@ export default function FormInput({
     initialValues,
     validationSchema,
     onSubmit: async (values) => {
+      let finalValues = values;
+      const listInputRemoveOnSubmit = inputList.filter(
+        (input) => input.removeOnSubmit === true
+      );
+      listInputRemoveOnSubmit.forEach((input) => {
+        delete finalValues[input.name];
+      });
       try {
         let response;
         if (method === "POST") {
-          response = await service.addItem(values);
+          response = await service.addItem(finalValues);
         } else if (method === "PUT") {
-          response = await service.updateItem(values, { id });
+          response = await service.updateItem(finalValues, { id });
         } else if (isFilter && !onSubmit) {
           response = await service.getItems({ ...getQueryParams() });
         } else {
-          // filter values ​​that are not empty
-          const filterQuery = Object.keys(values).reduce(
+          // filter finalValues ​​that are not empty
+          const filterQuery = Object.keys(finalValues).reduce(
             (acc: Record<string, any>, key) => {
-              if (values[key] !== "") {
-                if (Array.isArray(values[key])) {
-                  acc[key] = values[key].join(",");
+              if (finalValues[key] !== "") {
+                if (Array.isArray(finalValues[key])) {
+                  acc[key] = finalValues[key].join(",");
                 } else {
-                  acc[key] = values[key];
+                  acc[key] = finalValues[key];
                 }
               }
               return acc;
@@ -142,7 +160,7 @@ export default function FormInput({
   };
 
   useEffect(() => {
-    console.log("formik.values", formik.values);
+    onChange?.(formik);
   }, [formik.values]);
 
   // a function to take the data to be edited if method is PUT
@@ -182,11 +200,10 @@ export default function FormInput({
         const isValueBoolean =
           getQueryParams()[key] === "true" || getQueryParams()[key] === "false";
         const isValueArray = input?.validator.type === "array" || false;
-          console.log(input);
+        console.log(input);
         if (isValueArray) {
-          formik.setFieldValue(key, getQueryParams()[key].split(','));
-        } else
-        if (input) {
+          formik.setFieldValue(key, getQueryParams()[key].split(","));
+        } else if (input) {
           formik.setFieldValue(
             key,
             isValueBoolean
@@ -202,9 +219,50 @@ export default function FormInput({
     formik.resetForm();
   };
 
+  const parseQueryString = (queryString: string) => {
+    return queryString
+      .split("&")
+      .map((param) => param.split("="))
+      .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
+  };
+
+  const buildQueryString = (queryObj: Record<string, any>) => {
+    return Object.entries(queryObj)
+      .map(([key, value]) => `${key}=${value}`)
+      .join("&");
+  };
+
   const generateInputForm = () => (
     <React.Fragment>
       {inputList.map((input: InputListProps, index: number) => {
+        const listWatchInput = input.watch ? input.watch.split(",") : [];
+        const checkIsDisabled =
+          listWatchInput.length > 0
+            ? listWatchInput.some(
+                (item) =>
+                  formik.values[item] === "" ||
+                  (Array.isArray(formik.values[item]) &&
+                    formik.values[item].length === 0)
+              )
+            : false;
+        let option_query = input?.option?.query ? input.option.query : null;
+        if (option_query && listWatchInput.length > 0) {
+          const updateQueryString = (
+            array: any[],
+            queryString: string,
+            formikValues: Record<string, any>
+          ) => {
+            let queryObj = parseQueryString(queryString);
+            array.forEach((key) => {
+              if (queryObj[key as keyof typeof queryObj]) {
+                (queryObj as Record<string, any>)[key] = formikValues[key];
+              }
+            });
+            return buildQueryString(queryObj);
+          }
+          option_query = updateQueryString(listWatchInput, option_query, formik.values);
+        }
+        
         if (input.type === "component") {
           return (
             <div key={index} className="flex flex-col">
@@ -291,7 +349,18 @@ export default function FormInput({
           <InputListRenderer
             key={index}
             {...input}
+            disabled={input.watch ? checkIsDisabled : input.disabled || false}
             value={formik.values[input.name]}
+            option={
+              option_query
+                ? {
+                    ...input.option,
+                    query: option_query,
+                    type: input.option?.type || "select", 
+                    id: input.option?.id || "",
+                  }
+                : input.option
+            }
             onChange={(data: any) => {
               handleChange(data);
             }}
@@ -300,23 +369,34 @@ export default function FormInput({
         );
       })}
       <div className="flex justify-end items-center gap-2">
-        <Button
-          variant="text"
-          color="red"
-          onClick={() => {
-            if (asModal) {
-              asModal.handler(false);
-            } else {
-              router.back();
-              resetForm();
-            }
-          }}
-        >
-          Cancel
-        </Button>
-        <Button type="submit" className="btn" color="green" disabled={disabled}>
-          {method === "PUT" ? "Update" : isFilter ? "Apply" : "Create"}
-        </Button>
+        {isUseCencelButton && (
+          <Button
+            variant="text"
+            color="red"
+            onClick={() => {
+              if (asModal) {
+                asModal.handler(false);
+              } else {
+                router.back();
+                resetForm();
+              }
+            }}
+          >
+            Cancel
+          </Button>
+        )}
+        {customButtonSubmit ? (
+          customButtonSubmit
+        ) : (
+          <Button
+            type="submit"
+            className="btn"
+            color="green"
+            disabled={disabled}
+          >
+            {method === "PUT" ? "Update" : isFilter ? "Apply" : "Create"}
+          </Button>
+        )}
       </div>
     </React.Fragment>
   );
@@ -324,22 +404,38 @@ export default function FormInput({
   if (asModal) {
     return (
       <Dialog open={asModal.isOpen} handler={() => asModal.handler(true)}>
-        <DialogHeader color="blue">{title}</DialogHeader>
+        {isUseHeader && <DialogHeader color="blue">{title}</DialogHeader>}
         <DialogBody>
-          <form onSubmit={formik.handleSubmit}>{generateInputForm()}</form>
+          {customCard ? (
+            customCard(
+              <form onSubmit={formik.handleSubmit}>{generateInputForm()}</form>
+            )
+          ) : (
+            <form onSubmit={formik.handleSubmit}>{generateInputForm()}</form>
+          )}
         </DialogBody>
       </Dialog>
     );
   }
 
   return (
-    <Card className="mt-6">
-      <CardHeader color="blue" className="p-5">
-        <h1>{title}</h1>
-      </CardHeader>
-      <CardBody>
-        <form onSubmit={formik.handleSubmit}>{generateInputForm()}</form>
-      </CardBody>
-    </Card>
+    <React.Fragment>
+      {customCard ? (
+        customCard(
+          <form onSubmit={formik.handleSubmit}>{generateInputForm()}</form>
+        )
+      ) : (
+        <Card className="mt-6">
+          {isUseHeader && (
+            <CardHeader color="blue" className="p-5">
+              <h1>{title}</h1>
+            </CardHeader>
+          )}
+          <CardBody>
+            <form onSubmit={formik.handleSubmit}>{generateInputForm()}</form>
+          </CardBody>
+        </Card>
+      )}
+    </React.Fragment>
   );
 }

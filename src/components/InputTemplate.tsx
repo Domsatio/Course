@@ -34,6 +34,7 @@ import { format, set } from "date-fns";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FormInputHooks } from "./FormInput";
+import { get } from "http";
 
 type FileViewerProps = {
   file: string;
@@ -125,7 +126,7 @@ export const InputListRenderer = ({
   };
 
   useEffect(() => {
-    if (option?.api) {
+    if (option?.api && (option?.type === "multicheckbox" || option?.type === "checkbox")) {
       getDataApi();
     } else {
       setData(listData);
@@ -240,6 +241,7 @@ export const InputListRenderer = ({
           className={className}
           label={`Choose ${label}`}
           name={name}
+          onClick={() => getDataApi()}
           onChange={(e) => {
             const data = {
               target: {

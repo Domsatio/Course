@@ -1,10 +1,15 @@
-import PostCard from '@/components/client/PostCard'
-import { categoryServices, postServices } from '@/services/serviceGenerator'
-import { GetCategory } from '@/types/category.type'
-import { GetPost } from '@/types/post.type'
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/solid'
-import { Button, IconButton, Typography } from '@material-tailwind/react'
-import React, { useEffect, useState } from 'react'
+import PostCard from "@/components/client/postCard";
+import { categoryServices, postServices } from "@/services/serviceGenerator";
+import { GetCategory } from "@/types/category.type";
+import { GetPost } from "@/types/post.type";
+import { Button, Typography } from "@material-tailwind/react";
+import React, { useEffect, useState } from "react";
+import CardSkeleton from "@/components/Skeleton/CardSkeleton";
+import { paginationHook } from "@/hook/paginationHook";
+import { fetchDataHook } from "@/hook/fetchDataHook";
+import Pagination from "@/components/client/pagination";
+import { getQueryParams } from "@/helpers/appFunction";
+import { useRouter } from "next/router";
 
 type Params = {
   skip: number;
@@ -12,41 +17,70 @@ type Params = {
   search?: string;
   filter?: any;
   where?: string;
-}
+};
 
 const ClientView = () => {
-  const [posts, setPosts] = useState<Omit<GetPost, 'published' | 'createdAt'>[]>([])
-  const [categories, setCategories] = useState<Omit<GetCategory, 'posts'>[]>([])
-  const [activeCategory, setActiveCategory] = useState<string | null>(null)
-  const [activePage, setActivePage] = useState<number>(1)
-  const [totalPages, setTotalPages] = useState<number>(1)
+  const [posts, setPosts] = useState<
+    Omit<GetPost, "published" | "createdAt">[]
+  >([]);
+  const [categories, setCategories] = useState<Omit<GetCategory, "posts">[]>(
+    []
+  );
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const { isLoad, setIsLoad } = fetchDataHook();
+  const { activePage, totalPages, take, setActivePage, handleSetTotalPages } =
+    paginationHook({ initLimit: 12 });
+  const router = useRouter();
+
+  const getDataPosts = async () => {
+    const postParams: Params = {
+      skip: activePage * take - take,
+      take,
+      where: getQueryParams()["category"]
+        ? getQueryParams()["category"]
+        : undefined,
+    };
+    setIsLoad(true);
+    await postServices
+      .getItems(postParams)
+      .then(({ data: { totalData, data } }) => {
+        setPosts(data);
+        handleSetTotalPages(totalData);
+      });
+    setIsLoad(false);
+  };
+
+  const handleSetActiveCategory = async (category: string) => {
+    await router.replace({
+      pathname: "/club",
+      query: { category: category },
+    });
+    setActiveCategory(category);
+    getDataPosts();
+  };
 
   useEffect(() => {
-    const postParams: Params = {
-      skip: activePage * 12 - 12,
-      take: 12,
-      where: activeCategory !== null ? activeCategory : undefined,
-    }
+    getDataPosts();
+  }, [activePage]);
 
+  useEffect(() => {
     const categoryParams: Params = {
       skip: 0,
-      take: 'all',
+      take: "all",
+    };
+    if (activeCategory === null) {
+      setActiveCategory(getQueryParams()["category"] || "");
     }
-
-    postServices.getItems(postParams).then(({ data: { totalData, data } }) => {
-      setPosts(data)
-      setTotalPages(Math.ceil(totalData / 12))
-    })
-
+    getDataPosts();
     categoryServices.getItems(categoryParams).then(({ data: { data } }) => {
-      setCategories(data)
-    })
-  }, [activePage, activeCategory])
+      setCategories(data);
+    });
+  }, []);
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between pt-24">
       <section className="flex container flex-col justify-center flex-wrap gap-10 pt-10 pb-32 px-24">
-        <Typography variant="h2" color="black" placeholder='Blog Page'>
+        <Typography variant="h2" color="black" placeholder="Blog Page">
           Blog Page
         </Typography>
 
@@ -54,55 +88,61 @@ const ClientView = () => {
           {categories.map(({ id, name }) => (
             <Button
               key={id}
-              size='sm'
-              variant={`${activeCategory === id ? 'filled' : 'outlined'}`}
+              size="sm"
+              variant={`${activeCategory === name ? "filled" : "outlined"}`}
               className="rounded-full cursor-pointer capitalize border-gray-400"
-              onClick={() => setActiveCategory(activeCategory === id ? null : id)}
+              onClick={() => handleSetActiveCategory(name)}
             >
               {name}
             </Button>
           ))}
         </div>
 
-        <div className="flex justify-center flex-wrap gap-6">
-          {posts.map(({ id, title, slug, body, categories }) => (
-            <PostCard key={id} title={title} slug={slug} body={body} categories={categories} />
-          ))}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {isLoad ? (
+            <React.Fragment>
+              {Array.from({ length: 6 }, (_, i) => (
+                <CardSkeleton key={i} />
+              ))}
+            </React.Fragment>
+          ) : (
+            <React.Fragment>
+              {posts.map(
+                (data: Omit<GetPost, "published" | "createdAt">, index) => (
+                  <PostCard
+                    key={index}
+                    props={{ ...data, href: `/club/${data.slug}` }}
+                    category={
+                      <div className="flex flex-wrap gap-2">
+                        {data.categories.map(({ category }, i) => (
+                          <Typography
+                            key={i}
+                            variant="small"
+                            className="text-[#c28833] flex capitalize group-hover:text-[#c28833]/80"
+                          >
+                            {category.name}
+                          </Typography>
+                        ))}
+                      </div>
+                    }
+                    // title={title}
+                    // slug={slug}
+                    // body={body}
+                    // categories={categories}
+                  />
+                )
+              )}
+            </React.Fragment>
+          )}
         </div>
-
-        <div className='flex justify-center items-center gap-20'>
-          <IconButton
-            className='rounded-full border-gray-300 hover:border-black'
-            variant='outlined'
-            disabled={activePage === 1}
-            onClick={() => setActivePage(activePage - 1)}
-          >
-            <ChevronLeftIcon className="h-5 w-5 text-black" />
-          </IconButton>
-          <div className='flex gap-3'>
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-              <IconButton
-                key={page}
-                className='rounded-full border-gray-300 hover:border-black'
-                variant={`${activePage === page ? 'filled' : 'outlined'}`}
-                onClick={() => setActivePage(page)}
-              >
-                {page}
-              </IconButton>
-            ))}
-          </div>
-          <IconButton
-            className='rounded-full border-gray-300 hover:border-black'
-            variant='outlined'
-            disabled={activePage === totalPages}
-            onClick={() => setActivePage(activePage + 1)}
-          >
-            <ChevronRightIcon className="h-5 w-5 text-black" />
-          </IconButton>
-        </div>
+        <Pagination
+          activePage={activePage}
+          setActivePage={setActivePage}
+          totalPages={totalPages}
+        />
       </section>
     </main>
-  )
-}
+  );
+};
 
-export default ClientView
+export default ClientView;
