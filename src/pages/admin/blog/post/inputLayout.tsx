@@ -64,64 +64,34 @@ export const FormInputListRenderer = ({ id }: { id: string }) => {
   ];
   return FormInputList;
 }
-export const FormInputList: InputListProps[] = [
-  {
-    className: "",
-    name: "id",
-    label: "ID",
-    type: "input",
-    hide: true,
-    removeOnSubmit: true,
-    validator: Yup.string().required("Id is required"),
-    value: "",
-  },
-  {
-    className: "",
-    name: "title",
-    label: "Title",
-    type: "input",
-    removeOnSubmit: false,
-    validator: Yup.string().required("Title is required"),
-    value: "",
-  },
-  {
-    className: "",
-    name: "body",
-    label: "Body",
-    type: "textarea",
-    removeOnSubmit: false,
-    validator: Yup.string().required("Body is required"),
-    value: "",
-  },
-  {
-    className: "input-text",
-    name: "categories",
-    label: "Category",
-    type: "multicheckbox",
-    removeOnSubmit: false,
-    validator: Yup.array().required("Category is required"),
-    value: "",
-    valueID: "categoryId",
-    option: {
-      id: "id",
-      type: "multicheckbox",
-      query: "skip=0&take=30",
-      params: "name",
-      api: "/api/category",
-      data: [],
-    }
-  },
+export const FilterInputList: InputListProps[] = [
   {
     className: "",
     name: "published",
-    label: "Published",
+    label: "Dipublikasikan",
     type: "checkbox",
-    removeOnSubmit: false,
-    validator: Yup.boolean().required("Published is required"),
-    value: false,
+    validator: Yup.string(),
+    value: "",
+    useRiset: true,
     listData: [
       { title: "Yes", value: true },
       { title: "No", value: false },
     ],
-  }
+  },
+  {
+    className: "",
+    name: "category",
+    label: "Category",
+    type: "multicheckbox",
+    validator: Yup.array().required("Category is required"),
+    useRiset: true,
+    value: "",
+    option: {
+      id: "name",
+      params: "name",
+      query: "skip=0&take=all",
+      type: "select",
+      api: "/api/category",
+    }
+  },
 ];

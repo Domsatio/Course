@@ -28,6 +28,7 @@ import {
 import { TableDataProps } from "@/types/table.type";
 import FormInput from "@/components/admin/FormInput";
 import { supabase } from "@/libs/supabase";
+import { getQueryParams } from "@/helpers/appFunction";
 
 export interface TableActionProps {
   action: "update" | "delete" | "view" | "custom";
@@ -46,12 +47,12 @@ export default function TableData({
   isActionAdd = true,
   filter,
   service,
-  realtimeTable
+  realtimeTable,
 }: TableDataProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [debounceValue] = useDebounce(searchQuery, 1500);
-  const [data, setData] = useState<any[]>([]);
   const [isLoad, setIsLoad] = useState(false);
+  const [isError, setIsError] = useState(false);
   const router = useRouter();
   const [activePage, setActivePage] = useState(1);
   const [limit, setlimit] = useState<number>(5);
@@ -59,7 +60,7 @@ export default function TableData({
   const [totalData, setTotalData] = useState(0);
   const [modalFilter, setModalFilter] = useState(false);
 
-  const handleSetLImit = (item: number) => {
+  const handleSetLimit = (item: number) => {
     setlimit(item);
     setActivePage(1);
   };
@@ -70,31 +71,30 @@ export default function TableData({
       skip: number;
       take: number;
       search?: string;
-      filter?: any;
     } = {
       skip: skip,
       take: limit,
+      ...getQueryParams(),
     };
     if (searchQuery) {
       params.search = debounceValue;
     }
+    setIsLoad(true);
+    setIsError(false);
     try {
-      setIsLoad(true);
       const {
         data: { totalData, data },
       } = await service.getItems(params);
-      if (onSuccess) {
-        onSuccess({ data: data, page: activePage, size: limit });
-      }
+      onSuccess?.({ data: data, page: activePage, size: limit });
       setTotalData(totalData);
       setTotalPages(Math.ceil(totalData / limit));
-      setData(data);
     } catch (error) {
       console.log("error", error);
+      setIsError(true);
     } finally {
       setIsLoad(false);
     }
-  };
+  }
 
   const handleDelete = async (id: string) => {
     try {
@@ -108,6 +108,12 @@ export default function TableData({
   };
 
   useEffect(() => {
+    const params: any = getQueryParams();
+    setSearchQuery(params.search || "");
+    if (!params.search || params.search === "") {
+      getDataTable();
+    }
+    // set realtime data on table
     if (realtimeTable) {
       const channels = supabase
         .channel("custom-all-channel")
@@ -123,39 +129,30 @@ export default function TableData({
 
       return () => {
         channels.unsubscribe();
-      }
+      };
     }
   }, []);
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const urlParams = new URLSearchParams(window.location.search);
-      const params = Object.fromEntries(urlParams.entries());
-      setSearchQuery(params.search || "");
-    }
-    getDataTable();
-  }, [limit, activePage]);
-
-  useEffect(() => {
-    router.push(
+  // a function to handle set query parameter and get data table
+  const handleSetQuery = async () => {
+    const res = await router.push(
       {
         pathname: router.pathname,
-        query: { search: debounceValue.toLowerCase() },
+        query: { search: searchQuery.toLowerCase() },
       },
       undefined,
       { shallow: true }
     );
-    if (debounceValue) {
+    if (!isLoad && res) {
       getDataTable();
     }
-    // if (search) {
-    //   const filterData = data.filter((item) => {
-    //     return item.name.toLowerCase().includes(search.toLowerCase());
-    //   });
-    //   setData(filterData);
-    // }
-  }, [debounceValue]);
+  }
 
+  useEffect(() => {
+    handleSetQuery()
+  }, [debounceValue, limit, activePage]);
+
+  // table component
   const Table = (children: React.ReactNode) => (
     <Card className="h-full w-full overflow-auto">
       <CardHeader floated={false} shadow={false} className="rounded-none">
@@ -187,7 +184,9 @@ export default function TableData({
                 <Button
                   className="flex bg-red-600 items-center gap-3 !absolute right-1 top-1 rounded"
                   size="sm"
-                  onClick={() => setSearchQuery("")}
+                  onClick={() => {
+                    setSearchQuery("");
+                  }}
                 >
                   <XMarkIcon className="h-4 w-4" />
                 </Button>
@@ -210,14 +209,15 @@ export default function TableData({
                 />
                 <FormInput
                   inputList={filter}
-                  method="POST"
+                  method="GET"
                   service={service}
                   title="Filter"
                   asModal={{
                     isOpen: modalFilter,
                     handler: setModalFilter,
                   }}
-                  onSuccess={(data) => setData(data)}
+                  onSubmit={(data) => getDataTable()}
+                  onSuccess={(data) => onSuccess?.(data)}
                   isFilter={true}
                 />
               </React.Fragment>
@@ -242,8 +242,17 @@ export default function TableData({
               ))}
             </tr>
           </thead>
-          <tbody className="">
-            {isLoad ? <TableSkeleton long={tableHeader.length} /> : children}
+          <tbody className="relative">
+            {isLoad || isError || totalData === 0 ? (
+              <TableSkeleton
+                long={tableHeader.length}
+                isLoading={isLoad}
+                isError={isError}
+                onRefresh={getDataTable}
+              />
+            ) : (
+              children
+            )}
           </tbody>
         </table>
       </CardBody>
@@ -252,14 +261,17 @@ export default function TableData({
         totalData={totalData}
         totalPages={totalPages}
         limit={limit}
-        handleLimit={handleSetLImit}
-        onPageChange={(e: any) => {
-          if (activePage !== e) setActivePage(e);
+        handleLimit={handleSetLimit}
+        onPageChange={async (e: any) => {
+          if (activePage !== e) {
+            setActivePage(e)
+          };
         }}
       />
     </Card>
   );
 
+  // table action component
   const TableAction = ({
     data,
     id,
@@ -330,23 +342,54 @@ export default function TableData({
   };
 }
 
-const TableSkeleton = ({ long }: { long: number }) => {
+const TableSkeleton = ({
+  long,
+  isLoading,
+  isError,
+  onRefresh,
+}: {
+  long: number;
+  isLoading: boolean;
+  isError: boolean;
+  onRefresh: () => void;
+}) => {
   return (
     <React.Fragment>
-      {[...Array(5)].map((_, index) => (
-        <tr key={index}>
-          {[...Array(long)].map((_, index) => (
-            <td key={index} className="border-y border-blue-gray-100 p-4">
-              <Typography
-                variant="small"
-                color="blue-gray"
-                className="font-normal leading-none opacity-70"
-              >
-                <Typography as="div" className="h-5 rounded-full bg-gray-300">
-                  {" "}
-                  &nbsp;
+      {[...Array(!isError ? 5 : 7)].map((_, i) => (
+        <tr key={i}>
+          {[...Array(long)].map((_, ii) => (
+            <td
+              key={ii}
+              className={`${isLoading && "border-y border-blue-gray-100"} p-4`}
+            >
+              {isLoading && (
+                <Typography
+                  variant="small"
+                  color="blue-gray"
+                  className="font-normal leading-none opacity-70"
+                >
+                  <Typography as="div" className="h-5 rounded-full bg-gray-300">
+                    {" "}
+                    &nbsp;
+                  </Typography>
                 </Typography>
-              </Typography>
+              )}
+              {!isLoading && i === 2 && (
+                <div className="absolute w-full text-center right-0 left-0 flex flex-col">
+                  <Typography>
+                    {isError ? "Something when wrong" : "Data is empty"}
+                  </Typography>
+                  {isError && (
+                    <Button
+                      color="blue"
+                      className="max-w-min self-center"
+                      onClick={onRefresh}
+                    >
+                      Refresh
+                    </Button>
+                  )}
+                </div>
+              )}
             </td>
           ))}
         </tr>

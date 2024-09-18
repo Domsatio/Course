@@ -33,6 +33,7 @@ export default function Index() {
     title: "Products",
     description: "List of products",
     tableHeader: TABLE_HEAD,
+    realtimeTable: "Product",
     onSuccess: (data: GetProduct[]) => setData(data),
     service: productServices,
   });

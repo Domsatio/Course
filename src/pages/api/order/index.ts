@@ -13,7 +13,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { getToken } from "next-auth/jwt";
 import { v4 as uuidv4 } from "uuid";
 
-export default async function handler(
+export default async function handlerOrder(
   req: NextApiRequest,
   res: NextApiResponse
 ) {

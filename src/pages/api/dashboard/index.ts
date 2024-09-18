@@ -4,7 +4,7 @@ import { getDashboard } from "@/controllers/dashboard.controller";
 // import { cookies } from 'next/headers';
 // import {getCookies} from 'cookies-next'
 
-export default async function handler(
+export default async function handlerDashboard(
   req: NextApiRequest,
   res: NextApiResponse
 ) {

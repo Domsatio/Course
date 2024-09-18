@@ -13,7 +13,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { getToken } from "next-auth/jwt";
 import { v4 as uuidv4 } from "uuid";
 
-export default async function handler(
+export default async function handlerCourse(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
@@ -124,10 +124,12 @@ export default async function handler(
       }
     } else {
       try {
-        const { skip, take } = req.query;
+        const { skip, take, search = '', published } = req.query;
         const { totalData, data } = await getCourses(
           Number(skip),
-          Number(take)
+          Number(take),
+          search as string,
+          published as any
         );
         console.info("Get courses success");
         return res.status(200).send({

@@ -1,15 +1,17 @@
-import React from "react";
+import React, { use, useEffect } from "react";
 import Image from "next/image";
 import { NullProof } from "@/helpers/appFunction";
 import { LabelDetailPage, DetailPage } from "@/components/admin/DetailPage";
 import { GetServerSideProps } from "next";
 import { productServices } from "@/services/serviceGenerator";
+import axios from "axios";
+import { Button } from "@material-tailwind/react";
 
 type PageProps = {
   data: any;
 };
 
-export default function view({ data }: PageProps) {
+export default function view({data}: PageProps) {
   const displayDiscount =
     data.discount > 0 ? `${data.discount}%` : "No discount";
   return (
