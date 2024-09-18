@@ -1,5 +1,5 @@
 import * as Yup from "yup";
-import { InputListProps } from "@/helpers/typeProps";
+import { InputListProps } from "@/types/form.type";
 
 export const FormInputListRenderer = ({ id }: { id: string }) => {
   const FormInputList: InputListProps[] = [

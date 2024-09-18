@@ -25,8 +25,8 @@ import {
   DialogHeader,
   DialogFooter,
 } from "@material-tailwind/react";
-import { TableDataProps } from "@/helpers/typeProps";
-import FormInput from "@/components/FormInput";
+import { TableDataProps } from "@/types/table.type";
+import FormInput from "@/components/admin/FormInput";
 import { supabase } from "@/libs/supabase";
 import { getQueryParams } from "@/helpers/appFunction";
 
@@ -110,14 +110,14 @@ export default function TableData({
   useEffect(() => {
     const params: any = getQueryParams();
     setSearchQuery(params.search || "");
-    if(!params.search || params.search === "") {
+    if (!params.search || params.search === "") {
       getDataTable();
     }
     // set realtime data on table
     if (realtimeTable) {
       const channels = supabase
-      .channel("custom-all-channel")
-      .on(
+        .channel("custom-all-channel")
+        .on(
           "postgres_changes",
           { event: "*", schema: "public", table: realtimeTable },
           (payload) => {
@@ -126,15 +126,15 @@ export default function TableData({
           }
         )
         .subscribe();
-        
-        return () => {
-          channels.unsubscribe();
-        };
-      }
-    }, []);
-  
+
+      return () => {
+        channels.unsubscribe();
+      };
+    }
+  }, []);
+
   // a function to handle set query parameter and get data table
-  const handleSetQuery = async() =>{
+  const handleSetQuery = async () => {
     const res = await router.push(
       {
         pathname: router.pathname,
@@ -147,7 +147,7 @@ export default function TableData({
       getDataTable();
     }
   }
-  
+
   useEffect(() => {
     handleSetQuery()
   }, [debounceValue, limit, activePage]);
@@ -206,7 +206,7 @@ export default function TableData({
                   className="h-6 w-6"
                   cursor="pointer"
                   onClick={() => setModalFilter(true)}
-                />                                    
+                />
                 <FormInput
                   inputList={filter}
                   method="GET"
@@ -316,8 +316,8 @@ export default function TableData({
                 action === "custom"
                   ? onClick
                   : action === "delete"
-                  ? () => setIsOpen(true)
-                  : () => router.push(router.pathname + `/${action}/` + id)
+                    ? () => setIsOpen(true)
+                    : () => router.push(router.pathname + `/${action}/` + id)
               }
             >
               {action === "custom" ? (

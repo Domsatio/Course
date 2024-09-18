@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { FormikErrors, useFormik } from "formik";
 import * as Yup from "yup";
-import { InputListProps } from "@/helpers/typeProps";
+import { InputListProps } from "@/types/form.type";
 import { InputListRenderer } from "./InputTemplate";
 import {
   Button,
@@ -136,7 +136,7 @@ export default function FormInput({
     validateOnBlur: false,
   });
 
-  const handleChange = (e: any) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     formik.setFieldValue(name, value);
   };
@@ -182,18 +182,18 @@ export default function FormInput({
         const isValueBoolean =
           getQueryParams()[key] === "true" || getQueryParams()[key] === "false";
         const isValueArray = input?.validator.type === "array" || false;
-          console.log(input);
+        console.log(input);
         if (isValueArray) {
           formik.setFieldValue(key, getQueryParams()[key].split(','));
         } else
-        if (input) {
-          formik.setFieldValue(
-            key,
-            isValueBoolean
-              ? convertStringToBoolean(getQueryParams()[key])
-              : getQueryParams()[key]
-          );
-        }
+          if (input) {
+            formik.setFieldValue(
+              key,
+              isValueBoolean
+                ? convertStringToBoolean(getQueryParams()[key])
+                : getQueryParams()[key]
+            );
+          }
       });
     }
   }, [method, id]);
@@ -236,10 +236,10 @@ export default function FormInput({
                               input.name
                             ] as FormikErrors<any>[][0])
                               ? (
-                                  formik.errors[
-                                    input.name
-                                  ] as FormikErrors<any>[]
-                                )[i]?.[component.name]?.toString()
+                                formik.errors[
+                                input.name
+                                ] as FormikErrors<any>[]
+                              )[i]?.[component.name]?.toString()
                               : ""
                           }
                         />

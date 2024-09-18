@@ -1,13 +1,9 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/router";
-import { useRouter as topLoader } from "nextjs-toploader/app";
-import { routeList } from "@/helpers/routesList";
-import {
-  MenuItemProps,
-  ProfileMenuItemProps,
-  RouteItemsProps,
-} from "@/helpers/typeProps";
+import { useRouter as topLoader } from 'nextjs-toploader/app';
+import { adminRoutes } from "@/constants/admin/adminRoutes";
+import { MenuItemProps, ProfileMenuItemProps, RouteItemsProps } from "@/helpers/typeProps";
 import {
   Navbar,
   IconButton,
@@ -120,7 +116,7 @@ function ProfileMenu() {
           );
         })}
       </MenuList>
-        
+
     </Menu>
   );
 }
@@ -167,9 +163,8 @@ export default function AdminNavbar({ children }: { children: React.ReactNode })
                   icon={
                     <ChevronDownIcon
                       strokeWidth={2.5}
-                      className={`mx-auto h-4 w-4 transition-transform ${
-                        open === label ? "rotate-180" : ""
-                      }`}
+                      className={`mx-auto h-4 w-4 transition-transform ${open === label ? "rotate-180" : ""
+                        }`}
                     />
                   }
                 >
@@ -242,7 +237,7 @@ export default function AdminNavbar({ children }: { children: React.ReactNode })
           </Typography>
         </div>
         <List className="relative">
-          <RouteItems routeList={routeList} padding={0} parentRoute="/admin" />
+          <RouteItems routeList={adminRoutes} padding={0} parentRoute="/admin" />
         </List>
       </Card>
     );

@@ -1,5 +1,5 @@
 import { NullProof } from "@/helpers/appFunction";
-import { DetailPage, LabelDetailPage } from "@/components/DetailPage";
+import { DetailPage, LabelDetailPage } from "@/components/admin/DetailPage";
 import { CategoryPost } from "@/types/post.type";
 import { Chip } from "@material-tailwind/react";
 import { GetServerSideProps } from "next/types";
@@ -34,9 +34,8 @@ export default function view({ data }: any) {
             value={data.published ? "Published" : "Draft"}
             icon={
               <span
-                className={`mx-auto mt-1 block h-2 w-2 rounded-full content-[''] ${
-                  data.published ? "bg-green-900" : "bg-red-900"
-                }`}
+                className={`mx-auto mt-1 block h-2 w-2 rounded-full content-[''] ${data.published ? "bg-green-900" : "bg-red-900"
+                  }`}
               />
             }
             className="max-w-min"

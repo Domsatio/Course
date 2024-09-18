@@ -4,14 +4,14 @@ import { NullProof } from "@/helpers/appFunction";
 import DataDetailPage, {
   LabelDetailPage,
   DetailPage,
-} from "@/components/DetailPage";
+} from "@/components/admin/DetailPage";
 // import ReactPlayer from 'react-player/youtube'
 import { courseServices } from "@/services/serviceGenerator";
-import EmblaCarousel from "@/components/EmblaCarousel";
+import EmblaCarousel from "@/components/admin/EmblaCarousel";
 import { EmblaOptionsType } from "embla-carousel";
 import { Button } from "@material-tailwind/react";
 
-export default function view() {
+export default function DetailCourse() {
   const OPTIONS: EmblaOptionsType = {};
   const [imgUrl, setImgUrl] = useState("");
   const [videoUrl, setVideoUrl] = useState({
@@ -89,7 +89,7 @@ export default function view() {
           </LabelDetailPage>
           <LabelDetailPage label="Published">
             {data.published &&
-            NullProof({ input: data, params: "published" }) == true
+              NullProof({ input: data, params: "published" }) == true
               ? "Yes"
               : "No"}
           </LabelDetailPage>
