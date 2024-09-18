@@ -18,7 +18,7 @@ import { getQueryParams, convertStringToBoolean } from "@/helpers/appFunction";
 import { children } from "@material-tailwind/react/types/components/accordion";
 
 interface FormInputProps {
-  title: string;
+  title?: string;
   inputList: InputListProps[];
   method: "POST" | "PUT" | "GET";
   id?: string;
@@ -262,7 +262,7 @@ export default function FormInput({
           }
           option_query = updateQueryString(listWatchInput, option_query, formik.values);
         }
-        
+
         if (input.type === "component") {
           return (
             <div key={index} className="flex flex-col">

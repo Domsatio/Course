@@ -74,33 +74,29 @@ export const getPosts = async (
 export const getPublishedPosts = async (
   skip: number,
   take: number,
-  categoryId: string
+  category: string = ""
 ) => {
-  return prisma.$transaction(async (tx) => {
-    const totalData = await tx.post.count({
-      where: {
-        published: true,
-        categories: {
-          some: {
-            category: {
-              id: categoryId,
-            },
+  let whereCondition: any = {
+    published: true,
+  };
+  if (category !== "") {
+    whereCondition = {
+      categories: {
+        some: {
+          category: {
+            name: category
           },
         },
       },
+    };
+  }
+  return prisma.$transaction(async (tx) => {
+    const totalData = await tx.post.count({
+      where: whereCondition
     });
 
     const data = await tx.post.findMany({
-      where: {
-        published: true,
-        categories: {
-          some: {
-            category: {
-              id: categoryId,
-            },
-          },
-        },
-      },
+      where: whereCondition,
       skip,
       take,
       include: {

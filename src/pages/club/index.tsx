@@ -10,13 +10,14 @@ import { fetchDataHook } from "@/hook/fetchDataHook";
 import Pagination from "@/components/client/pagination";
 import { getQueryParams } from "@/helpers/appFunction";
 import { useRouter } from "next/router";
+import { ca } from "date-fns/locale";
 
 type Params = {
   skip: number;
   take: number | string;
   search?: string;
   filter?: any;
-  where?: string;
+  category?: string;
 };
 
 const ClientView = () => {
@@ -36,9 +37,9 @@ const ClientView = () => {
     const postParams: Params = {
       skip: activePage * take - take,
       take,
-      where: getQueryParams()["category"]
+      category: getQueryParams()["category"]
         ? getQueryParams()["category"]
-        : undefined,
+        : "",
     };
     setIsLoad(true);
     await postServices
@@ -77,6 +78,17 @@ const ClientView = () => {
     });
   }, []);
 
+  const BtnCategory = ({ value, name  }: { value: string, name?:string }) => (
+    <Button
+      size="sm"
+      variant={`${activeCategory === value ? "filled" : "outlined"}`}
+      className="rounded-full cursor-pointer capitalize border-gray-400"
+      onClick={() => handleSetActiveCategory(value)}
+    >
+      {name || value}
+    </Button>
+  );
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-between pt-24">
       <section className="flex container flex-col justify-center flex-wrap gap-10 pt-10 pb-32 px-24">
@@ -85,16 +97,11 @@ const ClientView = () => {
         </Typography>
 
         <div className="flex gap-2 flex-wrap">
+          {categories.length > 0 && 
+           <BtnCategory value="" name="All" />
+          }
           {categories.map(({ id, name }) => (
-            <Button
-              key={id}
-              size="sm"
-              variant={`${activeCategory === name ? "filled" : "outlined"}`}
-              className="rounded-full cursor-pointer capitalize border-gray-400"
-              onClick={() => handleSetActiveCategory(name)}
-            >
-              {name}
-            </Button>
+            <BtnCategory key={id} value={name} />
           ))}
         </div>
 

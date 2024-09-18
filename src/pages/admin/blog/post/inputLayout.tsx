@@ -78,20 +78,4 @@ export const FilterInputList: InputListProps[] = [
       { title: "No", value: false },
     ],
   },
-  {
-    className: "",
-    name: "category",
-    label: "Category",
-    type: "multicheckbox",
-    validator: Yup.array().required("Category is required"),
-    useRiset: true,
-    value: "",
-    option: {
-      id: "name",
-      params: "name",
-      query: "skip=0&take=all",
-      type: "select",
-      api: "/api/category",
-    }
-  },
 ];
