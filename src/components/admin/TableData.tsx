@@ -82,7 +82,7 @@ export default function TableData({
       ...getQueryParams(),
     };
     if (searchQuery) {
-      params.search = debounceValue;
+      params.search = debounceValue || "";
     }
     setIsLoad(true);
     setIsError(false);
@@ -142,7 +142,7 @@ export default function TableData({
     const res = await router.push(
       {
         pathname: router.pathname,
-        query: { search: searchQuery.toLowerCase() },
+        query: { search: searchQuery?.toLowerCase() || "" },
       },
       undefined,
       { shallow: true }
@@ -174,7 +174,7 @@ export default function TableData({
               <Input
                 label="Search"
                 icon={<MagnifyingGlassIcon className="h-5 w-5" />}
-                value={searchQuery}
+                value={searchQuery || ""}
                 onChange={(e) => {
                   e.preventDefault();
                   setSearchQuery(e.target.value);

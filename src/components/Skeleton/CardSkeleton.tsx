@@ -1,14 +1,11 @@
+import { memo } from "react";
 import {
     Card,
     CardHeader,
     CardBody,
-    CardFooter,
-    Typography,
-    Avatar,
-    Tooltip,
   } from "@material-tailwind/react";
   
-  export default function CardSkeleton() {
+function CardSkeleton() {
     return (
       <Card className="w-full max-w-[27rem] overflow-hidden animate-pulse">
         <CardHeader
@@ -29,3 +26,4 @@ import {
     );
   }
   
+  export default memo(CardSkeleton);
