@@ -1,17 +1,16 @@
-import PostCard from "@/components/client/postCard";
+import PostCard from "@/components/client/CardItem";
 import { courseServices } from "@/services/serviceGenerator";
 import { Course } from "@/types/course.type";
 import { Typography } from "@material-tailwind/react";
 import React, { useCallback, useEffect, useState } from "react";
-import { paginationHook } from "@/hook/paginationHook";
-import { fetchDataHook } from "@/hook/fetchDataHook";
+import { PaginationHook } from "@/hooks/paginationHook";
+import { FetchDataHook } from "@/hooks/fetchDataHook";
 import Pagination from "@/components/client/pagination";
 import CardSkeleton from "@/components/Skeleton/CardSkeleton";
 import Search from "@/components/client/search";
-import { searchHook } from "@/hook/searchHook";
+import { SearchHook } from "@/hooks/searchHook";
 import { getQueryParams } from "@/helpers/appFunction";
 import { useRouter } from "next/router";
-import { set } from "date-fns";
 
 type Params = {
   skip: number;
@@ -23,13 +22,12 @@ type Params = {
 
 const ClientCourses = () => {
   const [posts, setPosts] = useState<Course[]>([]);
-  const { isLoad, setIsLoad } = fetchDataHook();
-  const { activePage, totalPages, take, setActivePage, handleSetTotalPages } =
-    paginationHook({ initLimit: 12 });
-  const { debounceValue, searchQuery, setSearchQuery } = searchHook({delay:1000});
+  const { isLoad, setIsLoad } = FetchDataHook();
+  const { activePage, totalPages, take, setActivePage, handleSetTotalPages } = PaginationHook({ initLimit: 12 });
+  const { debounceValue, searchQuery, setSearchQuery } = SearchHook({ delay: 1000 });
   const router = useRouter();
-  
-  const setSearch = useCallback((value:string) => {
+
+  const setSearch = useCallback((value: string) => {
     setSearchQuery(value);
   }, [searchQuery]);
 
@@ -56,19 +54,19 @@ const ClientCourses = () => {
 
   useEffect(() => {
     setIsLoad(true);
-    if(!searchQuery){
+    if (!searchQuery) {
       setSearch(getQueryParams()["search"] ? getQueryParams()["search"] : "");
-    }else{
+    } else {
       getData();
     }
   }, []);
 
   useEffect(() => {
-    if(debounceValue !== null){
+    if (debounceValue !== null) {
       const handleGetData = async () => {
         await router.replace({
           pathname: "/course",
-          query: { search: debounceValue},
+          query: { search: debounceValue },
         });
         getData();
       }
@@ -77,13 +75,13 @@ const ClientCourses = () => {
   }, [debounceValue]);
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between pt-24">
-      <section className="flex container flex-col justify-center flex-wrap gap-10 pt-10 pb-32 px-24">
+    <main className="flex min-h-screen flex-col items-center bg-[#f4f4f4] justify-between py-24">
+      <section className="flex flex-col container 2xl:max-w-[75rem] justify-center flex-wrap gap-10 p-10 rounded-3xl bg-white">
         <Typography variant="h2" color="black" placeholder="Blog Page">
           Courses
         </Typography>
         <div className="my-2">
-          <Search onChange={(e) => setSearchQuery(e.target.value)} value={searchQuery||""} />
+          <Search onChange={(e) => setSearchQuery(e.target.value)} value={searchQuery || ""} />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {isLoad ? (
@@ -98,7 +96,7 @@ const ClientCourses = () => {
                 (data: Course, index) => (
                   <PostCard
                     key={index}
-                    props={{ ...data, href: `/course/${data.id}` }}
+                    props={{ ...data, href: `/course/${data.slug}` }}
                   />
                 )
               )}

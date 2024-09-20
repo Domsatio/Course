@@ -1,7 +1,11 @@
 import prisma from "@/libs/prisma/db";
 import { Product, UpdateProduct } from "@/types/product.type";
 
-export const getProducts = async (skip: number = 0, take: number = 5, search: string = '') => {
+export const getProducts = async (
+  skip: number = 0,
+  take: number = 5,
+  search: string = ""
+) => {
   let whereCondition: any = {
     OR: [
       {
@@ -14,21 +18,21 @@ export const getProducts = async (skip: number = 0, take: number = 5, search: st
   };
 
   const searchNumber = Number(search);
-if (!isNaN(searchNumber)) {
-  whereCondition.OR.push(
-    {
-      price: {
-        equals: searchNumber, 
+  if (!isNaN(searchNumber)) {
+    whereCondition.OR.push(
+      {
+        price: {
+          equals: searchNumber,
+        },
       },
-    },
-    {
-      quantity: {
-        equals: searchNumber, 
-      },
-    }
-  );
-}
-  
+      {
+        quantity: {
+          equals: searchNumber,
+        },
+      }
+    );
+  }
+
   return prisma.$transaction(async (tx) => {
     const totalData = await tx.product.count({
       where: whereCondition,
@@ -47,9 +51,11 @@ if (!isNaN(searchNumber)) {
   });
 };
 
-export const getProduct = async (id: string) => {
-  return prisma.product.findUnique({
-    where: { id },
+export const getProduct = async (param: string) => {
+  return prisma.product.findFirst({
+    where: {
+      OR: [{ id: param }, { slug: param }],
+    },
   });
 };
 

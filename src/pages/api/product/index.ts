@@ -5,6 +5,7 @@ import {
   getProduct,
   getProducts,
 } from "@/controllers/product.controller";
+import { stringToSlug } from "@/helpers/slug";
 import {
   createProductValidation,
   updateProductValidation,
@@ -26,6 +27,7 @@ export default async function handlerProduct(
     }
 
     req.body.id = uuidv4();
+    req.body.slug = stringToSlug(req.body.name);
 
     const { validatedData, errors } = createProductValidation(req.body);
 
@@ -51,11 +53,11 @@ export default async function handlerProduct(
         .send({ status: false, statusCode: 500, message: error });
     }
   } else if (req.method === "GET") {
-    if (req.query.id) {
-      const { id } = req.query;
+    if (req.query.id || req.query.slug) {
+      const { id, slug } = req.query;
 
       try {
-        const data = await getProduct(id as string);
+        const data = await getProduct((id as string) || (slug as string));
         console.info("Get product success");
         return res.status(200).send({
           status: true,
@@ -99,6 +101,7 @@ export default async function handlerProduct(
     }
 
     const { id } = req.query;
+    req.body.slug = stringToSlug(req.body.name);
 
     const { validatedData, errors } = updateProductValidation(req.body);
 

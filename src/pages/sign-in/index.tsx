@@ -36,6 +36,7 @@ export default function SignIn() {
     if (signInData?.error) {
       alert(signInData.error);
     }
+    push('/')
   };
 
   return (

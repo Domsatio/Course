@@ -5,6 +5,7 @@ export const createCourseValidation = (payload: Course) => {
   const schema = object({
     id: string().required("ID is required"),
     title: string().required("Title is required"),
+    slug: string().required("Slug is required"),
     description: string().required("Description is required"),
     image: array(
       object({
@@ -14,6 +15,9 @@ export const createCourseValidation = (payload: Course) => {
     video: array(
       object({
         video: string().required("Video is required"),
+        description: string().required("Description is required"),
+        file: string().required("File is required"),
+        thumbnailUrl: string().required("Thumbnail URL is required"),
       })
     ).required("Video is required"),
     published: boolean().required("Published is required"),
@@ -30,6 +34,7 @@ export const createCourseValidation = (payload: Course) => {
 export const updateCourseValidation = (payload: UpdateCourse) => {
   const schema = object({
     title: string().optional(),
+    slug: string().optional(),
     description: string().optional(),
     image: array(
       object({
@@ -39,6 +44,9 @@ export const updateCourseValidation = (payload: UpdateCourse) => {
     video: array(
       object({
         video: string().required("Video is required"),
+        description: string().required("Description is required"),
+        file: string().required("File is required"),
+        thumbnailUrl: string().required("Thumbnail URL is required"),
       })
     ).optional(),
     published: boolean().optional(),

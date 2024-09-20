@@ -5,6 +5,7 @@ import {
   getCourses,
   updateCourse,
 } from "@/controllers/course.controller";
+import { stringToSlug } from "@/helpers/slug";
 import {
   createCourseValidation,
   updateCourseValidation,
@@ -26,6 +27,7 @@ export default async function handlerCourse(
     }
 
     req.body.id = uuidv4();
+    req.body.slug = stringToSlug(req.body.title);
 
     const { validatedData, errors } = createCourseValidation(req.body);
 
@@ -57,6 +59,7 @@ export default async function handlerCourse(
     }
 
     const { id } = req.query;
+    req.body.slug = stringToSlug(req.body.title);
 
     const { validatedData, errors } = updateCourseValidation(req.body);
 
@@ -104,11 +107,11 @@ export default async function handlerCourse(
         .send({ status: false, statusCode: 500, message: error });
     }
   } else if (req.method === "GET") {
-    if (req.query.id) {
-      const { id } = req.query;
+    if (req.query.id || req.query.slug) {
+      const { id, slug } = req.query;
 
       try {
-        const data = await getCourse(id as string);
+        const data = await getCourse((id as string) || (slug as string));
         console.info("Get course success");
         return res.status(200).send({
           status: true,
@@ -124,7 +127,7 @@ export default async function handlerCourse(
       }
     } else {
       try {
-        const { skip, take, search = '', published } = req.query;
+        const { skip, take, search = "", published } = req.query;
         const { totalData, data } = await getCourses(
           Number(skip),
           Number(take),

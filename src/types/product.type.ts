@@ -3,6 +3,7 @@ import { Order } from "./order.type";
 export type Product = {
   id: string;
   name: string;
+  slug: string;
   description: string;
   price: number;
   discount?: number;
@@ -12,6 +13,7 @@ export type Product = {
 
 export type UpdateProduct = {
   name?: string;
+  slug?: string;
   description?: string;
   price?: number;
   discount?: number;
@@ -22,6 +24,7 @@ export type UpdateProduct = {
 export type GetProduct = {
   id: string;
   name: string;
+  slug: string;
   description: string;
   price: number;
   discount?: number;

@@ -1,49 +1,61 @@
+import { GetProduct } from "@/types/product.type";
 import {
   Card,
   CardHeader,
   CardBody,
-  CardFooter,
   Typography,
-  Button,
 } from "@material-tailwind/react";
+import Image from "next/image";
+import { FC } from "react";
+import { ConvertCurrency } from "@/helpers/appFunction";
+import Link from "next/link";
 
-const StoreCard = () => {
+const FinalPrice = ({ price, discount }: { price: number, discount?: number }) => {
+  const discountedPrice = discount !== undefined ? price - (price * discount) / 100 : price;
+
   return (
-    <Card className="w-80">
-      <CardHeader shadow={false} floated={false} className="h-80">
-        <img
-          src="https://images.unsplash.com/photo-1629367494173-c78a56567877?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=927&q=80"
-          alt="card-image"
-          className="h-full w-full object-cover"
-        />
-      </CardHeader>
-      <CardBody>
-        <div className="mb-2 flex items-center justify-between">
-          <Typography color="blue-gray" className="font-medium">
-            Apple AirPods
+    <div className="mt-7">
+      <Typography color="blue-gray" className="text-xl font-bold">
+        {ConvertCurrency(discountedPrice)}
+      </Typography>
+      <div className='flex gap-2 mt-2'>
+        {discount !== undefined && (
+          <Typography className="text-sm py-1 px-2 bg-green-200 text-green-900 font-semibold rounded-lg">
+            -{discount}%
           </Typography>
-          <Typography color="blue-gray" className="font-semibold">
-            Rp 149.000
+        )}
+        {discount !== undefined && (
+          <Typography color="gray" className="line-through text-base">
+            {ConvertCurrency(price)}
           </Typography>
-        </div>
-        <Typography
-          variant="small"
-          color="gray"
-          className="font-normal opacity-75"
-        >
-          With plenty of talk and listen time, voice-activated Siri access, and
-          an available wireless charging case.
-        </Typography>
-      </CardBody>
-      <CardFooter className="pt-0">
-        <Button
-          ripple={false}
-          fullWidth={true}
-        >
-          Buy
-        </Button>
-      </CardFooter>
-    </Card>
+        )}
+      </div>
+    </div>
+  );
+}
+
+const StoreCard: FC<Omit<GetProduct, 'createdAt' | 'updatedAt' | 'quantity'>> = ({ name, slug, description, price, discount, image }) => {
+  return (
+    <Link href={`/store/${slug}`}>
+      <Card className="w-full">
+        <CardHeader shadow={false} floated={false} className="h-80">
+          <Image
+            src={image}
+            width={300}
+            height={300}
+            alt="card-image"
+            className="h-full w-full object-cover"
+            priority
+          />
+        </CardHeader>
+        <CardBody className="space-y-2">
+          <Typography color="black" className="font-medium">
+            {name}
+          </Typography>
+          <FinalPrice price={price} discount={discount} />
+        </CardBody>
+      </Card>
+    </Link>
   )
 }
 
