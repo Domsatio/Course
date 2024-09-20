@@ -8,7 +8,7 @@ export const getPosts = async (
   take: number = 5,
   search: string = "",
   category: string = "",
-  published: boolean|string|undefined = undefined
+  published: boolean | string | undefined = undefined
 ) => {
   let whereCondition: any = {
     OR: [
@@ -27,15 +27,13 @@ export const getPosts = async (
     ],
   };
   const unjoinedCategory = category.split(",");
-  console.log("unjoinedCategory", unjoinedCategory);
-  
   if (category !== "") {
     whereCondition = {
       categories: {
         some: {
           category: {
             name: {
-              in: unjoinedCategory, 
+              in: unjoinedCategory,
             },
           },
         },
@@ -46,73 +44,86 @@ export const getPosts = async (
     whereCondition.published = convertStringToBoolean(published as string);
   }
 
-  return prisma.$transaction(async (tx) => {
-    const totalData = await tx.post.count({
-      where: whereCondition,
-    });
+  return prisma.$transaction(
+    async (tx) => {
+      const totalData = await tx.post.count({
+        where: whereCondition,
+      });
 
-    const data = await tx.post.findMany({
-      where: whereCondition,
-      include: {
-        categories: {
-          include: {
-            category: true,
+      const data = await tx.post.findMany({
+        where: whereCondition,
+        include: {
+          categories: {
+            include: {
+              category: true,
+            },
           },
         },
-      },
-      skip,
-      take,
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+        skip,
+        take,
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
 
-    return { totalData, data };
-  }, { maxWait: 5000, timeout: 20000 });
+      return { totalData, data };
+    },
+    { maxWait: 5000, timeout: 20000 }
+  );
 };
 
 export const getPublishedPosts = async (
   skip: number,
   take: number,
+  search: string = "",
   category: string = ""
 ) => {
   let whereCondition: any = {
-    published: true,
+    OR: [
+      {
+        title: {
+          contains: search,
+          mode: "insensitive",
+        },
+      },
+    ],
   };
+  whereCondition.published = true;
   if (category !== "") {
-    whereCondition = {
-      categories: {
-        some: {
-          category: {
-            name: category
-          },
+    whereCondition.categories = {
+      some: {
+        category: {
+          name: category,
         },
       },
     };
   }
-  return prisma.$transaction(async (tx) => {
-    const totalData = await tx.post.count({
-      where: whereCondition
-    });
+  return prisma.$transaction(
+    async (tx) => {
+      const totalData = await tx.post.count({
+        where: whereCondition,
+      });
 
-    const data = await tx.post.findMany({
-      where: whereCondition,
-      skip,
-      take,
-      include: {
-        categories: {
-          include: {
-            category: true,
+      const data = await tx.post.findMany({
+        where: whereCondition,
+        skip,
+        take,
+        include: {
+          categories: {
+            include: {
+              category: true,
+            },
           },
         },
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
 
-    return { totalData, data };
-  });
+      return { totalData, data };
+    },
+    { maxWait: 5000, timeout: 20000 }
+  );
 };
 
 export const getPost = async (param: string) => {
