@@ -11,7 +11,6 @@ import Search from "@/components/client/search";
 import { SearchHook } from "@/hooks/searchHook";
 import { getQueryParams } from "@/helpers/appFunction";
 import { useRouter } from "next/router";
-import { set } from "date-fns";
 
 type Params = {
   skip: number;
