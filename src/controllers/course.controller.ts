@@ -73,9 +73,11 @@ export const getCourses = async (
   );
 };
 
-export const getCourse = async (id: string) => {
-  return prisma.course.findUnique({
-    where: { id },
+export const getCourse = async (param: string) => {
+  return prisma.course.findFirst({
+    where: {
+      OR: [{ id: param }, { slug: param }],
+    },
   });
 };
 

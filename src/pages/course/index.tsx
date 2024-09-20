@@ -1,10 +1,10 @@
-import PostCard from "@/components/client/postCard";
+import PostCard from "@/components/client/CardItem";
 import { courseServices } from "@/services/serviceGenerator";
 import { Course } from "@/types/course.type";
 import { Typography } from "@material-tailwind/react";
 import React, { useEffect, useState } from "react";
-import { paginationHook } from "@/hook/paginationHook";
-import { fetchDataHook } from "@/hook/fetchDataHook";
+import { PaginationHook } from "@/hooks/paginationHook";
+import { FetchDataHook } from "@/hooks/fetchDataHook";
 import Pagination from "@/components/client/pagination";
 import CardSkeleton from "@/components/Skeleton/CardSkeleton";
 
@@ -18,9 +18,9 @@ type Params = {
 
 const ClientCourses = () => {
   const [posts, setPosts] = useState<Course[]>([]);
-  const { isLoad, setIsLoad } = fetchDataHook();
+  const { isLoad, setIsLoad } = FetchDataHook();
   const { activePage, totalPages, take, setActivePage, handleSetTotalPages } =
-    paginationHook({ initLimit: 12 });
+    PaginationHook({ initLimit: 12 });
 
   useEffect(() => {
     const postParams: Params = {
@@ -41,8 +41,8 @@ const ClientCourses = () => {
   }, [activePage]);
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between pt-24">
-      <section className="flex container flex-col justify-center flex-wrap gap-10 pt-10 pb-32 px-24">
+    <main className="flex min-h-screen flex-col items-center bg-[#f4f4f4] justify-between py-24">
+      <section className="flex flex-col container 2xl:max-w-[75rem] justify-center flex-wrap gap-10 p-10 rounded-3xl bg-white">
         <Typography variant="h2" color="black" placeholder="Blog Page">
           Courses
         </Typography>
@@ -60,7 +60,7 @@ const ClientCourses = () => {
                 (data: Course, index) => (
                   <PostCard
                     key={index}
-                    props={{ ...data, href: `/course/${data.id}` }}
+                    props={{ ...data, href: `/course/${data.slug}` }}
                   />
                 )
               )}

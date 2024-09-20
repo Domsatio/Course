@@ -79,6 +79,7 @@ model Address {
 model Product {
   id          String   @id @default(uuid())
   name        String
+  slug        String   @unique
   description String
   price       Float
   discount    Float?   @default(0)
@@ -141,6 +142,7 @@ model CategoriesOnPosts {
 model Course {
   id          String   @id @default(uuid())
   title       String
+  slug        String   @unique
   description String
   image       Json
   video       Json

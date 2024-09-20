@@ -39,13 +39,13 @@ const EmblaCarousel: React.FC<PropTypeUmblaCarousel> = (props) => {
     },
     [emblaMainApi, emblaThumbsApi]
   );
-  
+
   const onSelect = useCallback(() => {
     if (!emblaMainApi || !emblaThumbsApi) return;
     setSelectedIndex(emblaMainApi.selectedScrollSnap());
     emblaThumbsApi.scrollTo(emblaMainApi.selectedScrollSnap());
   }, [emblaMainApi, emblaThumbsApi]);
-  
+
   useEffect(() => {
     if (!emblaMainApi) return;
     onSelect();
@@ -63,41 +63,40 @@ const EmblaCarousel: React.FC<PropTypeUmblaCarousel> = (props) => {
         <div className="overflow-hidden" ref={emblaMainRef}>
           <div className="flex touch-pan-y touch-pinch-zoom -ml-4">
             {Array.isArray(slides) &&
-                slides.map((item, index: number) => (
-                  <div
-                    className="transform-gpu flex-none w-full min-w-0 pl-4"
-                    key={index}
-                  >
-                    <div className="flex items-center justify-center h-80 select-none">
-                      <PreviewChild item={item} />
-                    </div>
+              slides.map((item, index: number) => (
+                <div
+                  className="transform-gpu flex-none w-full min-w-0 pl-4"
+                  key={index}
+                >
+                  <div className="flex items-center justify-center select-none">
+                    <PreviewChild item={item} />
                   </div>
-                ))
-              }
+                </div>
+              ))
+            }
           </div>
         </div>
         <div className="mt-3">
-        <div className="overflow-hidden" ref={emblaThumbsRef}>
-          <div
-            className={`flex justify-center ${
-              Array.isArray(slides) && slides.length > 6 && "ml-[75px]"
-            } gap-2`}
-          >
-            {Array.isArray(slides) &&
-              slides.map((item, index: number) => (
-                <React.Fragment key={index}>
-                  <ThumChild item={item} onClick={() => onThumbClick(index)} />
-                </React.Fragment>
-              ))}
+          <div className="overflow-hidden" ref={emblaThumbsRef}>
+            <div
+              className={`flex justify-center ${Array.isArray(slides) && slides.length > 6 && "ml-[75px]"
+                } gap-2`}
+            >
+              {Array.isArray(slides) &&
+                slides.map((item, index: number) => (
+                  <React.Fragment key={index}>
+                    <ThumChild item={item} onClick={() => onThumbClick(index)} />
+                  </React.Fragment>
+                ))}
+            </div>
           </div>
         </div>
-      </div>
       </>
     )
   }, [slides, emblaMainApi, emblaThumbsApi])
 
   return (
-    <div className="max-w-[40rem] m-auto">
+    <div className="max-w-full m-auto">
       {SlideMemo}
     </div>
   );

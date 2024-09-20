@@ -11,7 +11,7 @@ export const accountRoutes: {
     href: "/account/subscriptions",
   },
   {
-    label: "Addresses",
+    label: "Address",
     href: "/account/address",
   },
   {

@@ -4,17 +4,24 @@ import { Typography } from '@material-tailwind/react'
 import React, { FC } from 'react'
 import { GetServerSideProps } from "next";
 import { dateFormater } from '@/helpers/date';
+import { useRouter } from 'next/router';
 
-const DetailClub: FC<{ data: Omit<GetPost, 'id' | 'published' | 'slug'> }> = ({ data: { title, body, categories, createdAt } }) => {
+const DetailClub: FC<Omit<GetPost, 'id' | 'published' | 'slug'>> = ({ title, body, categories, createdAt }) => {
+  const { push } = useRouter()
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between pt-24">
-      <section className="flex container flex-col justify-center items-center flex-wrap gap-5 pt-10 pb-32 px-24">
+    <main className="flex min-h-screen flex-col items-center bg-[#f4f4f4] justify-between py-24">
+      <section className="flex flex-col container 2xl:max-w-[75rem] justify-center items-center flex-wrap gap-10 p-10 rounded-3xl bg-white">
         <div className='flex gap-3'>
           {categories.map(({ categoryId, category }) =>
             <Typography
               key={categoryId}
               variant="small"
-              className="text-[#c28833] flex capitalize group-hover:text-[#c28833]/80"
+              className="text-[#c28833] flex capitalize cursor-pointer group-hover:text-[#c28833]/80"
+              onClick={() => push({
+                pathname: "/club",
+                query: { category: category.name },
+              })}
             >
               {category.name}
             </Typography>
@@ -36,19 +43,10 @@ const DetailClub: FC<{ data: Omit<GetPost, 'id' | 'published' | 'slug'> }> = ({ 
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.query;
-
-  if (typeof slug !== 'string') {
-    return {
-      notFound: true
-    };
-  }
-
   try {
     const { data: { data } } = await postServices.getItem({ slug });
     return {
-      props: {
-        data: data
-      },
+      props: data
     };
   } catch (error) {
     console.error("Error fetching data:", error);
