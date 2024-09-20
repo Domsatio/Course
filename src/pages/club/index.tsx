@@ -16,6 +16,7 @@ import { getQueryParams } from "@/helpers/appFunction";
 import Search from "@/components/client/search";
 import { useRouter } from "next/router";
 import CategorySkeleton from "@/components/Skeleton/CategorySkeleton";
+import ContentWrapper from "@/layouts/client/contentWrapper";
 
 type Params = {
   skip: number;
@@ -112,71 +113,68 @@ const ClientView = () => {
   );
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between pt-24">
-      <section className="flex container flex-col justify-center flex-wrap gap-10 pt-10 pb-32 px-24">
-        <Typography variant="h2" color="black" placeholder="Blog Page">
-          Club
-        </Typography>
-
-        {isCategoryLoad ? (
-          <div className="flex flex-wrap gap-2">
-            {Array.from({ length: 6 }, (_, i) => (
-              <CategorySkeleton key={i} />
-            ))}
-          </div>
-        ) : (
-          <div className="flex flex-wrap gap-2">
-            {categories.length > 0 && <BtnCategory value="" name="All" />}
-            {categories.map(({ id, name }) => (
-              <BtnCategory key={id} value={name} />
-            ))}
-          </div>
-        )}
-
-        <Search
-          value={searchQuery || ""}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {isLoad ? (
-            <React.Fragment>
-              {Array.from({ length: 6 }, (_, i) => (
-                <CardSkeleton key={i} />
-              ))}
-            </React.Fragment>
-          ) : (
-            <React.Fragment>
-              {posts.map(
-                (data: Omit<GetPost, "published" | "createdAt">, index) => (
-                  <PostCard
-                    key={index}
-                    props={{ ...data, href: `/club/${data.slug}` }}
-                    category={
-                      <div className="flex flex-wrap gap-2">
-                        {data.categories.map(({ category }, i) => (
-                          <Typography
-                            key={i}
-                            variant="small"
-                            className="text-[#c28833] flex capitalize group-hover:text-[#c28833]/80"
-                          >
-                            {category.name}
-                          </Typography>
-                        ))}
-                      </div>
-                    }
-                  />
-                )
-              )}
-            </React.Fragment>
-          )}
+    <ContentWrapper>
+      <Typography variant="h2" color="black" placeholder="Blog Page">
+        Club
+      </Typography>
+      {isCategoryLoad ? (
+        <div className="flex flex-wrap gap-2">
+          {Array.from({ length: 6 }, (_, i) => (
+            <CategorySkeleton key={i} />
+          ))}
         </div>
-        <Pagination
-          activePage={activePage}
-          setActivePage={setActivePage}
-          totalPages={totalPages}
-        />
-      </section>
-    </main>
+      ) : (
+        <div className="flex flex-wrap gap-2">
+          {categories.length > 0 && <BtnCategory value="" name="All" />}
+          {categories.map(({ id, name }) => (
+            <BtnCategory key={id} value={name} />
+          ))}
+        </div>
+      )}
+
+      <Search
+        value={searchQuery || ""}
+        onChange={(e) => setSearchQuery(e.target.value)}
+      />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {isLoad ? (
+          <React.Fragment>
+            {Array.from({ length: 6 }, (_, i) => (
+              <CardSkeleton key={i} />
+            ))}
+          </React.Fragment>
+        ) : (
+          <React.Fragment>
+            {posts.map(
+              (data: Omit<GetPost, "published" | "createdAt">, index) => (
+                <PostCard
+                  key={index}
+                  props={{ ...data, href: `/club/${data.slug}` }}
+                  category={
+                    <div className="flex flex-wrap gap-2">
+                      {data.categories.map(({ category }, i) => (
+                        <Typography
+                          key={i}
+                          variant="small"
+                          className="text-[#c28833] flex capitalize group-hover:text-[#c28833]/80"
+                        >
+                          {category.name}
+                        </Typography>
+                      ))}
+                    </div>
+                  }
+                />
+              )
+            )}
+          </React.Fragment>
+        )}
+      </div>
+      <Pagination
+        activePage={activePage}
+        setActivePage={setActivePage}
+        totalPages={totalPages}
+      />
+    </ContentWrapper>
   );
 };
 

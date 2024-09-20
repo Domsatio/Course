@@ -17,6 +17,7 @@ export const createCourseValidation = (payload: Course) => {
       })
     ).required("Video is required"),
     published: boolean().required("Published is required"),
+    slug: string().required("Slug is required"),
   });
 
   try {
@@ -42,6 +43,7 @@ export const updateCourseValidation = (payload: UpdateCourse) => {
       })
     ).optional(),
     published: boolean().optional(),
+    slug: string().required("Slug is required"),
   });
 
   try {

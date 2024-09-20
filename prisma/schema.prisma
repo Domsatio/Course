@@ -86,6 +86,7 @@ model Product {
   quantity    Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  slug        String   @unique
   orders      Order[]
 }
 
@@ -147,6 +148,7 @@ model Course {
   published   Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  slug        String   @unique
 }
 
 enum UserRole {

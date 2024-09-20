@@ -9,6 +9,7 @@ export type Course = {
     video: string;
   }[];
   published: boolean;
+  slug: string
 };
 
 export type UpdateCourse = {

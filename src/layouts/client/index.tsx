@@ -1,8 +1,8 @@
 "use client";
 import React from "react";
 import { useRouter } from "next/router";
-import ComplexNavbar from "@/components/client/Navbar";
-import { Footer } from "@/components/client/Footer";
+import ComplexNavbar from "@/components/client/navbar";
+import { Footer } from "@/components/client/footer";
 
 export default function LayoutClient({ children }: { children: React.ReactNode }) {
   const { pathname } = useRouter();

@@ -184,14 +184,16 @@ export const InputListRenderer = ({
           }
         );
 
-        const { url, fields, fileUrl } = data[0];
+        const { url, urls, fields, fileUrl } = data[0];
         const formData = new FormData();
 
-        Object.entries(fields).forEach(([key, value]: [string, any]) => {
-          formData.append(key, value);
-        });
+        if (fields && typeof fields === 'object') {
+          Object.entries(fields).forEach(([key, value]: [string, any]) => {
+            formData.append(key, value);
+          });
+        }
         formData.append("file", files);
-        const response = await axios.post(url, formData, {
+        const response = await axios.post(urls ? urls[0] : url, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },

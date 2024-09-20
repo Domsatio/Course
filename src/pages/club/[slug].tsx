@@ -1,16 +1,19 @@
-import { postServices } from '@/services/serviceGenerator'
-import { GetPost } from '@/types/post.type'
-import { Typography } from '@material-tailwind/react'
-import React, { FC } from 'react'
+import { postServices } from "@/services/serviceGenerator";
+import { GetPost } from "@/types/post.type";
+import { Typography } from "@material-tailwind/react";
+import React, { FC } from "react";
 import { GetServerSideProps } from "next";
-import { dateFormater } from '@/helpers/date';
+import { dateFormater } from "@/helpers/date";
+import ContentWrapper from "@/layouts/client/contentWrapper";
 
-const DetailClub: FC<{ data: Omit<GetPost, 'id' | 'published' | 'slug'> }> = ({ data: { title, body, categories, createdAt } }) => {
+const DetailClub: FC<{ data: Omit<GetPost, "id" | "published" | "slug"> }> = ({
+  data: { title, body, categories, createdAt },
+}) => {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between pt-24">
-      <section className="flex container flex-col justify-center items-center flex-wrap gap-5 pt-10 pb-32 px-24">
-        <div className='flex gap-3'>
-          {categories.map(({ categoryId, category }) =>
+    <ContentWrapper>
+      <div className="flex flex-col items-center gap-5">
+        <div className="flex gap-3">
+          {categories.map(({ categoryId, category }) => (
             <Typography
               key={categoryId}
               variant="small"
@@ -18,36 +21,38 @@ const DetailClub: FC<{ data: Omit<GetPost, 'id' | 'published' | 'slug'> }> = ({ 
             >
               {category.name}
             </Typography>
-          )}
+          ))}
         </div>
         <Typography variant="h2" color="black">
           {title}
         </Typography>
-        <Typography variant='small' color='gray'>
+        <Typography variant="small" color="gray">
           {dateFormater(createdAt, "long")}
         </Typography>
-        <Typography variant='paragraph' className='px-56'>
+        <Typography variant="paragraph" className="px-56 text-left">
           {body}
         </Typography>
-      </section>
-    </main>
-  )
-}
+      </div>
+    </ContentWrapper>
+  );
+};
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.query;
 
-  if (typeof slug !== 'string') {
+  if (typeof slug !== "string") {
     return {
-      notFound: true
+      notFound: true,
     };
   }
 
   try {
-    const { data: { data } } = await postServices.getItem({ slug });
+    const {
+      data: { data },
+    } = await postServices.getItem({ slug });
     return {
       props: {
-        data: data
+        data: data,
       },
     };
   } catch (error) {
@@ -60,4 +65,4 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 };
 
-export default DetailClub
+export default DetailClub;

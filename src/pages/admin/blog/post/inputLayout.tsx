@@ -35,6 +35,7 @@ export const FormInputListRenderer = ({ id }: { id: string }) => {
       type: "multicheckbox",
       validator: Yup.array().required("Category is required"),
       value: [],
+      valueID: 'categoryId',
       option: {
         id: "id",
         type: "multicheckbox",
@@ -73,5 +74,21 @@ export const FilterInputList: InputListProps[] = [
       { title: "Yes", value: true },
       { title: "No", value: false },
     ],
+  },
+  {
+    className: "input-text",
+    name: "category",
+    label: "Category",
+    type: "select",
+    validator: Yup.string().required("Category is required"),
+    value: [],
+    option: {
+      id: "name",
+      params: "name",
+      type: "select",
+      query: "skip=0&take=all",
+      api: "/api/category",
+      data: [],
+    }
   },
 ];

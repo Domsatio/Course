@@ -43,28 +43,12 @@ const PostCard = ({props, category}: typeCard) => {
             width={500}
             height={300}
             className="transform transition-transform duration-500 group-hover:scale-110"
+            // loading="lazy"
             priority
           />
         </CardHeader>
         <CardBody className="space-y-2 px-0 py-3">
           {category}
-          {/* <div className="flex flex-wrap gap-2">
-            {categories.map(({ category }, i) => (
-              <Fragment key={category.id}>
-                <Typography
-                  variant="small"
-                  className="text-[#c28833] flex capitalize group-hover:text-[#c28833]/80"
-                >
-                  {category.name}
-                </Typography>
-                {i !== categories.length - 1 && (
-                  <span className="text-[#c28833] group-hover:[#c28833]/80">
-                    •
-                  </span>
-                )}
-              </Fragment>
-            ))}
-          </div> */}
           <Typography
             variant="h5"
             color="black"
