@@ -5,7 +5,7 @@ import {
   Chip,
 } from "@material-tailwind/react";
 import { GetOrder } from "@/types/order.type";
-import TableData, { TableActionProps } from "@/components/TableData";
+import TableData, { TableActionProps } from "@/components/admin/TableData";
 import { orderServices } from "@/services/serviceGenerator";
 import { dateFormater } from "@/helpers/date";
 import { NullProof } from "@/helpers/appFunction";

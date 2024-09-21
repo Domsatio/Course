@@ -1,14 +1,14 @@
-import PostCard from "@/components/client/postCard";
+import PostCard from "@/components/client/CardItem";
 import { courseServices } from "@/services/serviceGenerator";
 import { Course } from "@/types/course.type";
 import { Typography } from "@material-tailwind/react";
 import React, { useCallback, useEffect, useState } from "react";
-import { paginationHook } from "@/hook/paginationHook";
-import { fetchDataHook } from "@/hook/fetchDataHook";
+import { PaginationHook } from "@/hooks/paginationHook";
+import { FetchDataHook } from "@/hooks/fetchDataHook";
 import Pagination from "@/components/client/pagination";
 import CardSkeleton from "@/components/Skeleton/CardSkeleton";
 import Search from "@/components/client/search";
-import { searchHook } from "@/hook/searchHook";
+import { SearchHook } from "@/hooks/searchHook";
 import { getQueryParams } from "@/helpers/appFunction";
 import { useRouter } from "next/router";
 import ContentWrapper from "@/layouts/client/contentWrapper";
@@ -23,10 +23,10 @@ type Params = {
 
 const ClientCourses = () => {
   const [posts, setPosts] = useState<Course[]>([]);
-  const { isLoad, setIsLoad } = fetchDataHook();
+  const { isLoad, setIsLoad } = FetchDataHook();
   const { activePage, totalPages, take, setActivePage, handleSetTotalPages } =
-    paginationHook({ initLimit: 12 });
-  const { debounceValue, searchQuery, setSearchQuery } = searchHook({
+    PaginationHook({ initLimit: 12 });
+  const { debounceValue, searchQuery, setSearchQuery } = SearchHook({
     delay: 1000,
   });
   const router = useRouter();

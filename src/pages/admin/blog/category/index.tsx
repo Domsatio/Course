@@ -1,6 +1,6 @@
 import React, { useState, FC } from "react";
-import TableData from "@/components/TableData";
-import { TableActionProps } from "@/components/TableData";
+import TableData from "@/components/admin/TableData";
+import { TableActionProps } from "@/components/admin/TableData";
 import { Typography } from "@material-tailwind/react";
 import { GetCategory } from "@/types/category.type";
 import { categoryServices } from "@/services/serviceGenerator";
@@ -61,8 +61,8 @@ const Index: FC = () => {
               {posts.length === 0
                 ? "No post"
                 : posts.length === 1
-                ? "1 post"
-                : `${posts.length} posts`}
+                  ? "1 post"
+                  : `${posts.length} posts`}
             </Typography>
           </td>
           <td className={classes}>

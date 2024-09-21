@@ -28,9 +28,9 @@ import { TableDataProps } from "@/types/table.type";
 import FormInput from "@/components/admin/FormInput";
 import { supabase } from "@/libs/supabase";
 import { getQueryParams } from "@/helpers/appFunction";
-import { paginationHook } from "@/hook/paginationHook";
-import { fetchDataHook } from "@/hook/fetchDataHook";
-import { searchHook } from "@/hook/searchHook";
+import { PaginationHook } from "@/hooks/paginationHook";
+import { FetchDataHook } from "@/hooks/fetchDataHook";
+import { SearchHook } from "@/hooks/searchHook";
 
 export interface TableActionProps {
   action: "update" | "delete" | "view" | "custom";
@@ -52,8 +52,8 @@ export default function TableData({
   realtimeTable,
 }: TableDataProps) {
   const [modalFilter, setModalFilter] = useState<boolean>(false);
-  const { debounceValue, searchQuery, setSearchQuery} = searchHook({});
-  const { isLoad, isError, setIsLoad, setIsError } = fetchDataHook();
+  const { debounceValue, searchQuery, setSearchQuery } = SearchHook({});
+  const { isLoad, isError, setIsLoad, setIsError } = FetchDataHook();
   const {
     activePage,
     setActivePage,
@@ -62,7 +62,7 @@ export default function TableData({
     setTake,
     totalData,
     handleSetTotalPages,
-  } = paginationHook({});
+  } = PaginationHook({});
   const router = useRouter();
 
   const handleSetLimit = (item: number) => {
@@ -114,9 +114,6 @@ export default function TableData({
   useEffect(() => {
     const params: any = getQueryParams();
     setSearchQuery(params.search || "");
-    if (!params.search || params.search === "") {
-      getDataTable();
-    }
     // set realtime data on table
     if (realtimeTable) {
       const channels = supabase
@@ -159,7 +156,7 @@ export default function TableData({
   }, [take, activePage])
 
   useEffect(() => {
-    if(debounceValue && !isLoad){
+    if(debounceValue !== null && !isLoad){
       handleSetQuery();
     }
   }, [debounceValue]);

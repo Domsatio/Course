@@ -5,6 +5,7 @@ export const createProductValidation = (payload: Product) => {
   const schema = object({
     id: string().required("ID is required"),
     name: string().required("Name is required"),
+    slug: string().required("Slug is required"),
     description: string().required("Description is required"),
     price: number().required("Price is required"),
     discount: number().optional().default(0),
@@ -23,6 +24,7 @@ export const createProductValidation = (payload: Product) => {
 export const updateProductValidation = (payload: UpdateProduct) => {
   const schema = object({
     name: string().optional(),
+    slug: string().optional(),
     description: string().optional(),
     price: number().optional(),
     discount: number().optional(),

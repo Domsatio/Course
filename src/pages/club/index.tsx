@@ -1,20 +1,17 @@
-import PostCard from "@/components/client/postCard";
 import { categoryServices, postServices } from "@/services/serviceGenerator";
 import { GetCategory } from "@/types/category.type";
 import { GetPost } from "@/types/post.type";
 import { Button, Typography } from "@material-tailwind/react";
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import CardSkeleton from "@/components/Skeleton/CardSkeleton";
-import { paginationHook } from "@/hook/paginationHook";
-import {
-  fetchDataHook,
-  fetchDataHook as fetchCategoryHook,
-} from "@/hook/fetchDataHook";
-import { searchHook } from "@/hook/searchHook";
+import { PaginationHook } from "@/hooks/paginationHook";
+import { FetchDataHook, FetchDataHook as FetchCategoryHook } from "@/hooks/fetchDataHook";
+import { SearchHook } from "@/hooks/searchHook";
 import Pagination from "@/components/client/pagination";
 import { getQueryParams } from "@/helpers/appFunction";
 import Search from "@/components/client/search";
 import { useRouter } from "next/router";
+import CardItem from "@/components/client/CardItem";
 import CategorySkeleton from "@/components/Skeleton/CategorySkeleton";
 import ContentWrapper from "@/layouts/client/contentWrapper";
 
@@ -26,25 +23,17 @@ type Params = {
   category?: string;
 };
 
-const ClientView = () => {
-  const [posts, setPosts] = useState<
-    Omit<GetPost, "published" | "createdAt">[]
-  >([]);
-  const [categories, setCategories] = useState<Omit<GetCategory, "posts">[]>(
-    []
-  );
+const Club = () => {
+  const [posts, setPosts] = useState<Omit<GetPost, "published" | "createdAt">[]>([]);
+  const [categories, setCategories] = useState<Omit<GetCategory, "posts">[]>([]);
   const [activeCategory, setActiveCategory] = useState<string | null>("");
-  const { isLoad, setIsLoad } = fetchDataHook();
-  const { isLoad: isCategoryLoad, setIsLoad: setIsLoadCategory } =
-    fetchCategoryHook();
-  const { activePage, totalPages, take, setActivePage, handleSetTotalPages } =
-    paginationHook({ initLimit: 12 });
-  const { debounceValue, searchQuery, setSearchQuery } = searchHook({
-    delay: 800,
-  });
-  const router = useRouter();
+  const { isLoad, setIsLoad } = FetchDataHook();
+  const { isLoad: isCategoryLoad, setIsLoad: setIsLoadCategory } = FetchCategoryHook();
+  const { activePage, totalPages, take, setActivePage, handleSetTotalPages } = PaginationHook({ initLimit: 12 });
+  const { debounceValue, searchQuery, setSearchQuery } = SearchHook({ delay: 800, });
+  const { replace } = useRouter();
 
-  const getDataPosts = async () => {
+  const getPostsData = async () => {
     const postParams: Params = {
       skip: activePage * take - take,
       take,
@@ -64,13 +53,17 @@ const ClientView = () => {
   };
 
   const handleSetActiveCategory = async (category: string) => {
-    await router.replace({
+    await replace({
       pathname: "/club",
       query: { ...getQueryParams(), category: category },
     });
     setActiveCategory(category);
-    getDataPosts();
+    getPostsData();
   };
+
+  useEffect(() => {
+    getPostsData();
+  }, [activePage]);
 
   useEffect(() => {
     setIsLoad(true);
@@ -80,6 +73,10 @@ const ClientView = () => {
       skip: 0,
       take: "all",
     };
+    if (activeCategory === null) {
+      setActiveCategory(getQueryParams()["category"] || "");
+    }
+    getPostsData();
     categoryServices.getItems(categoryParams).then(({ data: { data } }) => {
       setCategories(data);
       setIsLoadCategory(false);
@@ -91,11 +88,11 @@ const ClientView = () => {
       setSearchQuery(getQueryParams()["search"] || "");
     } else {
       const handleGetData = async () => {
-        await router.replace({
+        await replace({
           pathname: "/club",
           query: { ...getQueryParams(), search: debounceValue || "" },
         });
-        getDataPosts();
+        getPostsData();
       };
       handleGetData();
     }
@@ -136,7 +133,7 @@ const ClientView = () => {
         value={searchQuery || ""}
         onChange={(e) => setSearchQuery(e.target.value)}
       />
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 place-items-center lg:place-items-start">
         {isLoad ? (
           <React.Fragment>
             {Array.from({ length: 6 }, (_, i) => (
@@ -147,7 +144,7 @@ const ClientView = () => {
           <React.Fragment>
             {posts.map(
               (data: Omit<GetPost, "published" | "createdAt">, index) => (
-                <PostCard
+                <CardItem
                   key={index}
                   props={{ ...data, href: `/club/${data.slug}` }}
                   category={
@@ -178,4 +175,4 @@ const ClientView = () => {
   );
 };
 
-export default ClientView;
+export default Club;

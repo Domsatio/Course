@@ -4,11 +4,17 @@ import { Typography } from "@material-tailwind/react";
 import React, { FC } from "react";
 import { GetServerSideProps } from "next";
 import { dateFormater } from "@/helpers/date";
+import { useRouter } from "next/router";
 import ContentWrapper from "@/layouts/client/contentWrapper";
 
-const DetailClub: FC<{ data: Omit<GetPost, "id" | "published" | "slug"> }> = ({
-  data: { title, body, categories, createdAt },
+const DetailClub: FC<Omit<GetPost, "id" | "published" | "slug">> = ({
+  title,
+  body,
+  categories,
+  createdAt,
 }) => {
+  const { push } = useRouter();
+
   return (
     <ContentWrapper>
       <div className="flex flex-col items-center gap-5">
@@ -17,7 +23,13 @@ const DetailClub: FC<{ data: Omit<GetPost, "id" | "published" | "slug"> }> = ({
             <Typography
               key={categoryId}
               variant="small"
-              className="text-[#c28833] flex capitalize group-hover:text-[#c28833]/80"
+              className="text-[#c28833] flex capitalize cursor-pointer hover:text-[#c28833]/80"
+              onClick={() =>
+                push({
+                  pathname: "/club",
+                  query: { category: category.name },
+                })
+              }
             >
               {category.name}
             </Typography>
@@ -39,21 +51,12 @@ const DetailClub: FC<{ data: Omit<GetPost, "id" | "published" | "slug"> }> = ({
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.query;
-
-  if (typeof slug !== "string") {
-    return {
-      notFound: true,
-    };
-  }
-
   try {
     const {
       data: { data },
     } = await postServices.getItem({ slug });
     return {
-      props: {
-        data: data,
-      },
+      props: data,
     };
   } catch (error) {
     console.error("Error fetching data:", error);

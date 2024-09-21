@@ -26,10 +26,9 @@ interface PostCardProps<T> {
 }
 
 // const PostCard: FC<Omit<GetPost, "id" | "published" | "createdAt"> > = ({ title, slug, body, categories}) => {
-const PostCard = ({props, category}: typeCard) => {
+const CardItem = ({ props, category }: typeCard) => {
   return (
-    // <Link href={`/club/${slug}`} className="group cursor-pointer">
-    <Link href={props.href||""} className="group cursor-pointer">
+    <Link href={props.href || ""} className="group cursor-pointer">
       <Card className="max-w-[357px] overflow-hidden shadow-none">
         <CardHeader
           floated={false}
@@ -56,7 +55,7 @@ const PostCard = ({props, category}: typeCard) => {
           >
             {props.title}
           </Typography>
-          <p className="line-clamp-3 text-black hover:text-black/70 text-sm leading-6">
+          <p className="line-clamp-3 text-black group-hover:text-black/70 text-sm leading-6">
             {props.body ? props.body : props.description}
           </p>
         </CardBody>
@@ -65,4 +64,4 @@ const PostCard = ({props, category}: typeCard) => {
   );
 };
 
-export default PostCard;
+export default CardItem;

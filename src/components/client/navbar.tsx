@@ -74,10 +74,7 @@ function ProfileMenu() {
           <MenuItem
             key={label}
             onClick={closeMenu}
-            className={`flex items-center gap-2 rounded ${label === "Sign Out"
-              ? "hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
-              : ""
-              }`}
+            className={`flex items-center gap-2 rounded ${label === "Sign Out" && "hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"}`}
           >
             {icon}
             <Typography
@@ -175,10 +172,10 @@ export default function ComplexNavbar() {
 
   return (
     <Navbar
-      className={`fixed mx-auto left-0 right-0 max-w-full lg:h-20 p-2 rounded-none transition-all duration-300 z-50 ${isScrollingUp || currentPosition < 68 ? "top-0" : "top-[-100px]"
+      className={`fixed left-0 right-0 max-w-full lg:h-20 p-2 rounded-none transition-all duration-300 z-50 ${isScrollingUp || currentPosition < 68 ? "top-0" : "top-[-100px]"
         }`}
     >
-      <div className="px-24 relative container mx-auto h-full flex items-center justify-between lg:justify-between text-blue-gray-900">
+      <div className="relative container mx-auto 2xl:max-w-[75rem] px-10 h-full flex items-center justify-between lg:justify-between text-blue-gray-900">
         <Typography className="cursor-pointer py-1.5 font-medium">
           DomClub
         </Typography>

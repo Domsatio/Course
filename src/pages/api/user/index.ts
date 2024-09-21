@@ -209,10 +209,11 @@ export default async function handlerUser(
       }
 
       try {
-        const { skip, take } = req.query;
+        const { skip, take, search='' } = req.query;
         const { totalData, data } = await getAllUsers(
           Number(skip),
-          Number(take)
+          Number(take),
+          search as string
         );
         console.info("Get all users success");
         return res.status(200).send({

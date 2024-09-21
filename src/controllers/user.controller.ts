@@ -37,20 +37,34 @@ export const getOneUser = async (id: string) => {
   });
 };
 
-export const getAllUsers = async (skip: number = 0, take: number = 5) => {
-  return prisma.$transaction(async (tx) => {
-    const totalData = await tx.user.count();
+export const getAllUsers = async (
+  skip: number = 0,
+  take: number = 5,
+  search: string = ""
+) => {
+  let whereCondition: any = {
+    OR: [
+      { name: { contains: search, mode: "insensitive" } },
+      { email: { contains: search, mode: "insensitive" } },
+    ],
+  };
+  return prisma.$transaction(
+    async (tx) => {
+      const totalData = await tx.user.count();
 
-    const data = await tx.user.findMany({
-      skip,
-      take,
-      orderBy: {
-        name: "asc",
-      },
-    });
+      const data = await tx.user.findMany({
+        where: whereCondition,
+        skip,
+        take,
+        orderBy: {
+          name: "asc",
+        },
+      });
 
-    return { totalData, data };
-  });
+      return { totalData, data };
+    },
+    { maxWait: 5000, timeout: 20000 }
+  );
 };
 
 export const loginUser = async (data: User) => {

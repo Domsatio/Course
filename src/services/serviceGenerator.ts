@@ -1,5 +1,5 @@
 import instance from "@/libs/axios/instance";
-import { Address, UpdateAddress } from "@/types/address.type";
+import { UpdateAddress } from "@/types/address.type";
 import { Category, UpdateCategory } from "@/types/category.type";
 import { Course, UpdateCourse } from "@/types/course.type";
 import { Order, UpdateOrder } from "@/types/order.type";
@@ -31,7 +31,9 @@ export const orderServices = createService<Order, UpdateOrder>("order");
 export const postServices = createService<Post, UpdatePost>("post");
 export const productServices = createService<Product, UpdateProduct>("product");
 export const userServices = createService<User, UpdateUser>("user");
-export const addressServices = createService<Address, UpdateAddress>("address");
+export const addressServices = createService<UpdateAddress, UpdateAddress>(
+  "address"
+);
 export const dashboardServices = {
   getDashboard: (token: string) =>
     instance.get("/api/dashboard", tokenHeader(token)),

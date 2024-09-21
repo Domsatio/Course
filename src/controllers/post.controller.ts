@@ -149,6 +149,7 @@ export const createPost = async ({
   body,
   categories,
   published,
+  thumbnail, // Add the thumbnail property
 }: Post) => {
   return prisma.post.create({
     data: {
@@ -158,6 +159,7 @@ export const createPost = async ({
       slug,
       body,
       published,
+      thumbnail,
       categories: {
         create: categories?.map((id) => ({
           category: {

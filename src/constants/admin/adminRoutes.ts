@@ -75,4 +75,10 @@ export const adminRoutes: MenuItemProps[] = [
       },
     ],
   },
+  {
+    isPage: true,
+    href: "/user",
+    label: "Users",
+    icon: VideoCameraIcon,
+  },
 ];

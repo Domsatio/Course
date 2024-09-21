@@ -37,17 +37,20 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(uuid())
-  email         String    @unique
-  password      String?
-  emailVerified DateTime?
-  name          String
-  role          UserRole  @default(USER)
-  accounts      Account[]
-  orders        Order[]
-  posts         Post[]
-  sessions      Session[]
-  address       Address?
+  id             String    @id @default(uuid())
+  email          String    @unique
+  password       String?
+  emailVerified  DateTime?
+  name           String
+  role           UserRole  @default(USER)
+  isSubscribed   Boolean   @default(false)
+  subscribeEnd   DateTime?
+  subscribeStart DateTime?
+  accounts       Account[]
+  address        Address?
+  orders         Order[]
+  posts          Post[]
+  sessions       Session[]
 }
 
 model VerificationToken {
@@ -82,11 +85,11 @@ model Product {
   description String
   price       Float
   discount    Float?   @default(0)
-  image       String
   quantity    Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   slug        String   @unique
+  thumbnail   String
   orders      Order[]
 }
 
@@ -114,6 +117,7 @@ model Post {
   updatedAt  DateTime            @updatedAt
   published  Boolean             @default(false)
   slug       String              @unique
+  thumbnail  String
   categories CategoriesOnPosts[]
   user       User                @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -143,12 +147,12 @@ model Course {
   id          String   @id @default(uuid())
   title       String
   description String
-  image       Json
   video       Json
   published   Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   slug        String   @unique
+  thumbnail   String
 }
 
 enum UserRole {
