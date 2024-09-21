@@ -1,11 +1,9 @@
-import React, { useEffect, useState, useMemo } from "react";
-import Image from "next/image";
+import React, { useEffect, useState } from "react";
 import { NullProof } from "@/helpers/appFunction";
 import DataDetailPage, {
   LabelDetailPage,
   DetailPage,
 } from "@/components/admin/DetailPage";
-// import ReactPlayer from 'react-player/youtube'
 import { courseServices } from "@/services/serviceGenerator";
 import EmblaCarousel from "@/components/admin/EmblaCarousel";
 import { EmblaOptionsType } from "embla-carousel";
@@ -93,31 +91,4 @@ export default function DetailCourse() {
       </div>
     </DetailPage>
   );
-}
-
-{
-  /* <EmblaCarousel slides={data.image} options={OPTIONS} PreviewChild={
-              ({ item }) => (
-                <img
-                  className="h-[315px] w-[550px] max-w-full rounded-lg object-cover object-center"
-                  src={item.image || ""}
-                  alt=""
-              />
-              )
-            }
-            ThumChild={
-              ({ item, onClick }) => (
-                <img
-                  key={item.id}
-                  onClick={onClick}
-                  src={item.image || ""}
-                  className="h-20 w-20 cursor-pointer rounded-lg object-cover object-center"
-                  alt="gallery-image"
-                />
-              )
-            }
-            /> */
-}
-{
-  /* Video */
 }

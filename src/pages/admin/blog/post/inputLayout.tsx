@@ -29,6 +29,14 @@ export const FormInputListRenderer = ({ id }: { id: string }) => {
       value: "",
     },
     {
+      className: "",
+      name: "thumbnail",
+      label: "Thumbnail",
+      type: "image",
+      validator: Yup.string().required("Thumbnail is required"),
+      value: "",
+    },
+    {
       className: "input-text",
       name: "categories",
       label: "Category",
@@ -64,7 +72,7 @@ export const FilterInputList: InputListProps[] = [
   {
     className: "",
     name: "published",
-    label: "Dipublikasikan",
+    label: "Published",
     type: "checkbox",
     validator: Yup.string(),
     value: "",

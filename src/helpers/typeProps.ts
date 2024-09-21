@@ -50,31 +50,6 @@ interface InputListOptionProps {
   watch?: string;
 }
 
-interface InputListProps {
-  className?: string;
-  name: string;
-  label: string;
-  protect?: string[];
-  type: FormInputTypeProps;
-  hide?: boolean;
-  removeOnSubmit?: boolean;
-  disabled?: boolean;
-  lockData?: boolean;
-  validator: any;
-  value?: string | number | string[] | boolean;
-  valueID?: string;
-  useRiset?: boolean;
-  listData?: {
-    title: string;
-    value: number | string | boolean;
-  }[];
-  onChange?: (e: any) => void;
-  error?: string;
-  option?: InputListOptionProps;
-  component?: InputListProps[];
-  watch?: string;
-}
-
 interface MenuItemProps {
   isheader?: boolean;
   isPage?: boolean;
@@ -86,7 +61,7 @@ interface MenuItemProps {
 
 interface ProfileMenuItemProps {
   label: string;
-  icon: any;
+  icon: React.ReactElement;
   href?: string;
 }
 

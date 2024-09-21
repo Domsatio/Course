@@ -6,7 +6,7 @@ import { FormInputList } from "./inputLayout";
 import { userServices } from "@/services/serviceGenerator";
 import { useSession } from "next-auth/react";
 
-const index = () => {
+const Index = () => {
   const { data: session } = useSession();
   return (
     <Card className="w-full flex flex-col gap-5 px-3 md:px-16 lg:px-28 md:flex-row text-[#161931]">
@@ -44,18 +44,18 @@ const index = () => {
               </div>
 
               <div className="items-center mt-8 sm:mt-14 text-[#202142]">
-                  <FormInput
-                    id={session?.user?.id}
-                    inputList={FormInputList}
-                    method="PUT"
-                    service={userServices}
-                    isUseCencelButton={false}
-                    customCard={(children:React.ReactNode) => (
-                      <React.Fragment>
-                        {children}
-                      </React.Fragment>
-                    )}
-                  />
+                <FormInput
+                  id={session?.user?.id}
+                  inputList={FormInputList}
+                  method="PUT"
+                  service={userServices}
+                  isUseCencelButton={false}
+                  customCard={(children: React.ReactNode) => (
+                    <React.Fragment>
+                      {children}
+                    </React.Fragment>
+                  )}
+                />
               </div>
             </div>
           </div>
@@ -65,4 +65,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default Index;

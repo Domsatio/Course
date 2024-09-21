@@ -6,7 +6,7 @@ import { GetServerSideProps } from "next";
 import { dateFormater } from '@/helpers/date';
 import { useRouter } from 'next/router';
 
-const DetailClub: FC<Omit<GetPost, 'id' | 'published' | 'slug'>> = ({ title, body, categories, createdAt }) => {
+const DetailClubPage: FC<Omit<GetPost, 'id' | 'published' | 'slug'>> = ({ title, body, categories, createdAt }) => {
   const { push } = useRouter()
 
   return (
@@ -58,4 +58,4 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 };
 
-export default DetailClub
+export default DetailClubPage

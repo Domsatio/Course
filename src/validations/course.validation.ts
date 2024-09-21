@@ -7,17 +7,12 @@ export const createCourseValidation = (payload: Course) => {
     title: string().required("Title is required"),
     slug: string().required("Slug is required"),
     description: string().required("Description is required"),
-    image: array(
-      object({
-        image: string().required("Image is required"),
-      })
-    ).required("Image is required"),
+    thumbnail: string().required("Thumbnail is required"),
     video: array(
       object({
         video: string().required("Video is required"),
         description: string().required("Description is required"),
         file: string().required("File is required"),
-        thumbnailUrl: string().required("Thumbnail URL is required"),
       })
     ).required("Video is required"),
     published: boolean().required("Published is required"),
@@ -36,17 +31,12 @@ export const updateCourseValidation = (payload: UpdateCourse) => {
     title: string().optional(),
     slug: string().optional(),
     description: string().optional(),
-    image: array(
-      object({
-        image: string().required("Image is required"),
-      })
-    ).optional(),
+    thumbnail: string().optional(),
     video: array(
       object({
         video: string().required("Video is required"),
         description: string().required("Description is required"),
         file: string().required("File is required"),
-        thumbnailUrl: string().required("Thumbnail URL is required"),
       })
     ).optional(),
     published: boolean().optional(),

@@ -37,17 +37,20 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(uuid())
-  email         String    @unique
-  password      String?
-  emailVerified DateTime?
-  name          String
-  role          UserRole  @default(USER)
-  accounts      Account[]
-  orders        Order[]
-  posts         Post[]
-  sessions      Session[]
-  address       Address?
+  id              String    @id @default(uuid())
+  email           String    @unique
+  password        String?
+  emailVerified   DateTime?
+  name            String
+  role            UserRole  @default(USER)
+  isSubscribed    Boolean   @default(false)
+  subscribeStart  DateTime?
+  subscribeEnd    DateTime?
+  accounts        Account[]
+  orders          Order[]
+  posts           Post[]
+  sessions        Session[]
+  address         Address?
 }
 
 model VerificationToken {
@@ -83,7 +86,7 @@ model Product {
   description String
   price       Float
   discount    Float?   @default(0)
-  image       String
+  thumbnail   String
   quantity    Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -110,6 +113,7 @@ model Post {
   userId     String
   title      String
   body       String
+  thumbnail  String
   createdAt  DateTime            @default(now())
   updatedAt  DateTime            @updatedAt
   published  Boolean             @default(false)
@@ -144,7 +148,7 @@ model Course {
   title       String
   slug        String   @unique
   description String
-  image       Json
+  thumbnail   String
   video       Json
   published   Boolean  @default(true)
   createdAt   DateTime @default(now())

@@ -15,7 +15,7 @@ type AlertState = {
   color: AlertProps["color"];
 }
 
-const AccountAddresses: FC = () => {
+const ClientAccountAddressPage: FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [displayAlert, setDisplayAlert] = useState<AlertState>({
     open: false,
@@ -121,4 +121,4 @@ const AccountAddresses: FC = () => {
   )
 }
 
-export default AccountAddresses
+export default ClientAccountAddressPage

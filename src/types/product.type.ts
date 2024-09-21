@@ -6,8 +6,8 @@ export type Product = {
   slug: string;
   description: string;
   price: number;
-  discount?: number;
-  image: string;
+  discount: number;
+  thumbnail: string;
   quantity: number;
 };
 
@@ -17,7 +17,7 @@ export type UpdateProduct = {
   description?: string;
   price?: number;
   discount?: number;
-  image?: string;
+  thumbnail?: string;
   quantity?: number;
 };
 
@@ -27,8 +27,8 @@ export type GetProduct = {
   slug: string;
   description: string;
   price: number;
-  discount?: number;
-  image: string;
+  discount: number;
+  thumbnail: string;
   quantity: number;
   orders: Order[];
 };

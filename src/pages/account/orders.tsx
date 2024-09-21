@@ -1,7 +1,7 @@
 import AccountLayout from '@/layouts/client/account'
 import { Typography } from '@material-tailwind/react'
 
-const AccountOrders = () => {
+const ClientAccountOrdersPage = () => {
   return (
     <AccountLayout>
       <Typography variant="h4" color="black" placeholder='Blog Page'>
@@ -11,4 +11,4 @@ const AccountOrders = () => {
   )
 }
 
-export default AccountOrders
+export default ClientAccountOrdersPage

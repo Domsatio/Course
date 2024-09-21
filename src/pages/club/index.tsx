@@ -7,7 +7,7 @@ import CardSkeleton from "@/components/Skeleton/CardSkeleton";
 import { PaginationHook } from "@/hooks/paginationHook";
 import { FetchDataHook, FetchDataHook as FetchCategoryHook } from "@/hooks/fetchDataHook";
 import { SearchHook } from "@/hooks/searchHook";
-import Pagination from "@/components/client/pagination";
+import Pagination from "@/components/client/Pagination";
 import { getQueryParams } from "@/helpers/appFunction";
 import Search from "@/components/client/search";
 import { useRouter } from "next/router";
@@ -22,7 +22,7 @@ type Params = {
   category?: string;
 };
 
-const Club = () => {
+const ClientClubPage = () => {
   const [posts, setPosts] = useState<Omit<GetPost, "published" | "createdAt">[]>([]);
   const [categories, setCategories] = useState<Omit<GetCategory, "posts">[]>([]);
   const [activeCategory, setActiveCategory] = useState<string | null>("");
@@ -109,8 +109,8 @@ const Club = () => {
   );
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between pt-24">
-      <section className="flex container flex-col justify-center flex-wrap gap-10 pt-10 pb-32 px-24">
+    <main className="flex min-h-screen flex-col items-center bg-[#f4f4f4] justify-between py-24">
+      <section className="flex flex-col container 2xl:max-w-[75rem] justify-center flex-wrap gap-10 p-10 rounded-3xl bg-white">
         <Typography variant="h2" color="black" placeholder="Blog Page">
           Club
         </Typography>
@@ -180,4 +180,4 @@ const Club = () => {
   );
 };
 
-export default Club;
+export default ClientClubPage;

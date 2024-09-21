@@ -13,7 +13,7 @@ type Params = {
   filter?: any;
 }
 
-const Store = () => {
+const ClientStorePage = () => {
   const [products, setProducts] = useState<Omit<GetProduct, "createdAt">[]>([]);
   const { activePage, totalPages, take, setActivePage, handleSetTotalPages } = PaginationHook({ initLimit: 12 });
   const { isLoad, setIsLoad } = FetchDataHook();
@@ -51,4 +51,4 @@ const Store = () => {
   )
 }
 
-export default Store
+export default ClientStorePage

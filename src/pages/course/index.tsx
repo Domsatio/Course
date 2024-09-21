@@ -2,10 +2,10 @@ import PostCard from "@/components/client/CardItem";
 import { courseServices } from "@/services/serviceGenerator";
 import { Course } from "@/types/course.type";
 import { Typography } from "@material-tailwind/react";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { PaginationHook } from "@/hooks/paginationHook";
 import { FetchDataHook } from "@/hooks/fetchDataHook";
-import Pagination from "@/components/client/pagination";
+import Pagination from "@/components/client/Pagination";
 import CardSkeleton from "@/components/Skeleton/CardSkeleton";
 import Search from "@/components/client/search";
 import { SearchHook } from "@/hooks/searchHook";
@@ -20,7 +20,7 @@ type Params = {
   where?: string;
 };
 
-const ClientCourses = () => {
+const ClientCoursePage = () => {
   const [posts, setPosts] = useState<Course[]>([]);
   const { isLoad, setIsLoad } = FetchDataHook();
   const { activePage, totalPages, take, setActivePage, handleSetTotalPages } = PaginationHook({ initLimit: 12 });
@@ -85,22 +85,20 @@ const ClientCourses = () => {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {isLoad ? (
-            <React.Fragment>
+            <Fragment>
               {Array.from({ length: 6 }, (_, i) => (
                 <CardSkeleton key={i} />
               ))}
-            </React.Fragment>
+            </Fragment>
           ) : (
-            <React.Fragment>
-              {posts.map(
-                (data: Course, index) => (
-                  <PostCard
-                    key={index}
-                    props={{ ...data, href: `/course/${data.slug}` }}
-                  />
-                )
-              )}
-            </React.Fragment>
+            <Fragment>
+              {posts.map((data: Course, index) => (
+                <PostCard
+                  key={index}
+                  props={{ ...data, href: `/course/${data.slug}` }}
+                />
+              ))}
+            </Fragment>
           )}
         </div>
         <Pagination
@@ -113,4 +111,4 @@ const ClientCourses = () => {
   );
 };
 
-export default ClientCourses;
+export default ClientCoursePage;
