@@ -3,14 +3,11 @@ export type Course = {
   title: string;
   slug: string;
   description: string;
-  image: {
-    image: string;
-  }[];
+  thumbnail: string;
   video: {
     video: string;
     description: string;
     file: string;
-    thumbnailUrl: string;
   }[];
   published: boolean;
 };
@@ -19,14 +16,11 @@ export type UpdateCourse = {
   title?: string;
   slug?: string;
   description?: string;
-  image?: {
-    image: string;
-  }[];
+  thumbnail?: string;
   video?: {
     video: string;
     description: string;
     file: string;
-    thumbnailUrl: string;
   }[];
   published?: boolean;
 };

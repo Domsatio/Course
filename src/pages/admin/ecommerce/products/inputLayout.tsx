@@ -20,10 +20,10 @@ export const FormInputList: InputListProps[] = [
   },
   {
     className: "",
-    name: "image",
-    label: "Image",
+    name: "thumbnail",
+    label: "Thumbnail",
     type: "image",
-    validator: Yup.mixed().required("Image is required"),
+    validator: Yup.string().required("Thumbnail is required"),
     value: "",
   },
   {
@@ -47,7 +47,7 @@ export const FormInputList: InputListProps[] = [
     name: "discount",
     label: "Discount",
     type: "number",
-    validator: Yup.number().typeError('Input should be a number').optional(),
-    value: "",
+    validator: Yup.number().typeError('Input should be a number').optional().default(0),
+    value: 0,
   },
 ];

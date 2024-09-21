@@ -2,22 +2,14 @@
 import React, { useState } from "react";
 import TableData from "@/components/admin/TableData";
 import { TableActionProps } from "@/components/admin/TableData";
-import { PencilIcon } from "@heroicons/react/24/solid";
-import {
-  Typography,
-  Chip,
-  Avatar,
-  IconButton,
-  Tooltip,
-  rating,
-} from "@material-tailwind/react";
+import { Typography, Avatar } from "@material-tailwind/react";
 import { NullProof, numberlistPagination } from "@/helpers/appFunction";
 import { productServices } from "@/services/serviceGenerator";
 import { GetProduct } from "@/types/product.type";
 
 const TABLE_HEAD = [
   "No",
-  "Image",
+  "Thumbnail",
   "Name",
   "Description",
   "Price",
@@ -65,7 +57,7 @@ export default function Index() {
           </td>
           <td className={classes}>
             <Avatar
-              src={product.image}
+              src={product.thumbnail}
               alt={product.name}
               size="md"
               className="border border-blue-gray-50 bg-blue-gray-50/50 object-contain p-1"
@@ -104,7 +96,7 @@ export default function Index() {
               color="blue-gray"
               className="font-normal"
             >
-              {product.discount}%
+              {product.discount > 0 ? product.discount + "%" : '-'}
             </Typography>
           </td>
           <td className={classes}>
