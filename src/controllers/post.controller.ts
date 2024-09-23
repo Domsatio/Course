@@ -149,6 +149,7 @@ export const createPost = async ({
   body,
   categories,
   published,
+  thumbnail,
 }: Post) => {
   return prisma.post.create({
     data: {
@@ -158,6 +159,7 @@ export const createPost = async ({
       slug,
       body,
       published,
+      thumbnail,
       categories: {
         create: categories?.map((id) => ({
           category: {
@@ -171,7 +173,7 @@ export const createPost = async ({
 
 export const updatePost = async (
   id: string,
-  { title, slug, body, categories, published }: UpdatePost
+  { title, slug, body, categories, thumbnail, published }: UpdatePost
 ) => {
   return prisma.post.update({
     where: { id },
@@ -179,6 +181,7 @@ export const updatePost = async (
       title,
       slug,
       body,
+      thumbnail,
       published,
       categories: {
         deleteMany: {},

@@ -161,6 +161,7 @@ export default function FormInput({
 
   useEffect(() => {
     onChange?.(formik);
+    console.log(formik.values);
   }, [formik.values]);
 
   // a function to take the data to be edited if method is PUT

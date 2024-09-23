@@ -7,7 +7,7 @@ export type Course = {
   video: {
     video: string;
     description: string;
-    file: string;
+    file?: string;
   }[];
   published: boolean;
 };
@@ -20,7 +20,7 @@ export type UpdateCourse = {
   video?: {
     video: string;
     description: string;
-    file: string;
+    file?: string;
   }[];
   published?: boolean;
 };

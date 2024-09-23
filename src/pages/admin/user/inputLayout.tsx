@@ -29,21 +29,12 @@ export const FormInputListRenderer = ({ id }: { id: string }) => {
       value: "",
     },
     {
-      className: "",
-      name: "thumbnail",
-      label: "Thumbnail",
-      type: "image",
-      validator: Yup.string().required("Thumbnail is required"),
-      value: "",
-    },
-    {
       className: "input-text",
       name: "categories",
       label: "Category",
       type: "multicheckbox",
       validator: Yup.array().required("Category is required"),
       value: [],
-      valueID: 'categoryId',
       option: {
         id: "id",
         type: "multicheckbox",
@@ -73,7 +64,7 @@ export const FilterInputList: InputListProps[] = [
   {
     className: "",
     name: "published",
-    label: "Published",
+    label: "Dipublikasikan",
     type: "checkbox",
     validator: Yup.string(),
     value: "",
@@ -84,19 +75,19 @@ export const FilterInputList: InputListProps[] = [
     ],
   },
   {
-    className: "input-text",
+    className: "",
     name: "category",
     label: "Category",
     type: "select",
-    validator: Yup.string().required("Category is required"),
-    value: [],
+    validator: Yup.string(),
+    value: "",
     option: {
       id: "name",
       params: "name",
+      query: "skip=0&take=all&published=published",
       type: "select",
-      query: "skip=0&take=all",
       api: "/api/category",
-      data: [],
-    }
-  },
+    },
+    watch: "published",
+  }
 ];

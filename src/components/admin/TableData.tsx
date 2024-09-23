@@ -114,9 +114,6 @@ export default function TableData({
   useEffect(() => {
     const params: any = getQueryParams();
     setSearchQuery(params.search || "");
-    if (!params.search || params.search === "") {
-      getDataTable();
-    }
     // set realtime data on table
     if (realtimeTable) {
       const channels = supabase
@@ -142,7 +139,7 @@ export default function TableData({
     const res = await router.push(
       {
         pathname: router.pathname,
-        query: { search: searchQuery?.toLowerCase() || "" },
+        query: { search: searchQuery || "" },
       },
       undefined,
       { shallow: true }
@@ -153,8 +150,16 @@ export default function TableData({
   };
 
   useEffect(() => {
-    handleSetQuery();
-  }, [debounceValue, take, activePage]);
+    if(!isLoad){
+      getDataTable()
+    }
+  }, [take, activePage])
+
+  useEffect(() => {
+    if(debounceValue !== null && !isLoad){
+      handleSetQuery();
+    }
+  }, [debounceValue]);
 
   // table component
   const Table = (children: React.ReactNode) => (
@@ -176,7 +181,6 @@ export default function TableData({
                 icon={<MagnifyingGlassIcon className="h-5 w-5" />}
                 value={searchQuery || ""}
                 onChange={(e) => {
-                  e.preventDefault();
                   setSearchQuery(e.target.value);
                 }}
                 className="pr-20"

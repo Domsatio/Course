@@ -19,7 +19,7 @@ export type FormInputTypeProps =
   | "file"
 
 export type InputListOptionProps = {
-  type: "select" | "multicheckbox" | "datalist" | "csv";
+  type: "select" | "checkbox" | "multicheckbox" | "datalist" | "csv";
   params?: string;
   query?: string;
   id: string;

@@ -32,6 +32,7 @@
     "react-dom": "^18",
     "react-player": "^2.10.1",
     "supabase": "^1.192.5",
+    "tailwind-merge": "^2.5.2",
     "uploadthing": "^6.13.2",
     "use-debounce": "^10.0.3",
     "uuid": "^10.0.0",

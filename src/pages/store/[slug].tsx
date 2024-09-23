@@ -32,14 +32,14 @@ const FinalPrice = ({ price, discount }: { price: number, discount: number }) =>
 const DetailStore: FC<Omit<GetProduct, 'id' | 'createdAt' | 'updatedAt'>> = (data) => {
   return (
     <main className="flex min-h-screen flex-col items-center bg-[#f4f4f4] justify-between py-24">
-      <section className="grid grid-cols-2 container 2xl:max-w-[75rem] p-10 rounded-3xl bg-white">
+      <section className="grid grid-cols-1 lg:grid-cols-2 container 2xl:max-w-[75rem] p-10 rounded-3xl bg-white">
         <Image
-          src={data.image}
+          src={data.thumbnail}
           alt={data.name}
           width={400}
           height={400}
           priority
-          className='rounded-lg'
+          className='rounded-lg mb-5 lg:mb-0'
         />
         <div>
           <Typography color="black" className='font-medium text-2xl'>

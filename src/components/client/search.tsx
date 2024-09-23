@@ -18,7 +18,6 @@ const Search: FC<SearchProps> = ({
   value,
 }) => {
   return (
-    <div>
       <Input
         name={name}
         placeholder={placeholder}
@@ -30,7 +29,6 @@ const Search: FC<SearchProps> = ({
           className: "hidden",
         }}
       />
-    </div>
   );
 };
 

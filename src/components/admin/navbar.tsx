@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useRouter as topLoader } from 'nextjs-toploader/app';
-import { adminRoutes } from "@/constants/admin/AdminRoutes";
+import { adminRoutes } from "@/constants/admin/adminRoutes";
 import { MenuItemProps, RouteItemsProps } from "@/helpers/typeProps";
 import {
   Navbar,

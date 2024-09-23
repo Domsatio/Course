@@ -48,7 +48,7 @@ export const getProducts = async (
     });
 
     return { totalData, data };
-  });
+  }, { maxWait: 5000, timeout: 20000 });
 };
 
 export const getProduct = async (param: string) => {

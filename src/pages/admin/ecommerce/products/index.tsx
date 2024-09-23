@@ -65,17 +65,16 @@ export default function Index() {
           </td>
           <td className={classes}>
             <Typography variant="small" color="blue-gray" className="font-bold">
-              {product.name}
+              {NullProof({ input: product, params: "name" })}
             </Typography>
           </td>
           <td className={`${classes} max-w-sm`}>
-            <Typography
-              variant="small"
+          <p
               color="blue-gray"
-              className="font-normal"
+              className="font-normal line-clamp-2 text-sm"
             >
-              {product.description}
-            </Typography>
+              {NullProof({ input: product, params: "description" })}
+            </p>
           </td>
           <td className={classes}>
             <Typography
@@ -105,7 +104,7 @@ export default function Index() {
               color="blue-gray"
               className="font-normal"
             >
-              {product.quantity}
+              {NullProof({ input: product, params: "quantity" })}
             </Typography>
           </td>
           <td className={classes}>

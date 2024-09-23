@@ -14,7 +14,7 @@ const FinalPrice = ({ price, discount }: { price: number, discount: number }) =>
   const discountedPrice = discount !== undefined ? price - (price * discount) / 100 : price;
 
   return (
-    <div className="mt-7">
+    <div className="mt-7 min-h-max">
       <Typography color="blue-gray" className="text-xl font-bold">
         {ConvertCurrency(discountedPrice)}
       </Typography>
@@ -35,7 +35,7 @@ const FinalPrice = ({ price, discount }: { price: number, discount: number }) =>
 const StoreCard: FC<Omit<GetProduct, 'createdAt' | 'updatedAt' | 'quantity' | 'description'>> = ({ name, slug, price, discount, thumbnail }) => {
   return (
     <Link href={`/store/${slug}`}>
-      <Card className="w-full">
+      <Card className="w-full h-full">
         <CardHeader shadow={false} floated={false} className="h-80">
           <Image
             src={thumbnail}

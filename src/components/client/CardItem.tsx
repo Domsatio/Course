@@ -37,6 +37,7 @@ const CardItem = ({ props, category }: typeCard) => {
             width={500}
             height={300}
             className="transform transition-transform duration-500 group-hover:scale-110"
+            // loading="lazy"
             priority
           />
         </CardHeader>

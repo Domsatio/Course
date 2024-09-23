@@ -7,6 +7,7 @@ import { LabelDetailPage } from "@/components/admin/DetailPage";
 import EmblaCarousel from "@/components/admin/EmblaCarousel";
 import { EmblaOptionsType } from "embla-carousel";
 import { Button, Typography } from "@material-tailwind/react";
+import ContentWrapper from "@/layouts/client/contentWrapper";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -14,7 +15,7 @@ type VideoUrl = {
   video: string;
   thumbnailUrl?: string;
   description: string;
-  file: string;
+  file?: string;
 }
 
 const DetailCoursePage: FC<Course> = (data) => {
@@ -33,8 +34,7 @@ const DetailCoursePage: FC<Course> = (data) => {
   }, [data]);
 
   return (
-    <main className="flex min-h-screen flex-col items-center bg-[#f4f4f4] justify-between py-24">
-      <section className="flex flex-col container 2xl:max-w-[75rem] justify-center flex-wrap gap-10 p-10 rounded-3xl bg-white">
+      <ContentWrapper>
         <Typography variant="h2" color="black">
           {NullProof({ input: data, params: "title" })}
         </Typography>
@@ -86,13 +86,23 @@ const DetailCoursePage: FC<Course> = (data) => {
             </Button>
           </LabelDetailPage>
         )}
-      </section>
-    </main>
+      </ContentWrapper>
   );
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.query;
+  // const session = context.req.cookies.session
+  // console.log(session, 'sesssssion');
+
+  // if (!session) {
+  //   return {
+  //     redirect: {
+  //       destination: "/course/subscribe-warning",
+  //       permanent: false,
+  //     },
+  //     };
+  // }
   try {
     const { data: { data } } = await courseServices.getItem({ slug });
     return {

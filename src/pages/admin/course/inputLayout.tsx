@@ -47,7 +47,7 @@ export const FormInputList: InputListProps[] = [
         name: "description",
         label: "Video Description",
         type: "textarea",
-        validator: Yup.string().required("Video description is required"),
+        validator: Yup.string(),
         value: "",
       },
       {
@@ -55,7 +55,7 @@ export const FormInputList: InputListProps[] = [
         name: "file",
         label: "Attachment",
         type: "file",
-        validator: Yup.string().required("Attachment is required"),
+        validator: Yup.string(),
         value: "",
       },
     ]
@@ -71,7 +71,15 @@ export const FormInputList: InputListProps[] = [
       { title: "Yes", value: true },
       { title: "No", value: false },
     ],
-  }
+  },
+  {
+    className: "",
+    name: "slug",
+    label: "Slug",
+    type: "input",
+    validator: Yup.string().required("Slug is required"),
+    value: "",
+  },
 ];
 
 export const FilterInputList: InputListProps[] = [

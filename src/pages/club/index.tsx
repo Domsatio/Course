@@ -7,12 +7,13 @@ import CardSkeleton from "@/components/Skeleton/CardSkeleton";
 import { PaginationHook } from "@/hooks/paginationHook";
 import { FetchDataHook, FetchDataHook as FetchCategoryHook } from "@/hooks/fetchDataHook";
 import { SearchHook } from "@/hooks/searchHook";
-import Pagination from "@/components/client/Pagination";
+import Pagination from "@/components/client/pagination";
 import { getQueryParams } from "@/helpers/appFunction";
 import Search from "@/components/client/search";
 import { useRouter } from "next/router";
 import CardItem from "@/components/client/CardItem";
 import CategorySkeleton from "@/components/Skeleton/CategorySkeleton";
+import ContentWrapper from "@/layouts/client/contentWrapper";
 
 type Params = {
   skip: number;
@@ -61,10 +62,6 @@ const ClientClubPage = () => {
   };
 
   useEffect(() => {
-    getPostsData();
-  }, [activePage]);
-
-  useEffect(() => {
     setIsLoad(true);
     setIsLoadCategory(true);
     setActiveCategory(getQueryParams()["category"] || "");
@@ -72,10 +69,6 @@ const ClientClubPage = () => {
       skip: 0,
       take: "all",
     };
-    if (activeCategory === null) {
-      setActiveCategory(getQueryParams()["category"] || "");
-    }
-    getPostsData();
     categoryServices.getItems(categoryParams).then(({ data: { data } }) => {
       setCategories(data);
       setIsLoadCategory(false);
@@ -109,74 +102,68 @@ const ClientClubPage = () => {
   );
 
   return (
-    <main className="flex min-h-screen flex-col items-center bg-[#f4f4f4] justify-between py-24">
-      <section className="flex flex-col container 2xl:max-w-[75rem] justify-center flex-wrap gap-10 p-10 rounded-3xl bg-white">
-        <Typography variant="h2" color="black" placeholder="Blog Page">
-          Club
-        </Typography>
+    <ContentWrapper>
+      <Typography variant="h2" color="black" placeholder="Blog Page">
+        Club
+      </Typography>
+      {isCategoryLoad ? (
+        <div className="flex flex-wrap gap-2">
+          {Array.from({ length: 6 }, (_, i) => (
+            <CategorySkeleton key={i} />
+          ))}
+        </div>
+      ) : (
+        <div className="flex flex-wrap gap-2">
+          {categories.length > 0 && <BtnCategory value="" name="All" />}
+          {categories.map(({ id, name }) => (
+            <BtnCategory key={id} value={name} />
+          ))}
+        </div>
+      )}
 
-        {isCategoryLoad ? (
-          <div className="flex flex-wrap gap-2">
+      <Search
+        value={searchQuery || ""}
+        onChange={(e) => setSearchQuery(e.target.value)}
+      />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 place-items-center lg:place-items-start">
+        {isLoad ? (
+          <React.Fragment>
             {Array.from({ length: 6 }, (_, i) => (
-              <CategorySkeleton key={i} />
+              <CardSkeleton key={i} />
             ))}
-          </div>
+          </React.Fragment>
         ) : (
-          <div className="flex flex-wrap gap-2">
-            {categories.length > 0 && <BtnCategory value="" name="All" />}
-            {categories.map(({ id, name }) => (
-              <BtnCategory key={id} value={name} />
-            ))}
-          </div>
-        )}
-
-        <Search
-          value={searchQuery || ""}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {isLoad ? (
-            <Fragment>
-              {Array.from({ length: 6 }, (_, i) => (
-                <CardSkeleton key={i} />
-              ))}
-            </Fragment>
-          ) : (
-            <Fragment>
-              {posts.length > 0 ? posts.map((data) => (
+          <React.Fragment>
+            {posts.map(
+              (data: Omit<GetPost, "published" | "createdAt">, index) => (
                 <CardItem
-                  key={data.id}
+                  key={index}
                   props={{ ...data, href: `/club/${data.slug}` }}
                   category={
-                    <div className="flex flex-wrap gap-1 text-[#c28833] items-center capitalize group-hover:text-[#c28833]/80">
+                    <div className="flex flex-wrap gap-2">
                       {data.categories.map(({ category }, i) => (
-                        <Fragment key={category.id}>
-                          {i !== 0 && <span>&nbsp;•&nbsp;</span>}
-                          <Typography
-                            variant="small"
-                          >
-                            {category.name}
-                          </Typography>
-                        </Fragment>
+                        <Typography
+                          key={i}
+                          variant="small"
+                          className="text-[#c28833] flex capitalize group-hover:text-[#c28833]/80"
+                        >
+                          {category.name}
+                        </Typography>
                       ))}
                     </div>
                   }
                 />
-              )) : (
-                <Typography color="gray">
-                  No post found
-                </Typography>
-              )}
-            </Fragment>
-          )}
-        </div>
-        {posts.length > 0 && <Pagination
-          activePage={activePage}
-          setActivePage={setActivePage}
-          totalPages={totalPages}
-        />}
-      </section>
-    </main>
+              )
+            )}
+          </React.Fragment>
+        )}
+      </div>
+      <Pagination
+        activePage={activePage}
+        setActivePage={setActivePage}
+        totalPages={totalPages}
+      />
+    </ContentWrapper>
   );
 };
 
