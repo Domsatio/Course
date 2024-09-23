@@ -1,9 +1,7 @@
 import React, { useState } from "react";
-import { useSession, signOut } from "next-auth/react";
-import { useRouter } from "next/router";
 import { useRouter as topLoader } from 'nextjs-toploader/app';
 import { adminRoutes } from "@/constants/admin/adminRoutes";
-import { MenuItemProps, ProfileMenuItemProps, RouteItemsProps } from "@/helpers/typeProps";
+import { MenuItemProps, RouteItemsProps } from "@/helpers/typeProps";
 import {
   Navbar,
   IconButton,
@@ -15,111 +13,16 @@ import {
   AccordionHeader,
   AccordionBody,
   Drawer,
-  Menu,
-  MenuHandler,
-  MenuList,
-  MenuItem,
-  Avatar,
   Card,
-  Button,
 } from "@material-tailwind/react";
 import {
-  UserCircleIcon,
-  Cog6ToothIcon,
-  PowerIcon,
-} from "@heroicons/react/24/solid";
-import {
   ChevronDownIcon,
-  MagnifyingGlassIcon,
   Bars3Icon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
+import { ProfileMenu } from "../ProfileMenu";
 
-const profileMenuItems: ProfileMenuItemProps[] = [
-  {
-    label: "My Profile",
-    icon: UserCircleIcon,
-    href: "/admin/profile",
-  },
-  {
-    label: "Edit Profile",
-    icon: Cog6ToothIcon,
-    href: "/profile/edit",
-  },
-  {
-    label: "Sign Out",
-    icon: PowerIcon,
-  },
-];
-
-function ProfileMenu() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const router = useRouter();
-  const { data: session } = useSession();
-
-  const closeMenu = () => setIsMenuOpen(false);
-
-  const profilePicture =
-    "https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80";
-
-  return (
-    <Menu open={isMenuOpen} handler={setIsMenuOpen} placement="bottom-end">
-      <MenuHandler>
-        <Button
-          variant="text"
-          className="flex items-center justify-center gap-1 rounded-full p-0.5 lg:ml-auto"
-        >
-          <Avatar
-            variant="circular"
-            size="md"
-            alt={session?.user?.name}
-            className="border border-gray-900 "
-            src={session?.user?.image ? session?.user?.image : profilePicture}
-          />
-        </Button>
-      </MenuHandler>
-      <MenuList className="p-1">
-        {profileMenuItems.map(({ label, icon, href }, key) => {
-          const isLastItem = label === "Sign Out";
-          return (
-            <MenuItem
-              key={label}
-              onClick={() => {
-                closeMenu
-                if (isLastItem) {
-                  signOut({
-                    redirect: true,
-                    callbackUrl: "localhost:3000/admin/sign-in",
-                  });
-                } else {
-                  router.push(href || "");
-                }
-              }}
-              className={`flex items-center gap-2 rounded ${isLastItem
-                ? "hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
-                : ""
-                }`}
-            >
-              {React.createElement(icon, {
-                className: `h-4 w-4 ${isLastItem ? "text-red-500" : ""}`,
-                strokeWidth: 2,
-              })}
-              <Typography
-                as="span"
-                variant="small"
-                className="font-normal"
-                color={isLastItem ? "red" : "inherit"}
-              >
-                {label}
-              </Typography>
-            </MenuItem>
-          );
-        })}
-      </MenuList>
-
-    </Menu>
-  );
-}
+<ProfileMenu />
 
 export default function AdminNavbar({ children }: { children: React.ReactNode }) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);

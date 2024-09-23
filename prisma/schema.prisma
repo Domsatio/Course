@@ -37,20 +37,20 @@ model Session {
 }
 
 model User {
-  id             String    @id @default(uuid())
-  email          String    @unique
-  password       String?
-  emailVerified  DateTime?
-  name           String
-  role           UserRole  @default(USER)
-  isSubscribed   Boolean   @default(false)
-  subscribeEnd   DateTime?
-  subscribeStart DateTime?
-  accounts       Account[]
-  address        Address?
-  orders         Order[]
-  posts          Post[]
-  sessions       Session[]
+  id              String    @id @default(uuid())
+  email           String    @unique
+  password        String?
+  emailVerified   DateTime?
+  name            String
+  role            UserRole  @default(USER)
+  isSubscribed    Boolean   @default(false)
+  subscribeStart  DateTime?
+  subscribeEnd    DateTime?
+  accounts        Account[]
+  orders          Order[]
+  posts           Post[]
+  sessions        Session[]
+  address         Address?
 }
 
 model VerificationToken {

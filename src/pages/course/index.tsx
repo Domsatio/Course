@@ -2,7 +2,7 @@ import PostCard from "@/components/client/CardItem";
 import { courseServices } from "@/services/serviceGenerator";
 import { Course } from "@/types/course.type";
 import { Typography } from "@material-tailwind/react";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { PaginationHook } from "@/hooks/paginationHook";
 import { FetchDataHook } from "@/hooks/fetchDataHook";
 import Pagination from "@/components/client/pagination";
@@ -21,7 +21,7 @@ type Params = {
   where?: string;
 };
 
-const ClientCourses = () => {
+const ClientCoursePage = () => {
   const [posts, setPosts] = useState<Course[]>([]);
   const { isLoad, setIsLoad } = FetchDataHook();
   const { activePage, totalPages, take, setActivePage, handleSetTotalPages } =
@@ -119,4 +119,4 @@ const ClientCourses = () => {
   );
 };
 
-export default ClientCourses;
+export default ClientCoursePage;

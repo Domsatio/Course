@@ -7,7 +7,7 @@ export const FormInputList: InputListProps[] = [
     name: "title",
     label: "Title",
     type: "input",
-    validator: Yup.string().required("Name is required"),
+    validator: Yup.string().required("Title is required"),
     value: "",
   },
   {
@@ -20,21 +20,11 @@ export const FormInputList: InputListProps[] = [
   },
   {
     className: "",
-    name: "image",
-    label: "Image",
-    type: "component",
-    validator: Yup.array().required("Image is required"),
+    name: "thumbnail",
+    label: "Thumbnail",
+    type: "image",
+    validator: Yup.string().required("Thumbnail is required"),
     value: "",
-    component: [
-      {
-        className: "",
-        name: "image",
-        label: "Image",
-        type: "image",
-        validator: Yup.string().required("Image description is required"),
-        value: "",
-      },
-    ]
   },
   {
     className: "",
@@ -47,7 +37,7 @@ export const FormInputList: InputListProps[] = [
       {
         className: "",
         name: "video",
-        label: "Video",
+        label: "Video Link",
         type: "input",
         validator: Yup.string().required("Video is required"),
         value: "",
@@ -63,7 +53,7 @@ export const FormInputList: InputListProps[] = [
       {
         className: "",
         name: "file",
-        label: "Materi PDF",
+        label: "Attachment",
         type: "file",
         validator: Yup.string(),
         value: "",
@@ -96,7 +86,7 @@ export const FilterInputList: InputListProps[] = [
   {
     className: "",
     name: "published",
-    label: "Dipublikasikan",
+    label: "Published",
     type: "checkbox",
     validator: Yup.string(),
     value: "",

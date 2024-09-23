@@ -9,15 +9,16 @@ import { EmblaOptionsType } from "embla-carousel";
 import { Button, Typography } from "@material-tailwind/react";
 import ContentWrapper from "@/layouts/client/contentWrapper";
 import Link from "next/link";
+import Image from "next/image";
 
 type VideoUrl = {
   video: string;
-  thumbnailUrl: string;
+  thumbnailUrl?: string;
   description: string;
-  file: string;
+  file?: string;
 }
 
-const DetailCourse: FC<Course> = (data) => {
+const DetailCoursePage: FC<Course> = (data) => {
   const OPTIONS: EmblaOptionsType = {};
   const [videoUrl, setVideoUrl] = useState<VideoUrl>({
     video: "",
@@ -56,12 +57,15 @@ const DetailCourse: FC<Course> = (data) => {
             ></iframe>
           )}
           ThumChild={({ item, onClick }) => (
-            <img
+            <Image
               key={item.id}
               onClick={onClick}
               src={item.thumbnailUrl || ""}
-              className="h-20 w-20 cursor-pointer rounded-lg object-cover object-center"
+              className="cursor-pointer rounded-lg object-cover object-center"
+              width={142}
+              height={80}
               alt="gallery-image"
+              priority
             />
           )}
           onScroll={(i) => {
@@ -88,17 +92,17 @@ const DetailCourse: FC<Course> = (data) => {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.query;
-  const session = context.req.cookies.session
-  console.log(session, 'sesssssion');
+  // const session = context.req.cookies.session
+  // console.log(session, 'sesssssion');
 
-  if (!session) {
-    return {
-      redirect: {
-        destination: "/course/subscribe-warning",
-        permanent: false,
-      },
-      };
-  }
+  // if (!session) {
+  //   return {
+  //     redirect: {
+  //       destination: "/course/subscribe-warning",
+  //       permanent: false,
+  //     },
+  //     };
+  // }
   try {
     const { data: { data } } = await courseServices.getItem({ slug });
     return {
@@ -114,4 +118,4 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 };
 
-export default DetailCourse;
+export default DetailCoursePage;

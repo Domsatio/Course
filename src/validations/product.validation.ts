@@ -8,8 +8,8 @@ export const createProductValidation = (payload: Product) => {
     slug: string().required("Slug is required"),
     description: string().required("Description is required"),
     price: number().required("Price is required"),
-    discount: number().optional().default(0),
-    image: string().required("Image is required"),
+    discount: number().required("Discount is required").default(0),
+    thumbnail: string().required("Thumbnail is required"),
     quantity: number().required("Quantity is required"),
   });
 
@@ -28,7 +28,7 @@ export const updateProductValidation = (payload: UpdateProduct) => {
     description: string().optional(),
     price: number().optional(),
     discount: number().optional(),
-    image: string().optional(),
+    thumbnail: string().optional(),
     quantity: number().optional(),
   });
 

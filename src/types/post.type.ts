@@ -6,8 +6,8 @@ export type Post = {
   title: string;
   slug: string;
   body: string;
+  thumbnail: string;
   published: boolean;
-  thumbnail: string; 
   categories?: string[];
 };
 
@@ -15,6 +15,7 @@ export type UpdatePost = {
   title?: string;
   slug?: string;
   body?: string;
+  thumbnail?: string;
   published?: boolean;
   categories?: string[];
 };
@@ -30,6 +31,7 @@ export type GetPost = {
   title: string;
   slug: string;
   body: string;
+  thumbnail: string;
   published: boolean;
   categories: CategoryPost[];
   createdAt: string;

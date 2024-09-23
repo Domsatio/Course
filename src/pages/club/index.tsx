@@ -23,7 +23,7 @@ type Params = {
   category?: string;
 };
 
-const Club = () => {
+const ClientClubPage = () => {
   const [posts, setPosts] = useState<Omit<GetPost, "published" | "createdAt">[]>([]);
   const [categories, setCategories] = useState<Omit<GetCategory, "posts">[]>([]);
   const [activeCategory, setActiveCategory] = useState<string | null>("");
@@ -62,10 +62,6 @@ const Club = () => {
   };
 
   useEffect(() => {
-    getPostsData();
-  }, [activePage]);
-
-  useEffect(() => {
     setIsLoad(true);
     setIsLoadCategory(true);
     setActiveCategory(getQueryParams()["category"] || "");
@@ -73,10 +69,6 @@ const Club = () => {
       skip: 0,
       take: "all",
     };
-    if (activeCategory === null) {
-      setActiveCategory(getQueryParams()["category"] || "");
-    }
-    getPostsData();
     categoryServices.getItems(categoryParams).then(({ data: { data } }) => {
       setCategories(data);
       setIsLoadCategory(false);
@@ -175,4 +167,4 @@ const Club = () => {
   );
 };
 
-export default Club;
+export default ClientClubPage;

@@ -7,7 +7,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React, { FC } from 'react'
 
-const FinalPrice = ({ price, discount }: { price: number, discount?: number }) => {
+const FinalPrice = ({ price, discount }: { price: number, discount: number }) => {
   const discountedPrice = discount !== undefined ? price - (price * discount) / 100 : price;
 
   return (
@@ -15,18 +15,16 @@ const FinalPrice = ({ price, discount }: { price: number, discount?: number }) =
       <Typography color="blue-gray" className="text-2xl font-bold">
         {ConvertCurrency(discountedPrice)}
       </Typography>
-      <div className='flex gap-2 mt-2'>
-        {discount !== undefined && (
+      {discount > 0 && (
+        <div className='flex gap-2 mt-2'>
           <Typography className="text-base py-1 px-2 bg-green-200 text-green-900 font-semibold rounded-lg">
             -{discount}%
           </Typography>
-        )}
-        {discount !== undefined && (
           <Typography color="gray" className="line-through text-base">
             {ConvertCurrency(price)}
           </Typography>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
