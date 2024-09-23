@@ -13,7 +13,12 @@ export default function view({ data }: any) {
           {NullProof({ input: data, params: "title" })}
         </LabelDetailPage>
         <LabelDetailPage label="Body">
-          {NullProof({ input: data, params: "body" })}
+          <article
+            className="prose  max-w-full"
+            dangerouslySetInnerHTML={{
+              __html: NullProof({ input: data, params: "body" }),
+            }}
+          ></article>
         </LabelDetailPage>
         <LabelDetailPage label="Categories">
           <div className="flex flex-wrap gap-1">
@@ -34,8 +39,9 @@ export default function view({ data }: any) {
             value={data.published ? "Published" : "Draft"}
             icon={
               <span
-                className={`mx-auto mt-1 block h-2 w-2 rounded-full content-[''] ${data.published ? "bg-green-900" : "bg-red-900"
-                  }`}
+                className={`mx-auto mt-1 block h-2 w-2 rounded-full content-[''] ${
+                  data.published ? "bg-green-900" : "bg-red-900"
+                }`}
               />
             }
             className="max-w-min"

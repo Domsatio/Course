@@ -52,25 +52,24 @@ export default function Index() {
               </Typography>
             </div>
           </td>
-          <td className={classes}>
+          <td className={`${classes} max-w-[250px] max-h-min`}>
             <div className="flex items-center gap-3">
-              <Typography
-                variant="small"
+              <p
                 color="blue-gray"
-                className="font-bold"
+                className="font-bold line-clamp-2"
               >
                 {NullProof({ input: post, params: "title" })}
-              </Typography>
+              </p>
             </div>
           </td>
           <td className={`${classes} max-w-[370px] max-h-min`}>
-            <p
-              // variant="small"
-              color="blue-gray"
-              className="font-normal line-clamp-2 text-sm"
-            >
-              {NullProof({ input: post, params: "body" })}
-            </p>
+              <article
+                color="blue-gray"
+                className="prose font-normal line-clamp-2 text-sm"
+                dangerouslySetInnerHTML={{
+                  __html: NullProof({ input: post, params: "body" }),
+                }}
+              ></article>
           </td>
           <td className={`${classes} max-w-[370px] max-h-min`}>
             <Typography
@@ -102,8 +101,9 @@ export default function Index() {
                 value={post.published ? "Published" : "Draft"}
                 icon={
                   <span
-                    className={`mx-auto mt-1 block h-2 w-2 rounded-full content-[''] ${post.published ? "bg-green-900" : "bg-red-900"
-                      }`}
+                    className={`mx-auto mt-1 block h-2 w-2 rounded-full content-[''] ${
+                      post.published ? "bg-green-900" : "bg-red-900"
+                    }`}
                   />
                 }
               />

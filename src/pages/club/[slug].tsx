@@ -36,9 +36,12 @@ const DetailClubPage: FC<Omit<GetPost, 'id' | 'published' | 'slug'>> = ({ title,
         <Typography variant="small" color="gray">
           {dateFormater(createdAt, "long")}
         </Typography>
-        <Typography variant="paragraph" className="px-56 text-left">
-          {body}
-        </Typography>
+        <article
+            className="prose lg:px-56"
+            dangerouslySetInnerHTML={{
+              __html: body,
+            }}
+          ></article>
       </div>
     </ContentWrapper>
   );

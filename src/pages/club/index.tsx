@@ -29,7 +29,7 @@ const ClientClubPage = () => {
   const [activeCategory, setActiveCategory] = useState<string | null>("");
   const { isLoad, setIsLoad } = FetchDataHook();
   const { isLoad: isCategoryLoad, setIsLoad: setIsLoadCategory } = FetchCategoryHook();
-  const { activePage, totalPages, take, setActivePage, handleSetTotalPages } = PaginationHook({ initLimit: 12 });
+  const { activePage, totalPages, take, setActivePage, handleSetTotalPages } = PaginationHook({ initLimit: 6 });
   const { debounceValue, searchQuery, setSearchQuery } = SearchHook({ delay: 800, });
   const { replace } = useRouter();
 
@@ -53,6 +53,7 @@ const ClientClubPage = () => {
   };
 
   const handleSetActiveCategory = async (category: string) => {
+    setActivePage(1);
     await replace({
       pathname: "/club",
       query: { ...getQueryParams(), category: category },

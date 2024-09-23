@@ -36,7 +36,7 @@ const CardItem = ({ props, category }: typeCard) => {
             alt="Post image"
             width={500}
             height={300}
-            className="transform transition-transform duration-500 group-hover:scale-110"
+            className="transform transition-transform duration-500 group-hover:scale-110 h-full"
             // loading="lazy"
             priority
           />
@@ -46,13 +46,16 @@ const CardItem = ({ props, category }: typeCard) => {
           <Typography
             variant="h5"
             color="black"
-            className="group-hover:text-black/70"
+            className="group-hover:text-black/70 line-clamp-2"
           >
             {props.title}
           </Typography>
-          <p className="line-clamp-3 text-black group-hover:text-black/70 text-sm leading-6">
-            {props.body ? props.body : props.description}
-          </p>
+            <article
+              className="prose font-normal line-clamp-3 text-black group-hover:text-black/70 text-sm leading-6"
+              dangerouslySetInnerHTML={{
+                __html: props.body || props.description || "",
+              }}
+            ></article>
         </CardBody>
       </Card>
     </Link>
