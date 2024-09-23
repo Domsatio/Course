@@ -4,10 +4,12 @@ import { CategoryPost } from "@/types/post.type";
 import { Chip } from "@material-tailwind/react";
 import { GetServerSideProps } from "next/types";
 import { postServices } from "@/services/serviceGenerator";
+import GenerateMetaData from "@/components/GenerateMetaData";
 
 export default function view({ data }: any) {
   return (
     <DetailPage title="Post">
+      <GenerateMetaData title="Post Detail" desc={NullProof({ input: data, params: "title" }) || "Post Detail"} />
       <div>
         <LabelDetailPage label="Title">
           {NullProof({ input: data, params: "title" })}

@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from "react";
-import { GetServerSideProps } from "next";
+import { GetServerSideProps, Metadata } from "next";
 import { courseServices } from "@/services/serviceGenerator";
 import { Course } from "@/types/course.type";
 import { NullProof } from "@/helpers/appFunction";
@@ -10,6 +10,7 @@ import { Button, Typography } from "@material-tailwind/react";
 import ContentWrapper from "@/layouts/client/contentWrapper";
 import Link from "next/link";
 import Image from "next/image";
+import GenerateMetaData from "@/components/GenerateMetaData";
 
 type VideoUrl = {
   video: string;
@@ -35,6 +36,7 @@ const DetailCoursePage: FC<Course> = (data) => {
 
   return (
       <ContentWrapper>
+        <GenerateMetaData title={NullProof({ input: data, params: "title" })} desc={`Detail ${NullProof({ input: data, params: "title" })}`}/>
         <Typography variant="h2" color="black">
           {NullProof({ input: data, params: "title" })}
         </Typography>

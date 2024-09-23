@@ -14,6 +14,8 @@ import { useRouter } from "next/router";
 import CardItem from "@/components/client/CardItem";
 import CategorySkeleton from "@/components/Skeleton/CategorySkeleton";
 import ContentWrapper from "@/layouts/client/contentWrapper";
+import { cn } from "@/libs/cn";
+import GenerateMetaData from "@/components/GenerateMetaData";
 
 type Params = {
   skip: number;
@@ -28,10 +30,11 @@ const ClientClubPage = () => {
   const [categories, setCategories] = useState<Omit<GetCategory, "posts">[]>([]);
   const [activeCategory, setActiveCategory] = useState<string | null>("");
   const { isLoad, setIsLoad } = FetchDataHook();
-  const { isLoad: isCategoryLoad, setIsLoad: setIsLoadCategory } = FetchCategoryHook();
+  const { isLoad: isCategoryLoad, setIsLoad: setIsCategoryLoad } = FetchCategoryHook();
   const { activePage, totalPages, take, setActivePage, handleSetTotalPages } = PaginationHook({ initLimit: 6 });
   const { debounceValue, searchQuery, setSearchQuery } = SearchHook({ delay: 800, });
   const { replace } = useRouter();
+
 
   const getPostsData = async () => {
     const postParams: Params = {
@@ -64,7 +67,7 @@ const ClientClubPage = () => {
 
   useEffect(() => {
     setIsLoad(true);
-    setIsLoadCategory(true);
+    setIsCategoryLoad(true);
     setActiveCategory(getQueryParams()["category"] || "");
     const categoryParams: Params = {
       skip: 0,
@@ -72,9 +75,14 @@ const ClientClubPage = () => {
     };
     categoryServices.getItems(categoryParams).then(({ data: { data } }) => {
       setCategories(data);
-      setIsLoadCategory(false);
+      setIsCategoryLoad(false);
     });
   }, []);
+
+  const handleSetActivePage = async (page: number) => {
+    setActivePage(page);
+    // getPostsData();
+  }
 
   useEffect(() => {
     if (searchQuery === null) {
@@ -89,7 +97,7 @@ const ClientClubPage = () => {
       };
       handleGetData();
     }
-  }, [debounceValue, activePage]);
+  }, [debounceValue]);
 
   const BtnCategory = ({ value, name }: { value: string; name?: string }) => (
     <Button
@@ -104,6 +112,7 @@ const ClientClubPage = () => {
 
   return (
     <ContentWrapper>
+      <GenerateMetaData title="Club" desc="This page contains various articles"/>
       <Typography variant="h2" color="black" placeholder="Blog Page">
         Club
       </Typography>
@@ -126,8 +135,8 @@ const ClientClubPage = () => {
         value={searchQuery || ""}
         onChange={(e) => setSearchQuery(e.target.value)}
       />
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 place-items-center lg:place-items-start">
-        {isLoad ? (
+      <div className={cn("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6", {'place-items-center lg:place-items-start': !isLoad})}>
+      {isLoad ? (
           <React.Fragment>
             {Array.from({ length: 6 }, (_, i) => (
               <CardSkeleton key={i} />
@@ -161,7 +170,7 @@ const ClientClubPage = () => {
       </div>
       <Pagination
         activePage={activePage}
-        setActivePage={setActivePage}
+        setActivePage={handleSetActivePage}
         totalPages={totalPages}
       />
     </ContentWrapper>

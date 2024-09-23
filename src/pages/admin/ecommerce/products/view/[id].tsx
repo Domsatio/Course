@@ -4,8 +4,7 @@ import { NullProof } from "@/helpers/appFunction";
 import { LabelDetailPage, DetailPage } from "@/components/admin/DetailPage";
 import { GetServerSideProps } from "next";
 import { productServices } from "@/services/serviceGenerator";
-import axios from "axios";
-import { Button } from "@material-tailwind/react";
+import GenerateMetaData from "@/components/GenerateMetaData";
 
 type PageProps = {
   data: any;
@@ -16,6 +15,7 @@ export default function view({data}: PageProps) {
     data.discount > 0 ? `${data.discount}%` : "No discount";
   return (
     <DetailPage title="Product">
+      <GenerateMetaData title={`Admin | Detail ${NullProof({ input: data, params: "name" })}`} />
       <div className="flex flex-wrap gap-5">
         <Image
           src={data.image}

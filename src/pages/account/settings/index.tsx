@@ -8,6 +8,7 @@ import { InputList } from './InputList';
 import InputRender from '@/components/client/InputRender';
 import { useSession } from "next-auth/react"
 import type { AlertProps } from "@material-tailwind/react";
+import GenerateMetaData from '@/components/GenerateMetaData';
 
 type AlertState = {
   open: boolean;
@@ -104,6 +105,7 @@ const ClientAccountDetailsPage: FC = () => {
 
   return (
     <AccountLayout>
+      <GenerateMetaData title='Account Settings' desc='Account settings page'/>
       <form className='space-y-7' onSubmit={formik.handleSubmit}>
         <Alert
           open={displayAlert.open}

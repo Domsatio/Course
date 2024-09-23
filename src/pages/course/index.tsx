@@ -12,6 +12,8 @@ import { SearchHook } from "@/hooks/searchHook";
 import { getQueryParams } from "@/helpers/appFunction";
 import { useRouter } from "next/router";
 import ContentWrapper from "@/layouts/client/contentWrapper";
+import { cn } from "@/libs/cn";
+import GenerateMetaData from "@/components/GenerateMetaData";
 
 type Params = {
   skip: number;
@@ -83,6 +85,7 @@ const ClientCoursePage = () => {
 
   return (
     <ContentWrapper>
+      <GenerateMetaData title="Courses" desc="This page contains various courses" />
       <Typography variant="h2" color="black" placeholder="Blog Page">
         Courses
       </Typography>
@@ -92,7 +95,7 @@ const ClientCoursePage = () => {
           value={searchQuery || ""}
         />
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className={cn("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6", {'place-items-center lg:place-items-start': !isLoad})}>
         {isLoad ? (
           <React.Fragment>
             {Array.from({ length: 6 }, (_, i) => (

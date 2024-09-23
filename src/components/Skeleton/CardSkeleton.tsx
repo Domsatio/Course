@@ -1,6 +1,7 @@
 import { Card, CardBody } from "@material-tailwind/react";
+import { memo } from "react";
 
-export default function CardSkeleton() {
+function CardSkeleton() {
   return (
     <Card className="max-w-[357px] overflow-hidden shadow-none animate-pulse">
       <CardBody className="space-y-2 px-0 py-3">
@@ -14,3 +15,6 @@ export default function CardSkeleton() {
     </Card>
   );
 }
+
+
+export default memo(CardSkeleton);

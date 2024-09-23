@@ -2,11 +2,13 @@ import React from "react";
 import ContentWrapper from "@/layouts/client/contentWrapper";
 import { Button } from "@material-tailwind/react";
 import { useRouter } from "next/router";
+import GenerateMetaData from "@/components/GenerateMetaData";
 
 export default function SubscribeWarning() {
   const router = useRouter();
   return (
     <ContentWrapper>
+      <GenerateMetaData title="Subscription Warning" desc="Subscription Warning Page" />
       <div className="flex flex-col items-center justify-center gap-5">
         <h1 className="text-2xl font-bold text-center font">Subscription</h1>
         <p className="text-center">
