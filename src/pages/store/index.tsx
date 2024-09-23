@@ -4,12 +4,15 @@ import { PaginationHook } from "@/hooks/paginationHook";
 import { productServices } from "@/services/serviceGenerator";
 import { GetProduct } from "@/types/product.type";
 import { Typography } from "@material-tailwind/react"
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Search from "@/components/client/search";
 import { SearchHook } from "@/hooks/searchHook";
 import { useRouter } from "next/router";
 import { getQueryParams } from "@/helpers/appFunction";
 import ContentWrapper from "@/layouts/client/contentWrapper";
+import StoreSkeletonCard from "@/components/Skeleton/StoreSkeleton";
+import { cn } from "@/libs/cn";
+import GenerateMetaData from "@/components/GenerateMetaData";
 
 type Params = {
   skip: number;
@@ -26,6 +29,7 @@ const ClientStorePage = () => {
   const router = useRouter();
 
   const getProductsData = async () => {
+    setIsLoad(true);
     const productParams: Params = {
       skip: activePage * take - take,
       take,
@@ -53,6 +57,7 @@ const ClientStorePage = () => {
 
   return (
     <ContentWrapper className="bg-transparent">
+        <GenerateMetaData title="Store" desc="" />
         <Typography variant="h2" color="black" placeholder='Blog Page'>
           Store
         </Typography>
@@ -60,10 +65,17 @@ const ClientStorePage = () => {
           onChange={(e) => handleSetSearchQuery(e.target.value)}
           value={searchQuery || ""}
         />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {products.map((product) =>
-            <StoreCard key={product.id} {...product} />
-          )}
+        <div className={cn("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6", {'place-items-center lg:place-items-start': !isLoad})}>
+          {isLoad ? Array.from({ length: 12 }).map((_, index) => (
+            <StoreSkeletonCard key={index} />
+          )) :
+          <React.Fragment>
+            {products.map((product) =>
+              <StoreCard key={product.id} {...product} />
+            )}
+          </React.Fragment>
+          }
+
         </div>
     </ContentWrapper>
   )

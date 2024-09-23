@@ -2,16 +2,19 @@ import { postServices } from "@/services/serviceGenerator";
 import { GetPost } from "@/types/post.type";
 import { Typography } from "@material-tailwind/react";
 import React, { FC } from "react";
-import { GetServerSideProps } from "next";
+import { GetServerSideProps} from "next";
 import { dateFormater } from "@/helpers/date";
 import { useRouter } from "next/router";
 import ContentWrapper from "@/layouts/client/contentWrapper";
+import GenerateMetaData from "@/components/GenerateMetaData";
+
 
 const DetailClubPage: FC<Omit<GetPost, 'id' | 'published' | 'slug'>> = ({ title, body, categories, createdAt }) => {
   const { push } = useRouter()
 
   return (
     <ContentWrapper>
+      <GenerateMetaData title={title} desc={`Detail ${title}`}/>
       <div className="flex flex-col items-center gap-5">
         <div className="flex gap-3">
           {categories.map(({ categoryId, category }) => (

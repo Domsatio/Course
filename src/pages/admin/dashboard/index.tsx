@@ -3,6 +3,8 @@ import { dashboardServices } from "@/services/serviceGenerator";
 import { GetServerSideProps } from "next";
 import cookie from "cookie";
 import { NullProof } from "@/helpers/appFunction";
+import GenerateMetaData from "@/components/GenerateMetaData";
+
 
 export default function index({ data }: { data: any }) {
   const DataWrapper = ({  data, param, titleValue, }: { data:any, param:string, titleValue:string}) => {
@@ -14,6 +16,7 @@ export default function index({ data }: { data: any }) {
   }
   return (
     <div className="pt-6">
+      <GenerateMetaData title="Admin | Dashboard" />
       <div className="grid grid-cols-1 gap-x-3 sm:grid-cols-2 md:grid-cols-3 gap-y-10">
         <DashboardCard title="Blog">
           <DataWrapper titleValue='Posts' param='totalPosts' data={data} />

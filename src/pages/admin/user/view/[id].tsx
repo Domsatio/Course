@@ -3,10 +3,12 @@ import { DetailPage, LabelDetailPage } from "@/components/admin/DetailPage";
 import { userServices } from "@/services/serviceGenerator";
 import { GetServerSideProps } from "next/types";
 import { User } from "@/types/user.type";
+import GenerateMetaData from "@/components/GenerateMetaData";
 
 export default function view({ data }: {data: User}) {
   return (
     <DetailPage title="User">
+      <GenerateMetaData title="User" desc="Detail User Page" />
       <div>
         <LabelDetailPage label="Name">
           {NullProof({ input: data, params: "name" })}
@@ -14,17 +16,6 @@ export default function view({ data }: {data: User}) {
         <LabelDetailPage label="Email">
           {NullProof({ input: data, params: "email" })}
         </LabelDetailPage>
-        {/* <LabelDetailPage label="Categories">
-          <div className="flex flex-wrap gap-1">
-            {NullProof({
-              input: data,
-              params: "categories",
-              isMap: true,
-            }).map(({ category: { id, name } }: CategoryPost) => (
-              <Chip key={id} value={name} size="sm" variant="outlined" />
-            ))}
-          </div>
-        </LabelDetailPage> */}
       </div>
     </DetailPage>
   );

@@ -8,6 +8,7 @@ import { courseServices } from "@/services/serviceGenerator";
 import EmblaCarousel from "@/components/admin/EmblaCarousel";
 import { EmblaOptionsType } from "embla-carousel";
 import { Button } from "@material-tailwind/react";
+import GenerateMetaData from "@/components/GenerateMetaData";
 
 export default function DetailCourse() {
   const OPTIONS: EmblaOptionsType = {};
@@ -27,6 +28,7 @@ export default function DetailCourse() {
 
   return (
     <DetailPage title="Course">
+      <GenerateMetaData title={`Admin | Detail ${NullProof({ input: data, params: "title" })}`} />
       <div className="flex flex-wrap gap-5">
         <div>
           <EmblaCarousel
