@@ -115,7 +115,7 @@ const ClientAccountAddressPage: FC = () => {
             error={formik.errors[name]?.toString() || ''}
           />
         )}
-        <Button type='submit' loading={isLoading}>
+        <Button type='submit'>
           Save Changes
         </Button>
       </form>

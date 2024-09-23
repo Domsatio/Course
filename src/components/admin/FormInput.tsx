@@ -426,7 +426,7 @@ export default function FormInput({
           <form onSubmit={formik.handleSubmit}>{generateInputForm()}</form>
         )
       ) : (
-        <Card className="mt-6">
+        <Card placeholder='' className="mt-6">
           {isUseHeader && (
             <CardHeader color="blue" className="p-5">
               <h1>{title}</h1>

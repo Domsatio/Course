@@ -44,85 +44,77 @@ export default function Index() {
     }
   }
 
-  return (
-    <Table>
-      {data?.map(({ id, quantity, status, createdAt, user, product }: GetOrder, index: number) => {
-        const isLast = index === data.length - 1;
-        const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
-        return (
-          <tr key={id}>
-            <td className={classes}>
-              <Typography
-                variant="small"
-                color="blue-gray"
-                className="font-normal"
-              >
-                {dateFormater(createdAt, "short")}
-              </Typography>
-            </td>
-            <td className={`${classes} flex gap-4 items-center`}>
+  return Table(
+    NullProof({
+      input: data,
+      params: "data",
+      isMap: true,
+    }).map((order: GetOrder, index: number) => {
+      const isLast = index === data.length - 1;
+      const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
+      return (
+        <tr key={order.id}>
+          <td className={classes}>
+            <Typography
+              variant="small"
+              color="blue-gray"
+              className="font-normal"
+            >
+              {NullProof({ input: order, params: "date" })}
+            </Typography>
+          </td>
+          <td className={classes}>
+            <Typography
+              variant="small"
+              color="blue-gray"
+              className="font-normal"
+            >
+              {NullProof({ input: order, params: "product" }).name}
+            </Typography>
+          </td>
+          <td className={classes}>
+            <Typography
+              variant="small"
+              color="blue-gray"
+              className="font-normal"
+            >
+              {NullProof({ input: order, params: "quantity" })}
+            </Typography>
+          </td>
+          <td className={classes}>
+            <Typography
+              variant="small"
+              color="blue-gray"
+              className="font-normal"
+            >
+              {NullProof({ input: order, params: "price" })}
+            </Typography>
+          </td>
+          <td className={classes}>
+            <div className="flex items-center">
               <Avatar
-                src={product.image}
-                alt={product.name}
-                size="md"
-                className="border border-blue-gray-50 bg-blue-gray-50/50 object-contain p-1"
+                src={NullProof({ input: order, params: "user" }).avatar}
               />
               <Typography
                 variant="small"
                 color="blue-gray"
-                className="font-normal"
+                className="font-normal ml-2"
               >
-                {product.name}
+                {NullProof({ input: order, params: "user" }).name}
               </Typography>
-            </td>
-            <td className={classes}>
-              <Typography
-                variant="small"
-                color="blue-gray"
-                className="font-normal"
-              >
-                {quantity}
-              </Typography>
-            </td>
-            <td className={classes}>
-              <Typography
-                variant="small"
-                color="blue-gray"
-                className="font-normal"
-              >
-                {NullProof({ input: product, params: "price", type: "currency" })}
-              </Typography>
-            </td>
-            <td className={classes}>
-              <Typography
-                variant="small"
-                color="blue-gray"
-                className="font-normal"
-              >
-                {user.email}
-              </Typography>
-            </td>
-            <td className={classes}>
-              <Typography
-                variant="small"
-                color="blue-gray"
-                className="font-normal flex"
-              >
-                <Chip
-                  variant="ghost"
-                  color={orderStatus(status)}
-                  size="sm"
-                  value={status}
-                />
-              </Typography>
-            </td>
-            <td className={classes}>
-              <TableAction data={dataAction} id={id} />
-            </td>
-          </tr>
-        );
-      })}
-    </Table>
+            </div>
+          </td>
+          <td className={classes}>
+            <Chip
+              value={order.status}
+              />
+          </td>
+          <td className={classes}>
+            {TableAction({data: dataAction, id: order.id})}
+          </td>
+        </tr>
+      );
+    })
   );
 }
 

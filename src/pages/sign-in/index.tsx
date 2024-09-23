@@ -69,6 +69,7 @@ export default function SignIn() {
               Email
             </Typography>
             <Input
+              crossOrigin={"email"}
               type="email"
               size="lg"
               placeholder="name@mail.com"
@@ -88,6 +89,7 @@ export default function SignIn() {
               Password
             </Typography>
             <Input
+              crossOrigin={"password"}
               type="password"
               size="lg"
               placeholder="********"

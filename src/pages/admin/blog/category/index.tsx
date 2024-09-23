@@ -5,6 +5,7 @@ import { Typography } from "@material-tailwind/react";
 import { GetCategory } from "@/types/category.type";
 import { categoryServices } from "@/services/serviceGenerator";
 import { NullProof, numberlistPagination } from "@/helpers/appFunction";
+import GenerateMetaData from "@/components/GenerateMetaData";
 
 const TABLE_HEAD = ["No", "Name", "Total Post(s)", "Action"];
 

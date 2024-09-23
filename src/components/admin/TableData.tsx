@@ -177,6 +177,7 @@ export default function TableData({
           <div className="flex w-full items-center shrink-0 gap-2 md:w-max">
             <div className="relative w-full flex md:w-72">
               <Input
+                crossOrigin={"search"}
                 label="Search"
                 icon={<MagnifyingGlassIcon className="h-5 w-5" />}
                 value={searchQuery || ""}
