@@ -11,9 +11,6 @@ import {
   Option,
   Checkbox,
   Typography,
-  Popover,
-  PopoverHandler,
-  PopoverContent,
   Tooltip,
   Dialog,
   DialogHeader,
@@ -22,19 +19,13 @@ import {
   Chip,
 } from "@material-tailwind/react";
 import { useDebounce } from "use-debounce";
-import {
-  MagnifyingGlassIcon,
-  ChevronRightIcon,
-  ChevronLeftIcon,
-  TrashIcon,
-  EyeIcon,
-} from "@heroicons/react/24/outline";
+import { TrashIcon, EyeIcon } from "@heroicons/react/24/outline";
 import CurrencyInput from "react-currency-input-field";
 import { format, set } from "date-fns";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FormInputHooks } from "./FormInput";
-import { get } from "http";
+import QuillEditor from "./QuillEdtor";
 
 type FileViewerProps = {
   file: string;
@@ -50,7 +41,11 @@ const FileViewer = ({
   handleOpen,
 }: FileViewerProps) => {
   return (
-    <Dialog size={isImage ? "sm" : 'md'} open={isOpen} handler={() => handleOpen(false)}>
+    <Dialog
+      size={isImage ? "sm" : "md"}
+      open={isOpen}
+      handler={() => handleOpen(false)}
+    >
       <DialogHeader className="border-b">Preview</DialogHeader>
       <DialogBody className="h-[500px]">
         <div className="relative h-full w-full">
@@ -126,7 +121,10 @@ export const InputListRenderer = ({
   };
 
   useEffect(() => {
-    if (option?.api && (option?.type === "multicheckbox" || option?.type === "checkbox")) {
+    if (
+      option?.api &&
+      (option?.type === "multicheckbox" || option?.type === "checkbox")
+    ) {
       getDataApi();
     } else {
       setData(listData);
@@ -137,7 +135,9 @@ export const InputListRenderer = ({
     }
   }, [debounceValue]);
 
-  const handleChangeMultipleCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeMultipleCheckbox = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const { checked, value: selectedValue, name } = e.target;
     let updatedValues = Array.isArray(value) ? [...value] : [];
     if (checked) {
@@ -178,7 +178,9 @@ export const InputListRenderer = ({
     if (files) {
       try {
         const { data } = await axios.post(
-          `/api/uploadThing?actionType=upload&slug=${type === "image" ? "imageUploader" : "pdfUploader"}`,
+          `/api/uploadThing?actionType=upload&slug=${
+            type === "image" ? "imageUploader" : "pdfUploader"
+          }`,
           {
             files: [{ name: files.name, type: files.type, size: files.size }],
           }
@@ -187,7 +189,7 @@ export const InputListRenderer = ({
         const { url, urls, fields, fileUrl } = data[0];
         const formData = new FormData();
 
-        if (fields && typeof fields === 'object') {
+        if (fields && typeof fields === "object") {
           Object.entries(fields).forEach(([key, value]: [string, any]) => {
             formData.append(key, value);
           });
@@ -231,7 +233,9 @@ export const InputListRenderer = ({
           className={className}
           name={name}
           value={value.toString()}
-          onChange={onChange}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            onChange?.({ target: { name, value: e.target.value } })
+          }
           disabled={disabled}
           inputMode={
             type === "number" ? "numeric" : type === "url" ? "url" : "text"
@@ -289,6 +293,14 @@ export const InputListRenderer = ({
           </label>
         </div>
       )}
+      {type === "texteditor" && (
+        <QuillEditor
+          value={String(value) || ""}
+          onChange={(content: string) =>
+            onChange?.({ target: { name, value: content } })
+          }
+        />
+      )}
       {type === "datalist" && (
         <datalist id={name}>
           {data?.map((data: any, index) => (
@@ -308,21 +320,21 @@ export const InputListRenderer = ({
                 onChange={
                   option?.api
                     ? (e) => {
-                      onChange?.({
-                        target: {
-                          name,
-                          value: e.target.checked ? data[option.id] : "",
-                        },
-                      });
-                    }
+                        onChange?.({
+                          target: {
+                            name,
+                            value: e.target.checked ? data[option.id] : "",
+                          },
+                        });
+                      }
                     : (e) => {
-                      onChange?.({
-                        target: {
-                          name,
-                          value: e.target.checked ? data.value : "",
-                        },
-                      });
-                    }
+                        onChange?.({
+                          target: {
+                            name,
+                            value: e.target.checked ? data.value : "",
+                          },
+                        });
+                      }
                 }
                 disabled={disabled}
                 crossOrigin={undefined}
@@ -388,7 +400,10 @@ export const InputListRenderer = ({
                       value.includes(option?.api ? item[option.id] : item.value)
                     }
                   />
-                  <Typography color="blue-gray" className="font-medium capitalize">
+                  <Typography
+                    color="blue-gray"
+                    className="font-medium capitalize"
+                  >
                     {option?.api
                       ? param.map((key: string) => item[key]).join(" | ")
                       : item.title}
@@ -476,10 +491,10 @@ export const InputListRenderer = ({
             Array.isArray(value)
               ? new Date()
               : value
-                ? typeof value === "string" || typeof value === "number"
-                  ? new Date(value)
-                  : null
-                : new Date()
+              ? typeof value === "string" || typeof value === "number"
+                ? new Date(value)
+                : null
+              : new Date()
           }
           onChange={(date) => {
             onChange?.({ target: { name, value: date } });

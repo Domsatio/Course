@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "migrate": "prisma migrate deploy",
     "lint": "next lint"
   },
   "dependencies": {
@@ -25,12 +26,14 @@
     "next-auth": "^4.24.5",
     "next-connect": "^1.0.0",
     "nextjs-toploader": "^3.6.15",
+    "quill": "^2.0.2",
     "react": "^18",
     "react-currency-input-field": "^3.8.0",
     "react-datepicker": "^7.3.0",
     "react-day-picker": "^9.0.8",
     "react-dom": "^18",
     "react-player": "^2.10.1",
+    "react-quill": "^2.0.0",
     "supabase": "^1.192.5",
     "tailwind-merge": "^2.5.2",
     "uploadthing": "^6.13.2",
