@@ -8,7 +8,7 @@ import { memo } from "react";
 
 const StoreSkeletonCard = () => {
   return (
-    <Card className="w-full h-full animate-pulse">
+    <Card placeholder='' className="w-full h-full animate-pulse">
       <CardHeader shadow={false} floated={false} className="h-72 bg-gray-200">
         <div className="h-full w-full bg-gray-300"></div>
       </CardHeader>

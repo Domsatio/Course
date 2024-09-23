@@ -73,6 +73,7 @@ export default function Register() {
               Name
             </Typography>
             <Input
+              crossOrigin={"name"}
               type="text"
               size="lg"
               placeholder="Your name"
@@ -92,6 +93,7 @@ export default function Register() {
               Email
             </Typography>
             <Input
+              crossOrigin={"email"}
               type="email"
               size="lg"
               placeholder="name@mail.com"
@@ -111,6 +113,7 @@ export default function Register() {
               Password
             </Typography>
             <Input
+              crossOrigin={"password"}
               type="password"
               size="lg"
               placeholder="********"

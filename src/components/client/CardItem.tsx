@@ -24,7 +24,7 @@ type typeCard = {
 const CardItem = ({ props, category }: typeCard) => {
   return (
     <Link href={props.href || ""} className="group cursor-pointer">
-      <Card className="max-w-[357px] overflow-hidden shadow-none">
+      <Card placeholder='' className="max-w-[357px] overflow-hidden shadow-none">
         <CardHeader
           floated={false}
           shadow={false}

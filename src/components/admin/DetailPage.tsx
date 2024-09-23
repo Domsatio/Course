@@ -27,12 +27,12 @@ export const DetailPage = ({
         <h2 className="text-xl lg:text-2xl font-bold">Detail {title}</h2>
       </CardHeader>
       <CardBody className="relative pt-10 lg:pt-4">
-        <div className="absolute top-3 right-4">
+        <div className="absolute top-3 right-4 cursor-pointer">
           <Button
             className="p-2"
             onClick={() => router.back()}
           >
-            <ArrowLeftIcon className="h-5 w-5" />
+            <ArrowLeftIcon className="h-5 w-5 cursor-pointer" />
           </Button>
         </div>
         <div>{children}</div>

@@ -228,6 +228,7 @@ export const InputListRenderer = ({
       </label>
       {(type === "input" || type === "number" || type === "url") && (
         <Input
+          crossOrigin={name}
           type="text"
           label={label}
           className={className}
