@@ -16,6 +16,7 @@ import CategorySkeleton from "@/components/Skeleton/CategorySkeleton";
 import ContentWrapper from "@/layouts/client/contentWrapper";
 import { cn } from "@/libs/cn";
 import GenerateMetaData from "@/components/GenerateMetaData";
+import { ca } from "date-fns/locale";
 
 type Params = {
   skip: number;
@@ -38,7 +39,7 @@ const ClientClubPage = () => {
 
   const getPostsData = async () => {
     const postParams: Params = {
-      skip: activePage * take - take,
+      skip: (Number(getQueryParams()['page']) || 1) * take - take,
       take,
       search: getQueryParams()["search"] || "",
       category: getQueryParams()["category"]
@@ -56,18 +57,21 @@ const ClientClubPage = () => {
   };
 
   const handleSetActiveCategory = async (category: string) => {
-    setActivePage(1);
+    setActiveCategory(category);
     await replace({
       pathname: "/club",
-      query: { ...getQueryParams(), category: category },
+      query: { ...getQueryParams(), category },
     });
-    setActiveCategory(category);
-    getPostsData();
+    if(activePage === 1) {
+      getPostsData();
+    }
+    setActivePage(1);
   };
 
   useEffect(() => {
     setIsLoad(true);
     setIsCategoryLoad(true);
+    setActivePage(parseInt(getQueryParams()["page"] || "1"));
     setActiveCategory(getQueryParams()["category"] || "");
     const categoryParams: Params = {
       skip: 0,
@@ -81,7 +85,6 @@ const ClientClubPage = () => {
 
   const handleSetActivePage = async (page: number) => {
     setActivePage(page);
-    // getPostsData();
   }
 
   useEffect(() => {
@@ -91,13 +94,17 @@ const ClientClubPage = () => {
       const handleGetData = async () => {
         await replace({
           pathname: "/club",
-          query: { ...getQueryParams(), search: debounceValue || "" },
+          query: { 
+            ...getQueryParams(), 
+            search: debounceValue || "",
+            page: activePage,
+          },
         });
         getPostsData();
       };
       handleGetData();
     }
-  }, [debounceValue]);
+  }, [debounceValue, activePage]);
 
   const BtnCategory = ({ value, name }: { value: string; name?: string }) => (
     <Button
