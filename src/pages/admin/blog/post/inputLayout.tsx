@@ -4,44 +4,48 @@ import { InputListProps } from "@/types/form.type";
 export const FormInputListRenderer = ({ id }: { id: string }) => {
   const FormInputList: InputListProps[] = [
     {
-      className: "",
       name: "userId",
       label: "ID",
       type: "input",
       hide: true,
       validator: Yup.string().required("Id is required"),
       value: id,
+      isRequired: true,
     },
     {
-      className: "",
       name: "title",
       label: "Title",
       type: "input",
       validator: Yup.string().required("Title is required"),
       value: "",
+      placeholder: "Input title here",
+      isRequired: true,
     },
     {
-      className: "",
+      className: "mt-7",
       name: "body",
       label: "Body",
       type: "textarea",
       validator: Yup.string().required("Body is required"),
       value: "",
+      placeholder: "Input body here",
+      isRequired: true,
     },
     {
-      className: "",
+      className: "mt-7",
       name: "thumbnail",
       label: "Thumbnail",
       type: "image",
       validator: Yup.string().required("Thumbnail is required"),
       value: "",
+      isRequired: true,
     },
     {
-      className: "input-text",
+      className: "input-text mt-7",
       name: "categories",
       label: "Category",
       type: "multicheckbox",
-      validator: Yup.array().required("Category is required"),
+      validator: Yup.array().optional(),
       value: [],
       valueID: 'categoryId',
       option: {
@@ -54,17 +58,13 @@ export const FormInputListRenderer = ({ id }: { id: string }) => {
       }
     },
     {
-      className: "",
+      className: "mt-7",
       name: "published",
       label: "Published",
       type: "checkbox",
       removeOnSubmit: false,
-      validator: Yup.boolean().required("Published is required"),
+      validator: Yup.boolean().required("Published is required").default(false),
       value: false,
-      listData: [
-        { title: "Yes", value: true },
-        { title: "No", value: false },
-      ],
     }
   ];
   return FormInputList;
@@ -75,13 +75,9 @@ export const FilterInputList: InputListProps[] = [
     name: "published",
     label: "Published",
     type: "checkbox",
-    validator: Yup.string(),
+    validator: Yup.boolean().optional(),
     value: "",
-    useRiset: true,
-    listData: [
-      { title: "Yes", value: true },
-      { title: "No", value: false },
-    ],
+    useReset: true,
   },
   {
     className: "input-text",

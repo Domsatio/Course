@@ -7,7 +7,7 @@ import CardSkeleton from "@/components/Skeleton/CardSkeleton";
 import { PaginationHook } from "@/hooks/paginationHook";
 import { FetchDataHook, FetchDataHook as FetchCategoryHook } from "@/hooks/fetchDataHook";
 import { SearchHook } from "@/hooks/searchHook";
-import Pagination from "@/components/client/pagination";
+import Pagination from "@/components/client/Pagination";
 import { getQueryParams } from "@/helpers/appFunction";
 import Search from "@/components/client/search";
 import { useRouter } from "next/router";
@@ -127,14 +127,14 @@ const ClientClubPage = () => {
       />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 place-items-center lg:place-items-start">
         {isLoad ? (
-          <React.Fragment>
+          <Fragment>
             {Array.from({ length: 6 }, (_, i) => (
               <CardSkeleton key={i} />
             ))}
-          </React.Fragment>
+          </Fragment>
         ) : (
-          <React.Fragment>
-            {posts.map(
+          <Fragment>
+            {posts.length > 0 ? posts.map(
               (data: Omit<GetPost, "published" | "createdAt">, index) => (
                 <CardItem
                   key={index}
@@ -154,15 +154,21 @@ const ClientClubPage = () => {
                   }
                 />
               )
+            ) : (
+              <Typography variant="small" color="gray">
+                No posts found
+              </Typography>
             )}
-          </React.Fragment>
+          </Fragment>
         )}
       </div>
-      <Pagination
-        activePage={activePage}
-        setActivePage={setActivePage}
-        totalPages={totalPages}
-      />
+      {posts.length > 0 &&
+        <Pagination
+          activePage={activePage}
+          setActivePage={setActivePage}
+          totalPages={totalPages}
+        />
+      }
     </ContentWrapper>
   );
 };

@@ -1,6 +1,6 @@
 import React from "react";
 import NextTopLoader from "nextjs-toploader";
-import AdminNavbar from "@/components/admin/navbar";
+import AdminNavbar from "@/components/admin/Navbar";
 
 export default function LayoutAdmin({ children }: { children: React.ReactNode }) {
   return (

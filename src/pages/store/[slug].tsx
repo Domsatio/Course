@@ -33,14 +33,17 @@ const DetailStore: FC<Omit<GetProduct, 'id' | 'createdAt' | 'updatedAt'>> = (dat
   return (
     <main className="flex min-h-screen flex-col items-center bg-[#f4f4f4] justify-between py-24">
       <section className="grid grid-cols-1 lg:grid-cols-2 container 2xl:max-w-[75rem] p-10 rounded-3xl bg-white">
-        <Image
-          src={data.thumbnail}
-          alt={data.name}
-          width={400}
-          height={400}
-          priority
-          className='rounded-lg mb-5 lg:mb-0'
-        />
+        <div className='relative h-96 w-96'>
+          <Image
+            src={data.thumbnail}
+            alt={data.name}
+            className='rounded-lg mb-5 lg:mb-0'
+            style={{ objectFit: "cover" }}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            priority
+            fill
+          />
+        </div>
         <div>
           <Typography color="black" className='font-medium text-2xl'>
             {data.name}

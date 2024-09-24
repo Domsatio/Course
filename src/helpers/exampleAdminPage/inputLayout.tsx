@@ -52,10 +52,6 @@ export const FormInputListRenderer = ({ id }: { id: string }) => {
       removeOnSubmit: false,
       validator: Yup.boolean().required("Published is required"),
       value: false,
-      listData: [
-        { title: "Yes", value: true },
-        { title: "No", value: false },
-      ],
     }
   ];
   return FormInputList;
@@ -68,11 +64,7 @@ export const FilterInputList: InputListProps[] = [
     type: "checkbox",
     validator: Yup.string(),
     value: "",
-    useRiset: true,
-    listData: [
-      { title: "Yes", value: true },
-      { title: "No", value: false },
-    ],
+    useReset: true,
   },
   {
     className: "",

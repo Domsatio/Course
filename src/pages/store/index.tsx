@@ -53,18 +53,22 @@ const ClientStorePage = () => {
 
   return (
     <ContentWrapper className="bg-transparent">
-        <Typography variant="h2" color="black" placeholder='Blog Page'>
-          Store
-        </Typography>
-        <Search
-          onChange={(e) => handleSetSearchQuery(e.target.value)}
-          value={searchQuery || ""}
-        />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {products.map((product) =>
-            <StoreCard key={product.id} {...product} />
-          )}
-        </div>
+      <Typography variant="h2" color="black" placeholder='Blog Page'>
+        Store
+      </Typography>
+      <Search
+        onChange={(e) => handleSetSearchQuery(e.target.value)}
+        value={searchQuery || ""}
+      />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {products.length > 0 ? products.map((product) =>
+          <StoreCard key={product.id} {...product} />
+        ) : (
+          <Typography variant="small" color="gray">
+            No products found
+          </Typography>
+        )}
+      </div>
     </ContentWrapper>
   )
 }

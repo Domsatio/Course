@@ -6,8 +6,9 @@ import { GetServerSideProps } from "next";
 import { dateFormater } from "@/helpers/date";
 import { useRouter } from "next/router";
 import ContentWrapper from "@/layouts/client/contentWrapper";
+import Image from "next/image";
 
-const DetailClubPage: FC<Omit<GetPost, 'id' | 'published' | 'slug'>> = ({ title, body, categories, createdAt }) => {
+const DetailClubPage: FC<Omit<GetPost, 'id' | 'published' | 'slug'>> = ({ title, thumbnail, body, categories, createdAt }) => {
   const { push } = useRouter()
 
   return (
@@ -36,7 +37,18 @@ const DetailClubPage: FC<Omit<GetPost, 'id' | 'published' | 'slug'>> = ({ title,
         <Typography variant="small" color="gray">
           {dateFormater(createdAt, "long")}
         </Typography>
-        <Typography variant="paragraph" className="px-56 text-left">
+        <div className="relative h-96 w-full">
+          <Image
+            src={thumbnail}
+            alt={title + " thumbnail"}
+            className="transform transition-transform duration-500 group-hover:scale-110"
+            style={{ objectFit: "contain" }}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            priority
+            fill
+          />
+        </div>
+        <Typography variant="paragraph" className="text-left">
           {body}
         </Typography>
       </div>
@@ -47,9 +59,7 @@ const DetailClubPage: FC<Omit<GetPost, 'id' | 'published' | 'slug'>> = ({ title,
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.query;
   try {
-    const {
-      data: { data },
-    } = await postServices.getItem({ slug });
+    const { data: { data } } = await postServices.getItem({ slug });
     return {
       props: data,
     };

@@ -15,7 +15,7 @@ export const createCourseValidation = (payload: Course) => {
         file: string().required("File is required"),
       })
     ).required("Video is required"),
-    published: boolean().required("Published is required"),
+    published: boolean().required("Published is required").default(false),
   });
 
   try {

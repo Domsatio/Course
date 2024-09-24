@@ -16,7 +16,7 @@ export type FormInputTypeProps =
   | "multipleImage"
   | "multipleInput"
   | "checkbox"
-  | "file"
+  | "file";
 
 export type InputListOptionProps = {
   type: "select" | "checkbox" | "multicheckbox" | "datalist" | "csv";
@@ -34,22 +34,20 @@ export type InputListProps = {
   name: string;
   label: string;
   protect?: string[];
+  placeholder?: string;
   type: FormInputTypeProps;
   hide?: boolean;
   removeOnSubmit?: boolean;
   disabled?: boolean;
+  isRequired?: boolean;
   lockData?: boolean;
   validator: any;
   value?: string | number | string[] | boolean;
   valueID?: string;
-  listData?: {
-    title: string;
-    value: number | string | boolean;
-  }[];
   onChange?: (e: any) => void;
   error?: string;
   option?: InputListOptionProps;
   component?: InputListProps[];
-  useRiset?: boolean;
+  useReset?: boolean;
   watch?: string;
 };

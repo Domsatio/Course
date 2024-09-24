@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { FormikErrors, useFormik } from "formik";
 import * as Yup from "yup";
@@ -12,10 +12,11 @@ import {
   Card,
   CardHeader,
   CardBody,
+  IconButton,
 } from "@material-tailwind/react";
-import { TrashIcon } from "@heroicons/react/24/outline";
 import { getQueryParams, convertStringToBoolean } from "@/helpers/appFunction";
 import { children } from "@material-tailwind/react/types/components/accordion";
+import { ArrowLeftIcon, PlusIcon } from "@heroicons/react/24/solid";
 
 interface FormInputProps {
   title?: string;
@@ -34,7 +35,7 @@ interface FormInputProps {
   redirect?: string;
   isUseHeader?: boolean;
   customCard?: (children: children) => JSX.Element;
-  isUseCencelButton?: boolean;
+  isUseCancelButton?: boolean;
   customButtonSubmit?: JSX.Element;
 }
 
@@ -57,14 +58,14 @@ export default function FormInput({
   redirect,
   isUseHeader = true,
   customCard,
-  isUseCencelButton = true,
+  isUseCancelButton = true,
   customButtonSubmit,
 }: FormInputProps) {
   const { disabled } = FormInputHooks();
   const router = useRouter();
 
   const initialValues = inputList.reduce((acc: Record<string, any>, item) => {
-    acc[item.name] = item.value || "";
+    acc[item.name] = item.value;
     return acc;
   }, {});
 
@@ -161,7 +162,6 @@ export default function FormInput({
 
   useEffect(() => {
     onChange?.(formik);
-    console.log(formik.values);
   }, [formik.values]);
 
   // a function to take the data to be edited if method is PUT
@@ -201,7 +201,6 @@ export default function FormInput({
         const isValueBoolean =
           getQueryParams()[key] === "true" || getQueryParams()[key] === "false";
         const isValueArray = input?.validator.type === "array" || false;
-        console.log(input);
         if (isValueArray) {
           formik.setFieldValue(key, getQueryParams()[key].split(","));
         } else if (input) {
@@ -234,17 +233,17 @@ export default function FormInput({
   };
 
   const generateInputForm = () => (
-    <React.Fragment>
+    <Fragment>
       {inputList.map((input: InputListProps, index: number) => {
         const listWatchInput = input.watch ? input.watch.split(",") : [];
         const checkIsDisabled =
           listWatchInput.length > 0
             ? listWatchInput.some(
-                (item) =>
-                  formik.values[item] === "" ||
-                  (Array.isArray(formik.values[item]) &&
-                    formik.values[item].length === 0)
-              )
+              (item) =>
+                formik.values[item] === "" ||
+                (Array.isArray(formik.values[item]) &&
+                  formik.values[item].length === 0)
+            )
             : false;
         let option_query = input?.option?.query ? input.option.query : null;
         if (option_query && listWatchInput.length > 0) {
@@ -266,17 +265,18 @@ export default function FormInput({
 
         if (input.type === "component") {
           return (
-            <div key={index} className="flex flex-col">
-              <label>{input.label}</label>
+            <div key={index} className={input.className}>
+              <label className="after:content-['*'] after:text-red-600 after:ml-1">{input.label}</label>
               {formik.values[input.name] &&
                 formik.values[input.name]?.map((item: any, i: number) => (
-                  <div key={i}>
+                  <div key={i} className="flex flex-col p-5 mt-2 rounded-lg border border-gray-300">
                     {/* setup input component */}
                     {input.component?.map(
                       (component: InputListProps, ii: number) => (
                         <InputListRenderer
                           key={ii}
                           {...component}
+                          label={`${component.label} ${i + 1}`}
                           value={item[component.name]}
                           onChange={(e: any) => {
                             const { value } = e.target;
@@ -305,26 +305,26 @@ export default function FormInput({
                       )
                     )}
                     {/* button to remove input component */}
-                    <Button
-                      color="red"
-                      size="sm"
-                      className="p-2 mb-2"
-                      onClick={() => {
-                        const newValues = formik.values[input.name].filter(
-                          (removeItem: any, idx: number) => i !== idx
-                        );
-                        formik.setFieldValue(input.name, newValues);
-                      }}
-                    >
-                      <TrashIcon className="h-5 w-5" />
-                    </Button>
+                    <div className="flex justify-center">
+                      <Button
+                        color="red"
+                        onClick={() => {
+                          const newValues = formik.values[input.name].filter(
+                            (removeItem: any, idx: number) => i !== idx
+                          );
+                          formik.setFieldValue(input.name, newValues);
+                        }}
+                      >
+                        Delete
+                      </Button>
+                    </div>
                   </div>
                 ))}
-              <div className="flex justify-center mb-3">
+              <div className="flex justify-center my-3">
                 {/* button to add new input component */}
                 <Button
                   color="blue"
-                  className="max-w-max"
+                  className="max-w-max flex items-center gap-2"
                   onClick={() => {
                     const newValues = input.component?.reduce(
                       (acc: Record<string, any>, item) => {
@@ -339,7 +339,8 @@ export default function FormInput({
                     ]);
                   }}
                 >
-                  Add {input.label} +
+                  <PlusIcon className="h-5 w-5" />
+                  Add {input.label}
                 </Button>
               </div>
             </div>
@@ -355,11 +356,11 @@ export default function FormInput({
             option={
               option_query
                 ? {
-                    ...input.option,
-                    query: option_query,
-                    type: input.option?.type || "select", 
-                    id: input.option?.id || "",
-                  }
+                  ...input.option,
+                  query: option_query,
+                  type: input.option?.type || "select",
+                  id: input.option?.id || "",
+                }
                 : input.option
             }
             onChange={(data: any) => {
@@ -369,8 +370,8 @@ export default function FormInput({
           />
         );
       })}
-      <div className="flex justify-end items-center gap-2">
-        {isUseCencelButton && (
+      <div className="flex justify-end items-center gap-2 mt-10">
+        {isUseCancelButton && (
           <Button
             variant="text"
             color="red"
@@ -399,7 +400,7 @@ export default function FormInput({
           </Button>
         )}
       </div>
-    </React.Fragment>
+    </Fragment>
   );
 
   if (asModal) {
@@ -420,7 +421,7 @@ export default function FormInput({
   }
 
   return (
-    <React.Fragment>
+    <Fragment>
       {customCard ? (
         customCard(
           <form onSubmit={formik.handleSubmit}>{generateInputForm()}</form>
@@ -428,8 +429,16 @@ export default function FormInput({
       ) : (
         <Card className="mt-6">
           {isUseHeader && (
-            <CardHeader color="blue" className="p-5">
-              <h1>{title}</h1>
+            <CardHeader color="blue" className="p-3">
+              <div className="flex items-center gap-3">
+                <IconButton
+                  variant="text"
+                  onClick={() => router.back()}
+                >
+                  <ArrowLeftIcon className="h-5 w-5 text-white" />
+                </IconButton>
+                <h1>{title}</h1>
+              </div>
             </CardHeader>
           )}
           <CardBody>
@@ -437,6 +446,6 @@ export default function FormInput({
           </CardBody>
         </Card>
       )}
-    </React.Fragment>
+    </Fragment>
   );
 }

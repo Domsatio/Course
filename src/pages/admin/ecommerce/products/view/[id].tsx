@@ -1,31 +1,27 @@
-import React, { use, useEffect } from "react";
+import React, { FC } from "react";
 import Image from "next/image";
 import { NullProof } from "@/helpers/appFunction";
 import { LabelDetailPage, DetailPage } from "@/components/admin/DetailPage";
 import { GetServerSideProps } from "next";
 import { productServices } from "@/services/serviceGenerator";
-import axios from "axios";
-import { Button } from "@material-tailwind/react";
+import { GetProduct } from "@/types/product.type";
 
-type PageProps = {
-  data: any;
-};
+const DetailProductAdmin: FC<GetProduct> = (data) => {
+  const displayDiscount = data.discount > 0 ? `${data.discount}%` : "No discount";
 
-export default function view({data}: PageProps) {
-  const displayDiscount =
-    data.discount > 0 ? `${data.discount}%` : "No discount";
   return (
     <DetailPage title="Product">
-      <div className="flex flex-wrap gap-5">
+      <div className="flex flex-row flex-wrap gap-5">
         <Image
-          src={data.image}
+          src={data.thumbnail}
           alt={NullProof({ input: data, params: "name" })}
           width={400}
           height={400}
           className="rounded-md"
+          priority
         />
-        <div>
-          <h1 className="font-black text-xl mb-3 lg:text-4xl lg:mt-2">
+        <div className="space-y-5">
+          <h1 className="font-black text-xl mb-3 lg:text-4xl">
             {NullProof({ input: data, params: "name" })}
           </h1>
           <LabelDetailPage label="Description" className="md:max-w-sm lg:max-w-md xl:max-w-xl">
@@ -47,11 +43,9 @@ export default function view({data}: PageProps) {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { id } = context.query;
   try {
-    const res = await productServices.getItem({ id: id });
+    const { data: { data } } = await productServices.getItem({ id });
     return {
-      props: {
-        data: res.data.data,
-      },
+      props: data
     };
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -62,3 +56,5 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 };
+
+export default DetailProductAdmin;

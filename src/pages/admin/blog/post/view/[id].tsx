@@ -1,16 +1,34 @@
 import { NullProof } from "@/helpers/appFunction";
 import { DetailPage, LabelDetailPage } from "@/components/admin/DetailPage";
-import { CategoryPost } from "@/types/post.type";
+import { CategoryPost, GetPost } from "@/types/post.type";
 import { Chip } from "@material-tailwind/react";
 import { GetServerSideProps } from "next/types";
 import { postServices } from "@/services/serviceGenerator";
+import { FC } from "react";
+import Image from "next/image";
 
-export default function view({ data }: any) {
+const DetailPostAdmin: FC<GetPost> = (data) => {
   return (
     <DetailPage title="Post">
-      <div>
+      <div className="space-y-5">
+        <LabelDetailPage label="Thumbnail">
+          <div className="relative h-96 w-full">
+            <Image
+              src={data.thumbnail}
+              alt={data.title + " thumbnail"}
+              className="transform transition-transform duration-500 group-hover:scale-110"
+              style={{ objectFit: "contain" }}
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              priority
+              fill
+            />
+          </div>
+        </LabelDetailPage>
         <LabelDetailPage label="Title">
           {NullProof({ input: data, params: "title" })}
+        </LabelDetailPage>
+        <LabelDetailPage label="Slug">
+          {NullProof({ input: data, params: "slug" })}
         </LabelDetailPage>
         <LabelDetailPage label="Body">
           {NullProof({ input: data, params: "body" })}
@@ -52,11 +70,9 @@ export default function view({ data }: any) {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { id } = context.query;
   try {
-    const res = await postServices.getItem({ id: id });
+    const { data: { data } } = await postServices.getItem({ id });
     return {
-      props: {
-        data: res.data.data,
-      },
+      props: data
     };
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -67,3 +83,5 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 };
+
+export default DetailPostAdmin;

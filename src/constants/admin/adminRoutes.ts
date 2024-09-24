@@ -4,6 +4,7 @@ import {
   DocumentTextIcon,
   CurrencyDollarIcon,
   VideoCameraIcon,
+  UsersIcon,
 } from "@heroicons/react/24/solid";
 import { MenuItemProps } from "@/helpers/typeProps";
 
@@ -22,7 +23,7 @@ export const adminRoutes: MenuItemProps[] = [
   },
   {
     isheader: true,
-    label: "Ecommerce",
+    label: "E-Commerce",
     href: "/ecommerce",
     icon: ShoppingCartIcon,
     children: [
@@ -78,6 +79,6 @@ export const adminRoutes: MenuItemProps[] = [
     isPage: true,
     href: "/user",
     label: "Users",
-    icon: VideoCameraIcon,
+    icon: UsersIcon,
   },
 ];
