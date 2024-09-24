@@ -6,7 +6,6 @@ import { GetServerSideProps } from "next";
 import Image from "next/image";
 import React, { FC, useState } from "react";
 import GenerateMetaData from "@/components/GenerateMetaData";
-import { ShareIcon } from "@heroicons/react/24/solid";
 import ModalShare from "@/components/ModalShare";
 import ContentWrapper from "@/layouts/client/contentWrapper";
 import ButtonShare from "@/components/client/ButtonShare";
