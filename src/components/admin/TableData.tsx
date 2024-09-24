@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Pagination from "./Pagination";
 import {
@@ -32,6 +32,8 @@ import { PaginationHook } from "@/hooks/paginationHook";
 import { FetchDataHook } from "@/hooks/fetchDataHook";
 import { SearchHook } from "@/hooks/searchHook";
 import Link from "next/link";
+import { ModalConfirmation } from "./ModalConfirmation";
+import { set } from "date-fns";
 
 export interface TableActionProps {
   action: "update" | "delete" | "view" | "custom";
@@ -210,24 +212,26 @@ export default function TableData({
               </Link>
             )}
             {filter && (
-              <Tooltip content="Filter">
-                <IconButton variant="text" onClick={() => setModalFilter(true)}>
-                  <FunnelIcon className="h-5 w-5" />
-                  <FormInput
-                    inputList={filter}
-                    method="GET"
-                    service={service}
-                    title="Filter"
-                    asModal={{
-                      isOpen: modalFilter,
-                      handler: setModalFilter,
-                    }}
-                    onSubmit={(data) => getDataTable()}
-                    onSuccess={(data) => onSuccess?.(data)}
-                    isFilter={true}
-                  />
-                </IconButton>
-              </Tooltip>
+              <Fragment>
+                <Tooltip content="Filter">
+                  <IconButton variant="text" onClick={() => setModalFilter(true)}>
+                    <FunnelIcon className="h-5 w-5" />
+                  </IconButton>
+                </Tooltip>
+                <FormInput
+                      inputList={filter}
+                      method="GET"
+                      service={service}
+                      title="Filter"
+                      asModal={{
+                        isOpen: modalFilter,
+                        handler: setModalFilter,
+                      }}
+                      onSubmit={(data) => getDataTable()}
+                      onSuccess={(data) => onSuccess?.(data)}
+                      isFilter={true}
+                    />
+              </Fragment>
             )}
           </div>
         </div>
@@ -290,27 +294,11 @@ export default function TableData({
 
     return (
       <div className="flex gap-2 items-center">
-        <Dialog size="xs" open={isOpen} handler={() => setIsOpen(true)}>
-          <DialogHeader color="red">Delete Data</DialogHeader>
-          <DialogBody>Are you sure you want to delete this data?</DialogBody>
-          <DialogFooter>
-            <Button
-              variant="outlined"
-              onClick={() => {
-                setIsOpen(false);
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              color="red"
-              className="ml-2"
-              onClick={() => handleDelete(id)}
-            >
-              Delete
-            </Button>
-          </DialogFooter>
-        </Dialog>
+        <ModalConfirmation
+          isOpen={isOpen}
+          handler={setIsOpen}
+          onConfirm={() => handleDelete(id)}
+        />
 
         {data.map(({ action, onClick, custom }) => (
           <Tooltip

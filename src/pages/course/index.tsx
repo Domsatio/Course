@@ -5,7 +5,7 @@ import { Typography } from "@material-tailwind/react";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { PaginationHook } from "@/hooks/paginationHook";
 import { FetchDataHook } from "@/hooks/fetchDataHook";
-import Pagination from "@/components/client/Pagination";
+import Pagination from "@/components/client/pagination";
 import CardSkeleton from "@/components/Skeleton/CardSkeleton";
 import Search from "@/components/client/search";
 import { SearchHook } from "@/hooks/searchHook";

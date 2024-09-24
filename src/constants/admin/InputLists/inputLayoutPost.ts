@@ -84,7 +84,7 @@ export const FilterInputList: InputListProps[] = [
     name: "category",
     label: "Category",
     type: "select",
-    validator: Yup.string().required("Category is required"),
+    validator: Yup.string(),
     value: [],
     option: {
       id: "name",

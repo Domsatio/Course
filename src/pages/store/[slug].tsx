@@ -4,9 +4,11 @@ import { GetProduct } from "@/types/product.type";
 import { Button, Typography } from "@material-tailwind/react";
 import { GetServerSideProps } from "next";
 import Image from "next/image";
-import Link from "next/link";
-import React, { FC, Fragment } from "react";
+import React, { FC, Fragment, useState } from "react";
 import GenerateMetaData from "@/components/GenerateMetaData";
+import ModalShare from "@/components/ModalShare";
+import ContentWrapper from "@/layouts/client/contentWrapper";
+import ButtonShare from "@/components/client/ButtonShare";
 
 const FinalPrice = ({
   price,
@@ -19,7 +21,7 @@ const FinalPrice = ({
     discount !== undefined ? price - (price * discount) / 100 : price;
 
   return (
-    <div className="mt-7">
+    <div>
       <Typography color="blue-gray" className="text-2xl font-bold">
         {ConvertCurrency(discountedPrice)}
       </Typography>
@@ -40,33 +42,40 @@ const FinalPrice = ({
 const DetailStore: FC<Omit<GetProduct, "id" | "createdAt" | "updatedAt">> = (
   data
 ) => {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   return (
     <Fragment>
       <GenerateMetaData title={data.name} desc={`Detail ${data.name}`} />
-      <main className="flex min-h-screen flex-col items-center bg-[#f4f4f4] justify-between py-24">
-        <section className="grid grid-cols-1 lg:grid-cols-2 container 2xl:max-w-[75rem] p-10 rounded-3xl bg-white">
+      <ContentWrapper className="grid grid-cols-1 lg:grid-cols-2">
+        <div className="max-h-96 lg:max-h-[500px]">
           <Image
             src={data.thumbnail}
             alt={data.name}
             width={400}
             height={400}
             priority
-            className="rounded-lg mb-5 lg:mb-0"
+            className="rounded-lg h-full w-full object-cover"
           />
-          <div>
-            <Typography color="black" className="font-medium text-2xl">
-              {data.name}
-            </Typography>
-            <FinalPrice price={data.price} discount={data.discount} />
-            <Link href="">
-              <Button className="rounded-full px-10 mt-10">Buy</Button>
-            </Link>
-            <Typography variant="paragraph" color="black" className="mt-10">
-              {data.description}
-            </Typography>
+        </div>
+        <div className="flex flex-col gap-5 lg:gap-10">
+          <Typography color="black" className="font-medium text-2xl">
+            {data.name}
+          </Typography>
+          <FinalPrice price={data.price} discount={data.discount} />
+          <div className="flex items-center gap-3">
+            <Button className="rounded-full px-10 py-[14px]">Buy</Button>
+            <ButtonShare name="share" setIsOpen={setIsOpen} />
+            <ModalShare
+              isOpen={isOpen}
+              handler={setIsOpen}
+              title="Share this product"
+            />
           </div>
-        </section>
-      </main>
+          <Typography variant="paragraph" color="black">
+            {data.description}
+          </Typography>
+        </div>
+      </ContentWrapper>
     </Fragment>
   );
 };

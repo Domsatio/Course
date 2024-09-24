@@ -83,7 +83,7 @@ export const FilterInputList: InputListProps[] = [
     name: "published",
     label: "Published",
     type: "checkbox",
-    validator: Yup.boolean().required("Published is required"),
+    validator: Yup.boolean(),
     value: "",
     useReset: true,
   },

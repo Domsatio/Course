@@ -10,7 +10,7 @@ import GenerateMetaData from "@/components/GenerateMetaData";
 
 const DetailPostAdmin: FC<GetPost> = (data) => {
   return (
-    <DetailPage title="Post">
+    <DetailPage title="Post" service={postServices}>
       <div className="space-y-5">
         <LabelDetailPage label="Thumbnail">
           <div className="relative h-96 w-full">

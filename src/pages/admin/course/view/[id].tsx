@@ -37,7 +37,7 @@ const DetailCourse: FC = () => {
   return (
     <Fragment>
       <GenerateMetaData title={`Admin | Detail ${NullProof({ input: data, params: "title" })}`} />
-      <DetailPage title="Course">
+      <DetailPage title="Course" service={courseServices}>
         <div className="space-y-5">
           <LabelDetailPage label="Title">
             {NullProof({ input: data, params: "title" })}
