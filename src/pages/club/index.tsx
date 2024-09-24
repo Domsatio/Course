@@ -14,6 +14,9 @@ import { useRouter } from "next/router";
 import CardItem from "@/components/client/CardItem";
 import CategorySkeleton from "@/components/Skeleton/CategorySkeleton";
 import ContentWrapper from "@/layouts/client/contentWrapper";
+import { cn } from "@/libs/cn";
+import GenerateMetaData from "@/components/GenerateMetaData";
+import { ca } from "date-fns/locale";
 
 type Params = {
   skip: number;
@@ -28,14 +31,15 @@ const ClientClubPage = () => {
   const [categories, setCategories] = useState<Omit<GetCategory, "posts">[]>([]);
   const [activeCategory, setActiveCategory] = useState<string | null>("");
   const { isLoad, setIsLoad } = FetchDataHook();
-  const { isLoad: isCategoryLoad, setIsLoad: setIsLoadCategory } = FetchCategoryHook();
-  const { activePage, totalPages, take, setActivePage, handleSetTotalPages } = PaginationHook({ initLimit: 12 });
+  const { isLoad: isCategoryLoad, setIsLoad: setIsCategoryLoad } = FetchCategoryHook();
+  const { activePage, totalPages, take, setActivePage, handleSetTotalPages } = PaginationHook({ initLimit: 6 });
   const { debounceValue, searchQuery, setSearchQuery } = SearchHook({ delay: 800, });
   const { replace } = useRouter();
 
+
   const getPostsData = async () => {
     const postParams: Params = {
-      skip: activePage * take - take,
+      skip: (Number(getQueryParams()['page']) || 1) * take - take,
       take,
       search: getQueryParams()["search"] || "",
       category: getQueryParams()["category"]
@@ -53,17 +57,21 @@ const ClientClubPage = () => {
   };
 
   const handleSetActiveCategory = async (category: string) => {
+    setActiveCategory(category);
     await replace({
       pathname: "/club",
-      query: { ...getQueryParams(), category: category },
+      query: { ...getQueryParams(), category },
     });
-    setActiveCategory(category);
-    getPostsData();
+    if (activePage === 1) {
+      getPostsData();
+    }
+    setActivePage(1);
   };
 
   useEffect(() => {
     setIsLoad(true);
-    setIsLoadCategory(true);
+    setIsCategoryLoad(true);
+    setActivePage(parseInt(getQueryParams()["page"] || "1"));
     setActiveCategory(getQueryParams()["category"] || "");
     const categoryParams: Params = {
       skip: 0,
@@ -71,9 +79,13 @@ const ClientClubPage = () => {
     };
     categoryServices.getItems(categoryParams).then(({ data: { data } }) => {
       setCategories(data);
-      setIsLoadCategory(false);
+      setIsCategoryLoad(false);
     });
   }, []);
+
+  const handleSetActivePage = async (page: number) => {
+    setActivePage(page);
+  }
 
   useEffect(() => {
     if (searchQuery === null) {
@@ -82,7 +94,11 @@ const ClientClubPage = () => {
       const handleGetData = async () => {
         await replace({
           pathname: "/club",
-          query: { ...getQueryParams(), search: debounceValue || "" },
+          query: {
+            ...getQueryParams(),
+            search: debounceValue || "",
+            page: activePage,
+          },
         });
         getPostsData();
       };
@@ -103,6 +119,7 @@ const ClientClubPage = () => {
 
   return (
     <ContentWrapper>
+      <GenerateMetaData title="Club" desc="This page contains various articles" />
       <Typography variant="h2" color="black" placeholder="Blog Page">
         Club
       </Typography>
@@ -125,7 +142,7 @@ const ClientClubPage = () => {
         value={searchQuery || ""}
         onChange={(e) => setSearchQuery(e.target.value)}
       />
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 place-items-center lg:place-items-start">
+      <div className={cn("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6", { 'place-items-center lg:place-items-start': !isLoad })}>
         {isLoad ? (
           <Fragment>
             {Array.from({ length: 6 }, (_, i) => (

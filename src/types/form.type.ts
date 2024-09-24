@@ -7,6 +7,7 @@ export type FormInputTypeProps =
   | "multicheckbox"
   | "datalist"
   | "textarea"
+  | "texteditor"
   | "label"
   | "component"
   | "csv"

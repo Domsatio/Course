@@ -19,6 +19,7 @@ const Search: FC<SearchProps> = ({
 }) => {
   return (
       <Input
+        crossOrigin={"true"}
         name={name}
         placeholder={placeholder}
         value={value}

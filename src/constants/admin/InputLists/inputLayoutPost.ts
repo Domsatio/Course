@@ -25,7 +25,7 @@ export const FormInputListRenderer = ({ id }: { id: string }) => {
       className: "mt-7",
       name: "body",
       label: "Body",
-      type: "textarea",
+      type: "texteditor",
       validator: Yup.string().required("Body is required"),
       value: "",
       placeholder: "Input body here",

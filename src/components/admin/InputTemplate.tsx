@@ -27,6 +27,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FormInputHooks } from "./FormInput";
 import { CheckIcon } from "@heroicons/react/24/solid";
+import QuillEditor from "./QuillEdtor";
 
 type FileViewerProps = {
   file: string;
@@ -42,7 +43,11 @@ const FileViewer = ({
   handleOpen,
 }: FileViewerProps) => {
   return (
-    <Dialog size={isImage ? "sm" : 'md'} open={isOpen} handler={() => handleOpen(false)}>
+    <Dialog
+      size={isImage ? "sm" : "md"}
+      open={isOpen}
+      handler={() => handleOpen(false)}
+    >
       <DialogHeader className="border-b">Preview</DialogHeader>
       <DialogBody className="h-[500px]">
         <div className="relative h-full w-full">
@@ -116,7 +121,10 @@ export const InputListRenderer = ({
   };
 
   useEffect(() => {
-    if (option?.api && (option?.type === "multicheckbox" || option?.type === "checkbox")) {
+    if (
+      option?.api &&
+      (option?.type === "multicheckbox" || option?.type === "checkbox")
+    ) {
       getDataApi();
     } else {
       setIsLoading(false);
@@ -126,7 +134,9 @@ export const InputListRenderer = ({
     }
   }, [debounceValue]);
 
-  const handleChangeMultipleCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeMultipleCheckbox = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const { checked, value: selectedValue, name } = e.target;
     let updatedValues = Array.isArray(value) ? [...value] : [];
     if (checked) {
@@ -167,7 +177,8 @@ export const InputListRenderer = ({
     if (files) {
       try {
         const { data } = await axios.post(
-          `/api/uploadThing?actionType=upload&slug=${type === "image" ? "imageUploader" : "pdfUploader"}`,
+          `/api/uploadThing?actionType=upload&slug=${type === "image" ? "imageUploader" : "pdfUploader"
+          }`,
           {
             files: [{ name: files.name, type: files.type, size: files.size }],
           }
@@ -176,7 +187,7 @@ export const InputListRenderer = ({
         const { url, urls, fields, fileUrl } = data[0];
         const formData = new FormData();
 
-        if (fields && typeof fields === 'object') {
+        if (fields && typeof fields === "object") {
           Object.entries(fields).forEach(([key, value]: [string, any]) => {
             formData.append(key, value);
           });
@@ -214,12 +225,15 @@ export const InputListRenderer = ({
       </label>
       {(type === "input" || type === "url") &&
         <Input
+          crossOrigin={name}
           type="text"
           label={label}
           className="!border !border-gray-300 bg-white text-gray-900 shadow-lg shadow-gray-900/5 ring-4 ring-transparent placeholder:text-gray-500 placeholder:opacity-100 focus:!border-gray-900 focus:!border-t-gray-900 focus:ring-gray-900/10"
           name={name}
           value={value.toString()}
-          onChange={onChange}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            onChange?.({ target: { name, value: e.target.value } })
+          }
           disabled={disabled}
           placeholder={placeholder}
           inputMode={
@@ -293,6 +307,14 @@ export const InputListRenderer = ({
             onChange={onChange}
           />
         </div>
+      )}
+      {type === "texteditor" && (
+        <QuillEditor
+          value={String(value) || ""}
+          onChange={(content: string) =>
+            onChange?.({ target: { name, value: content } })
+          }
+        />
       )}
       {type === "datalist" && (
         <datalist id={name}>
@@ -378,7 +400,10 @@ export const InputListRenderer = ({
                       value.includes(option?.api ? item[option.id] : item.value)
                     }
                   />
-                  <Typography color="blue-gray" className="font-medium capitalize">
+                  <Typography
+                    color="blue-gray"
+                    className="font-medium capitalize"
+                  >
                     {option?.api
                       ? param.map((key: string) => item[key]).join(" | ")
                       : item.title}

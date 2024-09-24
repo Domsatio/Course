@@ -4,10 +4,11 @@ import { Alert, Button } from '@material-tailwind/react'
 import { object } from "yup";
 import { useFormik } from 'formik';
 import { FC, useEffect, useState } from 'react';
-import { InputList } from './InputList';
+import { InputList } from '../../../constants/client/InputLists/InputListAddress';
 import InputRender from '@/components/client/InputRender';
 import { useSession } from "next-auth/react"
 import type { AlertProps } from "@material-tailwind/react";
+import GenerateMetaData from '@/components/GenerateMetaData';
 
 type AlertState = {
   open: boolean;
@@ -86,6 +87,7 @@ const ClientAccountAddressPage: FC = () => {
 
   return (
     <AccountLayout>
+      <GenerateMetaData title='Address Settings' desc='Address settings page' />
       <form className='space-y-7' onSubmit={formik.handleSubmit}>
         <Alert
           open={displayAlert.open}
@@ -113,7 +115,7 @@ const ClientAccountAddressPage: FC = () => {
             error={formik.errors[name]?.toString() || ''}
           />
         )}
-        <Button type='submit' loading={isLoading}>
+        <Button type='submit'>
           Save Changes
         </Button>
       </form>

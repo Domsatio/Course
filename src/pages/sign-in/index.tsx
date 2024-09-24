@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
+import GenerateMetaData from "@/components/GenerateMetaData";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
@@ -41,6 +42,7 @@ export default function SignIn() {
 
   return (
     <section className="flex gap-4 justify-center min-h-screen items-center">
+      <GenerateMetaData title="Sign In" desc="Sign In Page" />
       <div className="w-full lg:w-3/5">
         <div className="text-center">
           <Typography variant="h2" className="font-bold mb-4">
@@ -67,6 +69,7 @@ export default function SignIn() {
               Email
             </Typography>
             <Input
+              crossOrigin={"email"}
               type="email"
               size="lg"
               placeholder="name@mail.com"
@@ -86,6 +89,7 @@ export default function SignIn() {
               Password
             </Typography>
             <Input
+              crossOrigin={"password"}
               type="password"
               size="lg"
               placeholder="********"

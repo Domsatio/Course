@@ -7,12 +7,14 @@ import { dateFormater } from "@/helpers/date";
 import { useRouter } from "next/router";
 import ContentWrapper from "@/layouts/client/contentWrapper";
 import Image from "next/image";
+import GenerateMetaData from "@/components/GenerateMetaData";
 
 const DetailClubPage: FC<Omit<GetPost, 'id' | 'published' | 'slug'>> = ({ title, thumbnail, body, categories, createdAt }) => {
   const { push } = useRouter()
 
   return (
     <ContentWrapper>
+      <GenerateMetaData title={title} desc={`Detail ${title}`} />
       <div className="flex flex-col items-center gap-5">
         <div className="flex gap-3">
           {categories.map(({ categoryId, category }) => (
@@ -48,11 +50,14 @@ const DetailClubPage: FC<Omit<GetPost, 'id' | 'published' | 'slug'>> = ({ title,
             fill
           />
         </div>
-        <Typography variant="paragraph" className="text-left">
-          {body}
-        </Typography>
-      </div>
-    </ContentWrapper>
+        <article
+          className="prose lg:px-56"
+          dangerouslySetInnerHTML={{
+            __html: body,
+          }}
+        ></article>
+      </div >
+    </ContentWrapper >
   );
 };
 

@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import { signIn } from "next-auth/react";
 import { userServices } from "@/services/serviceGenerator";
+import GenerateMetaData from "@/components/GenerateMetaData";
 
 export default function Register() {
   const [name, setName] = useState("");
@@ -45,6 +46,7 @@ export default function Register() {
 
   return (
     <section className="flex gap-4 justify-center min-h-screen items-center">
+      <GenerateMetaData title="Sign Up" desc="Sign Up Page" />
       <div className="w-full lg:w-3/5">
         <div className="text-center">
           <Typography variant="h2" className="font-bold mb-4">
@@ -71,6 +73,7 @@ export default function Register() {
               Name
             </Typography>
             <Input
+              crossOrigin={"name"}
               type="text"
               size="lg"
               placeholder="Your name"
@@ -90,6 +93,7 @@ export default function Register() {
               Email
             </Typography>
             <Input
+              crossOrigin={"email"}
               type="email"
               size="lg"
               placeholder="name@mail.com"
@@ -109,6 +113,7 @@ export default function Register() {
               Password
             </Typography>
             <Input
+              crossOrigin={"password"}
               type="password"
               size="lg"
               placeholder="********"

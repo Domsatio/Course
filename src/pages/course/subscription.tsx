@@ -9,6 +9,7 @@ import {
   Button,
 } from "@material-tailwind/react";
 import { ConvertCurrency } from "@/helpers/appFunction";
+import GenerateMetaData from "@/components/GenerateMetaData";
 
 type SubscriptionProps = {
     label: string;
@@ -54,6 +55,7 @@ export default function Subscription() {
 
   return (
     <ContentWrapper>
+      <GenerateMetaData title="Subscription" desc="Subscription Page" />
       <div>
         <p className="font-black text-xl lg:text-3xl xl:text-6xl mb-5 lg:mb-10">
           This community is not for normies.

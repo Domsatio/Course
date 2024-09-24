@@ -6,6 +6,7 @@ import { GetServerSideProps } from "next/types";
 import { postServices } from "@/services/serviceGenerator";
 import { FC } from "react";
 import Image from "next/image";
+import GenerateMetaData from "@/components/GenerateMetaData";
 
 const DetailPostAdmin: FC<GetPost> = (data) => {
   return (
@@ -24,6 +25,7 @@ const DetailPostAdmin: FC<GetPost> = (data) => {
             />
           </div>
         </LabelDetailPage>
+        <GenerateMetaData title="Post Detail" desc={NullProof({ input: data, params: "title" }) || "Post Detail"} />
         <LabelDetailPage label="Title">
           {NullProof({ input: data, params: "title" })}
         </LabelDetailPage>
@@ -31,7 +33,12 @@ const DetailPostAdmin: FC<GetPost> = (data) => {
           {NullProof({ input: data, params: "slug" })}
         </LabelDetailPage>
         <LabelDetailPage label="Body">
-          {NullProof({ input: data, params: "body" })}
+          <article
+            className="prose  max-w-full"
+            dangerouslySetInnerHTML={{
+              __html: NullProof({ input: data, params: "body" }),
+            }}
+          ></article>
         </LabelDetailPage>
         <LabelDetailPage label="Categories">
           <div className="flex flex-wrap gap-1">
