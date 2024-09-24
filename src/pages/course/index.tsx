@@ -24,7 +24,7 @@ type Params = {
 };
 
 const ClientCoursePage = () => {
-  const [posts, setPosts] = useState<Course[]>([]);
+  const [courses, setCourses] = useState<Course[]>([]);
   const { isLoad, setIsLoad } = FetchDataHook();
   const { activePage, totalPages, take, setActivePage, handleSetTotalPages } =
     PaginationHook({ initLimit: 12 });
@@ -50,7 +50,7 @@ const ClientCoursePage = () => {
     await courseServices
       .getItems(postParams)
       .then(({ data: { totalData, data } }) => {
-        setPosts(data);
+        setCourses(data);
         handleSetTotalPages(totalData);
       });
     setIsLoad(false);
@@ -97,27 +97,33 @@ const ClientCoursePage = () => {
       </div>
       <div className={cn("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6", {'place-items-center lg:place-items-start': !isLoad})}>
         {isLoad ? (
-          <React.Fragment>
+          <Fragment>
             {Array.from({ length: 6 }, (_, i) => (
               <CardSkeleton key={i} />
             ))}
-          </React.Fragment>
+          </Fragment>
         ) : (
-          <React.Fragment>
-            {posts.map((data: Course, index) => (
+          <Fragment>
+            {courses.length > 0 ? courses.map((data: Course, index) => (
               <PostCard
                 key={index}
                 props={{ ...data, href: `/course/${data.id}` }}
               />
-            ))}
-          </React.Fragment>
+            )) : (
+              <Typography variant="small" color="gray">
+                No courses found
+              </Typography>
+            )}
+          </Fragment>
         )}
       </div>
-      <Pagination
-        activePage={activePage}
-        setActivePage={(e) => handleSetActivePage(e)}
-        totalPages={totalPages}
-      />
+      {courses.length > 0 &&
+        <Pagination
+          activePage={activePage}
+          setActivePage={(e) => handleSetActivePage(e)}
+          totalPages={totalPages}
+        />
+      }
     </ContentWrapper>
   );
 };

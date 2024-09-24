@@ -9,7 +9,7 @@ export const createPostValidation = (payload: Post) => {
     slug: string().required("Slug is required"),
     body: string().required("Body is required"),
     thumbnail: string().required("Thumbnail is required"),
-    published: boolean().required().default(false),
+    published: boolean().required("Published is required").default(false),
     categories: array().optional(),
   });
 

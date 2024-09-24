@@ -1,11 +1,11 @@
 import { Typography } from "@material-tailwind/react";
 import GenerateMetaData from "@/components/GenerateMetaData";
-import React from "react";
+import { Fragment} from "react";
 import ContentWrapper from "@/layouts/client/contentWrapper";
 
 const ClientAboutPage = () => {
   return (
-    <React.Fragment>
+    <Fragment>
       <GenerateMetaData title="About" desc="About Page" />
       <ContentWrapper>
         <Typography variant="h2" className="text-center mt-10 lg:px-32">
@@ -41,7 +41,7 @@ const ClientAboutPage = () => {
           comment or connect with me on social media—I’d love to hear from you!
         </Typography>
       </ContentWrapper>
-    </React.Fragment>
+    </Fragment>
   );
 };
 

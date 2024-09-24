@@ -39,11 +39,12 @@ const StoreCard: FC<Omit<GetProduct, 'createdAt' | 'updatedAt' | 'quantity' | 'd
         <CardHeader shadow={false} floated={false} className="h-80">
           <Image
             src={thumbnail}
-            width={300}
-            height={300}
-            alt="card-image"
-            className="h-full w-full object-cover"
+            alt={name + " thumbnail"}
+            className="h-full w-full"
+            style={{ objectFit: "cover" }}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             priority
+            fill
           />
         </CardHeader>
         <CardBody className="space-y-2">

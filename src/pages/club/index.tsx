@@ -16,7 +16,6 @@ import CategorySkeleton from "@/components/Skeleton/CategorySkeleton";
 import ContentWrapper from "@/layouts/client/contentWrapper";
 import { cn } from "@/libs/cn";
 import GenerateMetaData from "@/components/GenerateMetaData";
-import { ca } from "date-fns/locale";
 
 type Params = {
   skip: number;
@@ -62,7 +61,7 @@ const ClientClubPage = () => {
       pathname: "/club",
       query: { ...getQueryParams(), category },
     });
-    if(activePage === 1) {
+    if (activePage === 1) {
       getPostsData();
     }
     setActivePage(1);
@@ -94,8 +93,8 @@ const ClientClubPage = () => {
       const handleGetData = async () => {
         await replace({
           pathname: "/club",
-          query: { 
-            ...getQueryParams(), 
+          query: {
+            ...getQueryParams(),
             search: debounceValue || "",
             page: activePage,
           },
@@ -119,7 +118,7 @@ const ClientClubPage = () => {
 
   return (
     <ContentWrapper>
-      <GenerateMetaData title="Club" desc="This page contains various articles"/>
+      <GenerateMetaData title="Club" desc="This page contains various articles" />
       <Typography variant="h2" color="black" placeholder="Blog Page">
         Club
       </Typography>
@@ -142,16 +141,16 @@ const ClientClubPage = () => {
         value={searchQuery || ""}
         onChange={(e) => setSearchQuery(e.target.value)}
       />
-      <div className={cn("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6", {'place-items-center lg:place-items-start': !isLoad})}>
-      {isLoad ? (
-          <React.Fragment>
+      <div className={cn("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6", { 'place-items-center lg:place-items-start': !isLoad })}>
+        {isLoad ? (
+          <Fragment>
             {Array.from({ length: 6 }, (_, i) => (
               <CardSkeleton key={i} />
             ))}
-          </React.Fragment>
+          </Fragment>
         ) : (
-          <React.Fragment>
-            {posts.map(
+          <Fragment>
+            {posts.length > 0 ? posts.map(
               (data: Omit<GetPost, "published" | "createdAt">, index) => (
                 <CardItem
                   key={index}
@@ -171,15 +170,21 @@ const ClientClubPage = () => {
                   }
                 />
               )
+            ) : (
+              <Typography variant="small" color="gray">
+                No posts found
+              </Typography>
             )}
-          </React.Fragment>
+          </Fragment>
         )}
       </div>
-      <Pagination
-        activePage={activePage}
-        setActivePage={handleSetActivePage}
-        totalPages={totalPages}
-      />
+      {posts.length > 0 &&
+        <Pagination
+          activePage={activePage}
+          setActivePage={setActivePage}
+          totalPages={totalPages}
+        />
+      }
     </ContentWrapper>
   );
 };

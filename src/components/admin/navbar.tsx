@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { FC, SetStateAction, useState } from "react";
 import { useRouter as topLoader } from 'nextjs-toploader/app';
 import { adminRoutes } from "@/constants/admin/adminRoutes";
 import { MenuItemProps, RouteItemsProps } from "@/helpers/typeProps";
@@ -38,13 +38,13 @@ export default function AdminNavbar({ children }: { children: React.ReactNode })
     routeLoader.push(href);
   };
 
-  const RouteItems: React.FC<RouteItemsProps> = ({
+  const RouteItems: FC<RouteItemsProps> = ({
     routeList = [],
     parentRoute = "",
     padding = 0,
   }) => {
-    const [open, setOpen] = React.useState("");
-    const handleOpen = (value: React.SetStateAction<string>) => {
+    const [open, setOpen] = useState("");
+    const handleOpen = (value: SetStateAction<string>) => {
       setOpen(open === value ? "nothing" : value);
     };
 
@@ -60,6 +60,7 @@ export default function AdminNavbar({ children }: { children: React.ReactNode })
           }: MenuItemProps) => {
             const childrenPadding = padding + 2;
             const currentRoute = parentRoute + href;
+
             if (isheader) {
               return (
                 <Accordion
@@ -68,38 +69,32 @@ export default function AdminNavbar({ children }: { children: React.ReactNode })
                   icon={
                     <ChevronDownIcon
                       strokeWidth={2.5}
-                      className={`mx-auto h-4 w-4 transition-transform ${open === label ? "rotate-180" : ""
-                        }`}
+                      className={`h-4 w-4 transition-transform ${open === label && "rotate-180"}`}
                     />
                   }
                 >
                   <ListItem className="p-0" selected={open === label}>
                     <AccordionHeader
                       onClick={() => handleOpen(label)}
-                      className="border-b-0 p-3"
+                      className="border-b-0 p-3 h-11"
                     >
                       <ListItemPrefix>
                         {React.createElement(icon, {
                           className: "h-5 w-5",
                         })}
                       </ListItemPrefix>
-                      <Typography
-                        color="blue-gray"
-                        className="mr-auto font-normal"
-                      >
+                      <Typography className="mr-auto font-normal">
                         {label}
                       </Typography>
                     </AccordionHeader>
                   </ListItem>
                   <AccordionBody className="py-1">
                     <List className="p-0">
-                      <>
-                        <RouteItems
-                          routeList={children}
-                          padding={childrenPadding}
-                          parentRoute={currentRoute}
-                        />
-                      </>
+                      <RouteItems
+                        routeList={children}
+                        padding={childrenPadding}
+                        parentRoute={currentRoute}
+                      />
                     </List>
                   </AccordionBody>
                 </Accordion>
@@ -129,16 +124,11 @@ export default function AdminNavbar({ children }: { children: React.ReactNode })
       <Card
         color="transparent"
         shadow={false}
-        className={`h-[calc(100vh-2rem)] w-full p-4 ${className}`}
+        className={`h-[calc(100vh-2rem)] w-full rounded-none p-4 ${className}`}
       >
-        <div className="mb-2 flex items-center gap-4 p-4">
-          <img
-            src="https://docs.material-tailwind.com/img/logo-ct-dark.png"
-            alt="brand"
-            className="h-8 w-8"
-          />
+        <div className="mb-2 p-4">
           <Typography variant="h5" color="blue-gray">
-            Sidebar
+            Admin Panel
           </Typography>
         </div>
         <List className="relative">

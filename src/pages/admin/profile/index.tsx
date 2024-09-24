@@ -49,7 +49,7 @@ const Index = () => {
                   inputList={FormInputList}
                   method="PUT"
                   service={userServices}
-                  isUseCencelButton={false}
+                  isUseCancelButton={false}
                   customCard={(children: React.ReactNode) => (
                     <React.Fragment>
                       {children}

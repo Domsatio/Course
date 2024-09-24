@@ -4,7 +4,7 @@ import { GetProduct } from "@/types/product.type";
 import { Button, Typography } from "@material-tailwind/react";
 import { GetServerSideProps } from "next";
 import Image from "next/image";
-import React, { FC, useState } from "react";
+import React, { FC, Fragment, useState } from "react";
 import GenerateMetaData from "@/components/GenerateMetaData";
 import ModalShare from "@/components/ModalShare";
 import ContentWrapper from "@/layouts/client/contentWrapper";
@@ -44,7 +44,7 @@ const DetailStore: FC<Omit<GetProduct, "id" | "createdAt" | "updatedAt">> = (
 ) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   return (
-    <React.Fragment>
+    <Fragment>
       <GenerateMetaData title={data.name} desc={`Detail ${data.name}`} />
       <ContentWrapper className="grid grid-cols-1 lg:grid-cols-2">
         <div className="max-h-96 lg:max-h-[500px]">
@@ -76,7 +76,7 @@ const DetailStore: FC<Omit<GetProduct, "id" | "createdAt" | "updatedAt">> = (
           </Typography>
         </div>
       </ContentWrapper>
-    </React.Fragment>
+    </Fragment>
   );
 };
 

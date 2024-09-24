@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, Fragment, useEffect, useState } from "react";
 import { GetServerSideProps, Metadata } from "next";
 import { courseServices } from "@/services/serviceGenerator";
 import { Course } from "@/types/course.type";
@@ -35,8 +35,9 @@ const DetailCoursePage: FC<Course> = (data) => {
   }, [data]);
 
   return (
+    <Fragment>
+      <GenerateMetaData title={NullProof({ input: data, params: "title" })} desc={`Detail ${NullProof({ input: data, params: "title" })}`} />
       <ContentWrapper>
-        <GenerateMetaData title={NullProof({ input: data, params: "title" })} desc={`Detail ${NullProof({ input: data, params: "title" })}`}/>
         <Typography variant="h2" color="black">
           {NullProof({ input: data, params: "title" })}
         </Typography>
@@ -83,12 +84,13 @@ const DetailCoursePage: FC<Course> = (data) => {
           <LabelDetailPage label="Attachments">
             <Button>
               <Link href={videoUrl.file} target="_blank" rel="noreferrer">
-                See File
+                Download
               </Link>
             </Button>
           </LabelDetailPage>
         )}
       </ContentWrapper>
+    </Fragment>
   );
 }
 

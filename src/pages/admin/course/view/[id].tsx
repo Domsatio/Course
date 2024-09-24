@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { FC, Fragment, useEffect, useState } from "react";
 import { NullProof } from "@/helpers/appFunction";
 import DataDetailPage, {
   LabelDetailPage,
@@ -7,12 +7,20 @@ import DataDetailPage, {
 import { courseServices } from "@/services/serviceGenerator";
 import EmblaCarousel from "@/components/admin/EmblaCarousel";
 import { EmblaOptionsType } from "embla-carousel";
-import { Button } from "@material-tailwind/react";
+import { Button, Chip } from "@material-tailwind/react";
+import Link from "next/link";
 import GenerateMetaData from "@/components/GenerateMetaData";
 
-export default function DetailCourse() {
+type VideoUrl = {
+  video: string;
+  thumbnailUrl?: string;
+  description: string;
+  file?: string;
+}
+
+const DetailCourse: FC = () => {
   const OPTIONS: EmblaOptionsType = {};
-  const [videoUrl, setVideoUrl] = useState({
+  const [videoUrl, setVideoUrl] = useState<VideoUrl>({
     video: "",
     thumbnailUrl: "",
     description: "",
@@ -27,10 +35,31 @@ export default function DetailCourse() {
   }, [data]);
 
   return (
-    <DetailPage title="Course">
+    <Fragment>
       <GenerateMetaData title={`Admin | Detail ${NullProof({ input: data, params: "title" })}`} />
-      <div className="flex flex-wrap gap-5">
-        <div>
+      <DetailPage title="Course" service={courseServices}>
+        <div className="space-y-5">
+          <LabelDetailPage label="Title">
+            {NullProof({ input: data, params: "title" })}
+          </LabelDetailPage>
+          <LabelDetailPage label="Description">
+            {NullProof({ input: data, params: "description" })}
+          </LabelDetailPage>
+          <LabelDetailPage label="Publised">
+            <Chip
+              variant="ghost"
+              color={data.published ? "green" : "red"}
+              size="sm"
+              value={data.published ? "Published" : "Draft"}
+              icon={
+                <span
+                  className={`mx-auto mt-1 block h-2 w-2 rounded-full content-[''] ${data.published ? "bg-green-900" : "bg-red-900"
+                    }`}
+                />
+              }
+              className="max-w-min"
+            />
+          </LabelDetailPage>
           <EmblaCarousel
             slides={data.video}
             options={OPTIONS}
@@ -61,36 +90,22 @@ export default function DetailCourse() {
               }
             }}
           />
-          <div className="mt-5">
-            <LabelDetailPage label="Description">
-              {NullProof({ input: videoUrl, params: "description" })}
+          <LabelDetailPage label="Video Description">
+            {NullProof({ input: videoUrl, params: "description" })}
+          </LabelDetailPage>
+          {videoUrl.file && (
+            <LabelDetailPage label="Attachment">
+              <Button>
+                <Link href={videoUrl.file} target="_blank" rel="noreferrer">
+                  Download
+                </Link>
+              </Button>
             </LabelDetailPage>
-            {videoUrl.file && (
-              <LabelDetailPage label="Materi PDF">
-                <Button>
-                  <a href={videoUrl.file} target="_blank" rel="noreferrer">
-                    See File
-                  </a>
-                </Button>
-              </LabelDetailPage>
-            )}
-          </div>
+          )}
         </div>
-        <div>
-          <LabelDetailPage label="Title">
-            {NullProof({ input: data, params: "title" })}
-          </LabelDetailPage>
-          <LabelDetailPage label="Description">
-            {NullProof({ input: data, params: "description" })}
-          </LabelDetailPage>
-          <LabelDetailPage label="Published">
-            {data.published &&
-              NullProof({ input: data, params: "published" }) == true
-              ? "Yes"
-              : "No"}
-          </LabelDetailPage>
-        </div>
-      </div>
-    </DetailPage>
+      </DetailPage>
+    </Fragment>
   );
 }
+
+export default DetailCourse;

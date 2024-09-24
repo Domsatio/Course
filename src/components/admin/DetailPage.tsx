@@ -1,13 +1,19 @@
-import { useEffect, useState, memo } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import {
   Card,
   CardHeader,
   CardBody,
-  CardFooter,
-  Button,
+  IconButton,
+  Tooltip,
 } from "@material-tailwind/react";
-import { ArrowLeftIcon } from "@heroicons/react/24/solid";
+import {
+  ArrowLeftIcon,
+  PencilSquareIcon,
+  TrashIcon,
+} from "@heroicons/react/24/solid";
+import Link from "next/link";
+import { ModalConfirmation } from "./ModalConfirmation";
 
 interface DetailPageProps {
   service: any;
@@ -15,28 +21,30 @@ interface DetailPageProps {
 
 export const DetailPage = ({
   title = "",
+  service,
   children,
 }: {
   title: string;
+  service?: any;
   children?: React.ReactNode;
 }) => {
-  const router = useRouter();
+  const { back } = useRouter();
+
   return (
     <Card className="mt-6">
-      <CardHeader color="blue" className="p-3 lg:p-5">
-        <h2 className="text-xl lg:text-2xl font-bold">Detail {title}</h2>
-      </CardHeader>
-      <CardBody className="relative pt-10 lg:pt-4">
-        <div className="absolute top-3 right-4 cursor-pointer">
-          <Button
-            className="p-2"
-            onClick={() => router.back()}
-          >
-            <ArrowLeftIcon className="h-5 w-5 cursor-pointer" />
-          </Button>
+      <CardHeader
+        color="blue"
+        className="p-3 flex items-center justify-between"
+      >
+        <div className="flex items-center gap-3">
+          <IconButton variant="text" onClick={() => back()}>
+            <ArrowLeftIcon className="h-5 w-5 text-white" />
+          </IconButton>
+          <h1>Detail {title}</h1>
         </div>
-        <div>{children}</div>
-      </CardBody>
+        {service && <ActionDetailPage service={service} />}
+      </CardHeader>
+      <CardBody className="relative pt-10 lg:pt-4">{children}</CardBody>
     </Card>
   );
 };
@@ -44,12 +52,12 @@ export const DetailPage = ({
 export const LabelDetailPage = ({
   label,
   children,
-  position = "vertikal",
+  position = "vertical",
   className = "",
 }: {
   label?: string;
   children?: any;
-  position?: "horizontal" | "vertikal";
+  position?: "horizontal" | "vertical";
   className?: string;
 }) => {
   return (
@@ -67,22 +75,71 @@ export const LabelDetailPage = ({
   );
 };
 
+const ActionDetailPage = ({ service }: { service: any }) => {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const {
+    pathname,
+    push,
+    query: { id },
+  } = useRouter();
+  const updateHref = pathname.split("/view")[0] + "/update/" + id;
+
+  const handleDelete = async (id: string, service: any, redirect: string) => {
+    try {
+      await service.deleteItem({ id: id });
+      push(redirect);
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+  return (
+    <div className="flex gap-2">
+      <Tooltip content="Edit">
+        <Link href={updateHref}>
+          <IconButton variant="text" color="white">
+            <PencilSquareIcon className="h-5 w-5" />
+          </IconButton>
+        </Link>
+      </Tooltip>
+      <Tooltip content="Delete">
+        <IconButton color="red" onClick={() => setIsOpen(true)}>
+          <TrashIcon className="h-5 w-5" />
+        </IconButton>
+      </Tooltip>
+      <ModalConfirmation
+        isOpen={isOpen}
+        handler={setIsOpen}
+        onConfirm={async () => {
+          await handleDelete(id as string, service, pathname.split("/view")[0]);
+          setIsOpen(false);
+        }}
+      />
+    </div>
+  );
+};
+
 const DataDetailPage = ({ service }: DetailPageProps) => {
   const {
     query: { id },
   } = useRouter();
   const [data, setData] = useState<any>({});
+
   const fetchData = async () => {
     try {
-      const response = await service.getItem({ id });
-      setData(response.data.data);
+      const {
+        data: { data },
+      } = await service.getItem({ id });
+      setData(data);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
+
   useEffect(() => {
     if (id) fetchData();
   }, [id]);
+
   return { data };
 };
 
