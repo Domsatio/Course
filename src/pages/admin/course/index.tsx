@@ -6,7 +6,7 @@ import { Typography } from "@material-tailwind/react";
 import { courseServices } from "@/services/serviceGenerator";
 import { Course } from "@/types/course.type";
 import { Chip } from "@material-tailwind/react";
-import { FilterInputList } from "./inputLayout";
+import { FilterInputList } from "../../../constants/admin/InputLists/inputLayoutCourse";
 
 const TABLE_HEAD = ["No", "Title", "Description", "Publised", "Action"];
 

@@ -4,7 +4,7 @@ import { Alert, Button } from '@material-tailwind/react'
 import { object } from "yup";
 import { useFormik } from 'formik';
 import { FC, useEffect, useState } from 'react';
-import { InputList } from './InputList';
+import { InputList } from '../../../constants/client/InputLists/InputListSettings';
 import InputRender from '@/components/client/InputRender';
 import { useSession } from "next-auth/react"
 import type { AlertProps } from "@material-tailwind/react";

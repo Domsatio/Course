@@ -1,7 +1,7 @@
 'use client';
 import React from "react";
 import FormInput from "@/components/admin/FormInput";
-import { FormInputList } from "./inputLayout";
+import { FormInputList } from "../../../../constants/admin/InputLists/inputLayoutCategory";
 import { categoryServices } from "@/services/serviceGenerator";
 import GenerateMetaData from "@/components/GenerateMetaData";
 
