@@ -2,7 +2,7 @@
 import React from "react";
 import { useRouter } from "next/router";
 import FormInput from "@/components/admin/FormInput";
-import { FormInputList } from "../inputLayout";
+import { FormInputList } from "../../../../../constants/admin/InputLists/inputLayoutProduct";
 import { productServices } from "@/services/serviceGenerator";
 import GenerateMetaData from "@/components/GenerateMetaData";
 

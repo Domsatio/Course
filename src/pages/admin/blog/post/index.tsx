@@ -6,7 +6,7 @@ import { postServices } from "@/services/serviceGenerator";
 import { CategoryPost, GetPost } from "@/types/post.type";
 import { dateFormater } from "@/helpers/date";
 import { NullProof, numberlistPagination } from "@/helpers/appFunction";
-import { FilterInputList } from "./inputLayout";
+import { FilterInputList } from "../../../../constants/admin/InputLists/inputLayoutPost";
 
 const TABLE_HEAD = [
   "No",

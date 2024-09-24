@@ -3,7 +3,7 @@ import TableData from "@/components/admin/TableData";
 import { TableActionProps } from "@/components/admin/TableData";
 import { Typography } from "@material-tailwind/react";
 import { NullProof, numberlistPagination } from "@/helpers/appFunction";
-import { FilterInputList } from "./inputLayout";
+import { FilterInputList } from "../../../constants/admin/InputLists/inputLayoutUser";
 import { userServices } from "@/services/serviceGenerator";
 import { User } from "@/types/user.type";
 

@@ -1,5 +1,5 @@
 import FormInput from "@/components/admin/FormInput";
-import { FormInputList } from "./inputLayout";
+import { FormInputList } from "../../../constants/admin/InputLists/inputLayoutCourse";
 import { courseServices } from "@/services/serviceGenerator";
 import GenerateMetaData from "@/components/GenerateMetaData";
 
