@@ -16,7 +16,7 @@ const DetailClubPage: FC<Omit<GetPost, 'id' | 'published' | 'slug'>> = ({ title,
 
   return (
     <ContentWrapper className="relative">
-      <GenerateMetaData title={title} desc={`Detail ${title}`}/>
+      <GenerateMetaData title={title} desc={`Detail ${title}`} thumbnail={thumbnail}/>
       <div className="absolute top-5 right-5">
         <ButtonShare className="px-3 border-none bg-transparent shadow-none hover:shadow-none hover:scale-110" setIsOpen={() => setIsOpen(true)} />
       </div>

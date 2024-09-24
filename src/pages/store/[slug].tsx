@@ -45,7 +45,7 @@ const DetailStore: FC<Omit<GetProduct, "id" | "createdAt" | "updatedAt">> = (
   const [isOpen, setIsOpen] = useState<boolean>(false);
   return (
     <Fragment>
-      <GenerateMetaData title={data.name} desc={`Detail ${data.name}`} />
+      <GenerateMetaData title={data.name} desc={`Detail ${data.name}`} thumbnail={data.thumbnail} />
       <ContentWrapper className="grid grid-cols-1 lg:grid-cols-2">
         <div className="max-h-96 lg:max-h-[500px]">
           <Image
