@@ -50,12 +50,8 @@ export const FormInputListRenderer = ({ id }: { id: string }) => {
       label: "Published",
       type: "checkbox",
       removeOnSubmit: false,
-      validator: Yup.boolean().required("Published is required"),
+      validator: Yup.boolean().required("Published is required").default(false),
       value: false,
-      listData: [
-        { title: "Yes", value: true },
-        { title: "No", value: false },
-      ],
     }
   ];
   return FormInputList;
@@ -64,22 +60,18 @@ export const FilterInputList: InputListProps[] = [
   {
     className: "",
     name: "published",
-    label: "Dipublikasikan",
+    label: "Published",
     type: "checkbox",
-    validator: Yup.string(),
+    validator: Yup.boolean().required("Published is required"),
     value: "",
-    useRiset: true,
-    listData: [
-      { title: "Yes", value: true },
-      { title: "No", value: false },
-    ],
+    useReset: true,
   },
   {
     className: "",
     name: "category",
     label: "Category",
     type: "select",
-    validator: Yup.string(),
+    validator: Yup.string().required("Category is required"),
     value: "",
     option: {
       id: "name",

@@ -5,7 +5,7 @@ import { Button, Typography } from "@material-tailwind/react";
 import { GetServerSideProps } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import React, { FC } from "react";
+import React, { FC, Fragment } from "react";
 import GenerateMetaData from "@/components/GenerateMetaData";
 
 const FinalPrice = ({
@@ -41,7 +41,7 @@ const DetailStore: FC<Omit<GetProduct, "id" | "createdAt" | "updatedAt">> = (
   data
 ) => {
   return (
-    <React.Fragment>
+    <Fragment>
       <GenerateMetaData title={data.name} desc={`Detail ${data.name}`} />
       <main className="flex min-h-screen flex-col items-center bg-[#f4f4f4] justify-between py-24">
         <section className="grid grid-cols-1 lg:grid-cols-2 container 2xl:max-w-[75rem] p-10 rounded-3xl bg-white">
@@ -67,7 +67,7 @@ const DetailStore: FC<Omit<GetProduct, "id" | "createdAt" | "updatedAt">> = (
           </div>
         </section>
       </main>
-    </React.Fragment>
+    </Fragment>
   );
 };
 

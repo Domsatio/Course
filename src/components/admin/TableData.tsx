@@ -31,13 +31,14 @@ import { getQueryParams } from "@/helpers/appFunction";
 import { PaginationHook } from "@/hooks/paginationHook";
 import { FetchDataHook } from "@/hooks/fetchDataHook";
 import { SearchHook } from "@/hooks/searchHook";
+import Link from "next/link";
 
 export interface TableActionProps {
   action: "update" | "delete" | "view" | "custom";
   onClick?: () => void;
   custom?: {
     label: string;
-    icon: any;
+    icon: React.ReactElement;
   };
 }
 
@@ -150,13 +151,13 @@ export default function TableData({
   };
 
   useEffect(() => {
-    if(!isLoad){
+    if (!isLoad) {
       getDataTable()
     }
   }, [take, activePage])
 
   useEffect(() => {
-    if(debounceValue !== null && !isLoad){
+    if (debounceValue !== null && !isLoad) {
       handleSetQuery();
     }
   }, [debounceValue]);
@@ -202,34 +203,31 @@ export default function TableData({
               )}
             </div>
             {isActionAdd && (
-              <Button
-                color="blue"
-                onClick={() => router.push(router.pathname + "/create")}
-              >
-                Create
-              </Button>
+              <Link href={router.pathname + "/create"}>
+                <Button color="blue">
+                  Create
+                </Button>
+              </Link>
             )}
             {filter && (
-              <React.Fragment>
-                <FunnelIcon
-                  className="h-6 w-6"
-                  cursor="pointer"
-                  onClick={() => setModalFilter(true)}
-                />
-                <FormInput
-                  inputList={filter}
-                  method="GET"
-                  service={service}
-                  title="Filter"
-                  asModal={{
-                    isOpen: modalFilter,
-                    handler: setModalFilter,
-                  }}
-                  onSubmit={(data) => getDataTable()}
-                  onSuccess={(data) => onSuccess?.(data)}
-                  isFilter={true}
-                />
-              </React.Fragment>
+              <Tooltip content="Filter">
+                <IconButton variant="text" onClick={() => setModalFilter(true)}>
+                  <FunnelIcon className="h-5 w-5" />
+                  <FormInput
+                    inputList={filter}
+                    method="GET"
+                    service={service}
+                    title="Filter"
+                    asModal={{
+                      isOpen: modalFilter,
+                      handler: setModalFilter,
+                    }}
+                    onSubmit={(data) => getDataTable()}
+                    onSuccess={(data) => onSuccess?.(data)}
+                    isFilter={true}
+                  />
+                </IconButton>
+              </Tooltip>
             )}
           </div>
         </div>
@@ -288,7 +286,8 @@ export default function TableData({
     data: TableActionProps[];
     id: string;
   }) => {
-    const [isOpen, setIsOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState<boolean>(false);
+
     return (
       <div className="flex gap-2 items-center">
         <Dialog size="xs" open={isOpen} handler={() => setIsOpen(true)}>
@@ -312,33 +311,42 @@ export default function TableData({
             </Button>
           </DialogFooter>
         </Dialog>
+
         {data.map(({ action, onClick, custom }) => (
           <Tooltip
             key={action}
             content={action[0].toUpperCase() + action.substring(1)}
           >
-            <IconButton
-              variant="text"
-              className="cursor-pointer"
-              size="sm"
-              onClick={
-                action === "custom"
-                  ? onClick
-                  : action === "delete"
+            {(action === 'view' || action === 'update') ? (
+              <Link href={router.pathname + `/${action}/` + id}>
+                <IconButton
+                  variant="text"
+                  className="cursor-pointer"
+                  size="sm"
+                >
+                  {action === "update" ? (
+                    <PencilSquareIcon className="h-4 w-4" />
+                  ) : (
+                    <EyeIcon className="h-4 w-4" />
+                  )}
+                </IconButton>
+              </Link>
+            ) : (
+              <IconButton
+                variant="text"
+                className="cursor-pointer"
+                size="sm"
+                onClick={
+                  action === "delete"
                     ? () => setIsOpen(true)
-                    : () => router.push(router.pathname + `/${action}/` + id)
-              }
-            >
-              {action === "custom" ? (
-                custom?.icon
-              ) : action === "update" ? (
-                <PencilSquareIcon className="h-4 w-4" />
-              ) : action === "delete" ? (
-                <TrashIcon className="h-4 w-4" color="red" />
-              ) : action === "view" ? (
-                <EyeIcon className="h-4 w-4" />
-              ) : null}
-            </IconButton>
+                    : onClick
+                }
+              >
+                {action === "delete" ? (
+                  <TrashIcon className="h-4 w-4" color="red" />
+                ) : custom?.icon}
+              </IconButton>
+            )}
           </Tooltip>
         ))}
       </div>

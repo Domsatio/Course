@@ -1,7 +1,6 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { InputListProps } from "@/types/form.type";
-import * as Yup from "yup";
 import axios from "axios";
 import Image from "next/image";
 import {
@@ -17,14 +16,17 @@ import {
   DialogBody,
   DialogFooter,
   Chip,
+  IconButton,
+  Switch,
+  Spinner,
 } from "@material-tailwind/react";
 import { useDebounce } from "use-debounce";
 import { TrashIcon, EyeIcon } from "@heroicons/react/24/outline";
 import CurrencyInput from "react-currency-input-field";
-import { format, set } from "date-fns";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FormInputHooks } from "./FormInput";
+import { CheckIcon } from "@heroicons/react/24/solid";
 import QuillEditor from "./QuillEdtor";
 
 type FileViewerProps = {
@@ -54,7 +56,8 @@ const FileViewer = ({
               src={file || ""}
               className="object-contain"
               alt="Preview image"
-              fill={true}
+              priority
+              fill
             />
           ) : (
             <iframe
@@ -81,20 +84,17 @@ export const InputListRenderer = ({
   name = "",
   label = "",
   value = "",
+  placeholder = "",
   type = "input",
-  validator = Yup.string().required(),
+  isRequired = false,
   onChange,
   disabled = false,
-  listData = [],
   error,
   hide = false,
   option,
-  useRiset = false,
+  useReset = false,
 }: InputListProps) => {
-  const isRequired = validator
-    .describe()
-    .tests?.find((item: { name: string }) => item.name === "required");
-  const [data, setData] = useState<any[]>(listData || []);
+  const [data, setData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [preview, setPreview] = useState<boolean>(false);
@@ -127,7 +127,6 @@ export const InputListRenderer = ({
     ) {
       getDataApi();
     } else {
-      setData(listData);
       setIsLoading(false);
     }
     if (type === "image" && typeof value === "string") {
@@ -178,8 +177,7 @@ export const InputListRenderer = ({
     if (files) {
       try {
         const { data } = await axios.post(
-          `/api/uploadThing?actionType=upload&slug=${
-            type === "image" ? "imageUploader" : "pdfUploader"
+          `/api/uploadThing?actionType=upload&slug=${type === "image" ? "imageUploader" : "pdfUploader"
           }`,
           {
             files: [{ name: files.name, type: files.type, size: files.size }],
@@ -221,28 +219,47 @@ export const InputListRenderer = ({
   };
 
   return (
-    <div className={`flex flex-col gap-2 mb-3 ${hide && "hidden"}`}>
-      <label className="form-label">
+    <div className={`flex flex-col gap-2 mb-3 ${hide && "hidden"} ${className}`}>
+      <label className={`form-label ${isRequired && "after:content-['*'] after:text-red-600 after:ml-1"}`}>
         {label}
-        {isRequired && <span className="text-red-600"> *</span>}
       </label>
-      {(type === "input" || type === "number" || type === "url") && (
+      {(type === "input" || type === "url") &&
         <Input
           crossOrigin={name}
           type="text"
           label={label}
-          className={className}
+          className="!border !border-gray-300 bg-white text-gray-900 shadow-lg shadow-gray-900/5 ring-4 ring-transparent placeholder:text-gray-500 placeholder:opacity-100 focus:!border-gray-900 focus:!border-t-gray-900 focus:ring-gray-900/10"
           name={name}
           value={value.toString()}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             onChange?.({ target: { name, value: e.target.value } })
           }
           disabled={disabled}
+          placeholder={placeholder}
           inputMode={
-            type === "number" ? "numeric" : type === "url" ? "url" : "text"
+            type === "url" ? "url" : "text"
           }
+          labelProps={{
+            className: "hidden",
+          }}
         />
-      )}
+      }
+      {type === "number" &&
+        <Input
+          type="number"
+          label={label}
+          className="!border !border-gray-300 bg-white text-gray-900 shadow-lg shadow-gray-900/5 ring-4 ring-transparent placeholder:text-gray-500 placeholder:opacity-100 focus:!border-gray-900 focus:!border-t-gray-900 focus:ring-gray-900/10"
+          name={name}
+          value={value.toString()}
+          onChange={onChange}
+          disabled={disabled}
+          placeholder={placeholder}
+          inputMode={"numeric"}
+          labelProps={{
+            className: "hidden",
+          }}
+        />
+      }
       {type === "select" && (
         <Select
           className={className}
@@ -283,15 +300,12 @@ export const InputListRenderer = ({
       {type === "textarea" && (
         <div className="relative w-full min-w-[200px]">
           <textarea
-            className="peer h-full min-h-[100px] w-full resize-none rounded-[7px] border border-blue-gray-200 border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-gray-900 focus:border-t-transparent focus:outline-0 disabled:resize-none disabled:border-0 disabled:bg-blue-gray-50"
-            placeholder=" "
+            className="peer h-full min-h-[100px] w-full px-3 py-2.5 rounded-[7px] text-sm !border !border-gray-300 bg-white text-gray-900 shadow-lg shadow-gray-900/5 ring-4 ring-transparent placeholder:text-gray-500 placeholder:opacity-100 focus:!border-gray-900 focus:!border-t-gray-900 focus:ring-gray-900/10"
+            placeholder={placeholder}
             name={name}
             value={typeof value === "boolean" ? "" : value || ""}
             onChange={onChange}
           />
-          <label className="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none text-[11px] font-normal leading-tight text-blue-gray-400 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-blue-gray-200 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-blue-gray-200 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-gray-900 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:border-gray-900 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:border-gray-900 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
-            {label}
-          </label>
         </div>
       )}
       {type === "texteditor" && (
@@ -313,47 +327,31 @@ export const InputListRenderer = ({
       )}
       {type === "checkbox" && (
         <div className="flex flex-wrap gap-3">
-          {data?.map((data: any, index) => (
-            <div key={index} className="flex items-center gap-2">
-              <Checkbox
-                name={name}
-                value={option?.api ? data[option.id] : data.value}
-                onChange={
-                  option?.api
-                    ? (e) => {
-                        onChange?.({
-                          target: {
-                            name,
-                            value: e.target.checked ? data[option.id] : "",
-                          },
-                        });
-                      }
-                    : (e) => {
-                        onChange?.({
-                          target: {
-                            name,
-                            value: e.target.checked ? data.value : "",
-                          },
-                        });
-                      }
-                }
-                disabled={disabled}
-                crossOrigin={undefined}
-                checked={value === (option?.api ? data[option.id] : data.value)}
-              />
-              <Typography color="blue-gray" className="font-medium">
-                {option?.api
-                  ? param.map((item) => data[item]).join(" | ")
-                  : data.title}
-              </Typography>
-            </div>
-          ))}
+          <Switch
+            label={value ? "Yes" : "No"}
+            color="blue"
+            ripple={false}
+            name={name}
+            disabled={disabled}
+            value={value as string}
+            checked={value as boolean}
+            onChange={
+              (e) => {
+                onChange?.({
+                  target: {
+                    name,
+                    value: e.target.checked ? true : false,
+                  },
+                });
+              }
+            }
+          />
         </div>
       )}
       {type === "multicheckbox" &&
         (!isLoading ? (
           <div>
-            <div className="flex flex-wrap gap-3 rounded-md borde p-3">
+            <div className="flex flex-wrap gap-3">
               {data?.map((item: any, index: number) => {
                 const checked =
                   Array.isArray(value) &&
@@ -362,6 +360,7 @@ export const InputListRenderer = ({
                   return (
                     <Chip
                       key={index}
+                      color="blue"
                       className="cursor-pointer"
                       onClose={() => {
                         const updatedValues = value.filter(
@@ -414,7 +413,17 @@ export const InputListRenderer = ({
             </div>
           </div>
         ) : (
-          <div>...Loading</div>
+          <div className="w-fit">
+            <Chip
+              variant="ghost"
+              color="yellow"
+              size="sm"
+              value="Loading"
+              icon={
+                <Spinner color="amber" className="h-4 w-4" />
+              }
+            />
+          </div>
         ))}
 
       {type === "label" && (
@@ -422,7 +431,7 @@ export const InputListRenderer = ({
       )}
       {type === "component" && <div className={className}>{value}</div>}
       {(type === "image" || type === "file") && (
-        <React.Fragment>
+        <Fragment>
           {value && (
             <FileViewer
               file={value.toLocaleString()}
@@ -435,11 +444,7 @@ export const InputListRenderer = ({
             <input
               name={name}
               type="file"
-              // accept="image/*"
-              onChange={(e) => {
-                // handleImageChange(e);
-                handleImageUpload(e);
-              }}
+              onChange={(e) => handleImageUpload(e)}
               className="block w-64 text-sm text-gray-500
                 file:py-2 file:px-4 file:rounded-full file:border-0
                 file:text-sm file:font-semibold
@@ -449,41 +454,58 @@ export const InputListRenderer = ({
             />
           )}
           {formDisabled && (
-            <Typography color="blue-gray" className="text-sm">
-              Uploading...
-            </Typography>
-          )}
-          {value && (
-            <div className="flex gap-2">
-              <Tooltip content="View">
-                <button
-                  type="button"
-                  className="inline-flex justify-center items-center px-3 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700 focus:outline-none"
-                  onClick={() => setPreview(true)}
-                >
-                  <EyeIcon className="h-5 w-5" aria-hidden="true" />
-                </button>
-              </Tooltip>
-              <Tooltip content="Delete">
-                <button
-                  type="button"
-                  className="inline-flex justify-center items-center px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-700 focus:outline-none"
-                  onClick={() => {
-                    onChange?.({
-                      target: {
-                        name,
-                        value: "",
-                      },
-                    });
-                    setPreviewImage(null);
-                  }}
-                >
-                  <TrashIcon className="h-5 w-5" aria-hidden="true" />
-                </button>
-              </Tooltip>
+            <div className="w-fit">
+              <Chip
+                variant="ghost"
+                color="yellow"
+                size="sm"
+                value="Uploading"
+                icon={
+                  <Spinner color="amber" className="h-4 w-4" />
+                }
+              />
             </div>
           )}
-        </React.Fragment>
+          {value && (
+            <div className="space-y-2 w-fit">
+              <Chip
+                variant="ghost"
+                color="green"
+                size="sm"
+                value="Uploaded"
+                icon={
+                  <CheckIcon className="h-4 w-4" />
+                }
+              />
+              <div className="flex gap-2">
+                <Tooltip content="View">
+                  <IconButton
+                    color="blue"
+                    onClick={() => setPreview(true)}
+                  >
+                    <EyeIcon className="h-5 w-5" aria-hidden="true" />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip content="Delete">
+                  <IconButton
+                    color="red"
+                    onClick={() => {
+                      onChange?.({
+                        target: {
+                          name,
+                          value: "",
+                        },
+                      });
+                      setPreviewImage(null);
+                    }}
+                  >
+                    <TrashIcon className="h-5 w-5" aria-hidden="true" />
+                  </IconButton>
+                </Tooltip>
+              </div>
+            </div>
+          )}
+        </Fragment>
       )}
       {type === "date" && (
         <DatePicker
@@ -492,10 +514,10 @@ export const InputListRenderer = ({
             Array.isArray(value)
               ? new Date()
               : value
-              ? typeof value === "string" || typeof value === "number"
-                ? new Date(value)
-                : null
-              : new Date()
+                ? typeof value === "string" || typeof value === "number"
+                  ? new Date(value)
+                  : null
+                : new Date()
           }
           onChange={(date) => {
             onChange?.({ target: { name, value: date } });
@@ -504,7 +526,7 @@ export const InputListRenderer = ({
       )}
       {type === "currency" && (
         <CurrencyInput
-          className={`${className} border border-blue-gray-200 rounded-md px-3 py-2.5 w-full text-sm font-normal text-blue-gray-700 focus:outline-none focus:border-gray-900 focus:border-2`}
+          className="border border-gray-300 rounded-md px-3 py-2.5 w-full text-sm font-normal bg-white text-gray-900 shadow-lg shadow-gray-900/5 ring-4 ring-transparent placeholder:text-gray-500 placeholder:opacity-100 focus:!border-gray-900 focus:!border-t-gray-900 focus:ring-gray-900/10"
           name={name}
           value={Number(value) || 0}
           onValueChange={(value, name, values) => {
@@ -516,13 +538,12 @@ export const InputListRenderer = ({
             });
           }}
           intlConfig={{ locale: "id-ID", currency: "IDR" }}
-          // prefix="Rp. "
           groupSeparator=","
           decimalSeparator="."
           min={0}
         />
       )}
-      {useRiset && (
+      {useReset && (
         <Button
           color="red"
           size="sm"
