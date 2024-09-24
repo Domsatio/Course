@@ -14,6 +14,7 @@ import {
   AccordionBody,
   Drawer,
   Card,
+  Button,
 } from "@material-tailwind/react";
 import {
   ChevronDownIcon,
@@ -21,6 +22,7 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { ProfileMenu } from "../ProfileMenu";
+import Link from "next/link";
 
 <ProfileMenu />
 
@@ -150,7 +152,7 @@ export default function AdminNavbar({ children }: { children: React.ReactNode })
     <div className="flex relative">
       <SideItem className="w-64 min-h-screen hidden lg:block bg-white fixed" />
       <div className="w-full min-h-screen lg:pl-64">
-        <Navbar className="rounded-none flex items-center justify-between mx-auto max-w-full px-4 py-2 lg:px-8 lg:py-4">
+        <Navbar className="rounded-none flex items-center justify-between lg:justify-end mx-auto max-w-full px-4 py-2 lg:px-8 lg:py-4">
           <IconButton
             variant="text"
             size="lg"
@@ -163,7 +165,14 @@ export default function AdminNavbar({ children }: { children: React.ReactNode })
               <Bars3Icon className="h-8 w-8 stroke-2" />
             )}
           </IconButton>
-          <ProfileMenu />
+          <div className="flex items-center gap-5">
+            <Link href="/">
+              <Button variant="outlined" className='flex items-center gap-3 py-2 px-4 rounded-full capitalize'>
+                Client
+              </Button>
+            </Link>
+            <ProfileMenu />
+          </div>
         </Navbar>
         <Drawer open={isDrawerOpen} onClose={closeDrawer} className="lg:hidden">
           <SideItem />

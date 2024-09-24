@@ -16,11 +16,11 @@ export const ProfileMenu = () => {
 
   if (session?.user.role === "ADMIN" && !pathname.startsWith("/admin")) {
     return (
-      <Button size="sm" variant="outlined" className="rounded-full">
         <Link href="/admin/dashboard">
-          Admin Panel
+          <Button size="sm" variant="outlined" className="rounded-full">
+              Admin Panel
+          </Button>
         </Link>
-      </Button>
     )
   }
 

@@ -20,7 +20,7 @@ export function Footer() {
   return (
     <footer className="relative w-full">
       <div className="w-full bg-[#1b1b1b]">
-        <div className="mx-auto container px-24 grid w-full grid-cols-1 gap-8 py-12 md:grid-cols-2 lg:grid-cols-4">
+        <div className="mx-auto container p-5 lg:px-24 grid w-full gap-8 py-12 grid-cols-2 lg:grid-cols-4">
           {SITEMAP.map(({ title, links }, key) => (
             <div key={key} className="w-full">
               <Typography
