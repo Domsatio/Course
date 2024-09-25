@@ -7,17 +7,27 @@ import { categoryServices } from "@/services/serviceGenerator";
 import { NullProof, numberlistPagination } from "@/helpers/appFunction";
 import GenerateMetaData from "@/components/GenerateMetaData";
 
+type DataProps = {
+  data: GetCategory[];
+  page: number;
+  size: number;
+}
+
 const TABLE_HEAD = ["No", "Name", "Total Post(s)", "Action"];
 
 const Index: FC = () => {
-  const [data, setData] = useState<any>({});
+  const [data, setData] = useState<DataProps>({
+    data: [],
+    page: 0,
+    size: 0,
+  });
   const { Table, TableAction } = TableData({
     title: "Categories",
     description: "List of categories",
     tableHeader: TABLE_HEAD,
     service: categoryServices,
     realtimeTable: "Category",
-    onSuccess: (data: GetCategory[]) => setData(data),
+    onSuccess: (data: DataProps) => setData(data),
   });
 
   return Table(

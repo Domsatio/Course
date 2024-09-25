@@ -7,17 +7,27 @@ import { FilterInputList } from "../../../constants/admin/InputLists/inputLayout
 import { userServices } from "@/services/serviceGenerator";
 import { User } from "@/types/user.type";
 
+type DataProps = {
+  data: User[];
+  page: number;
+  size: number;
+}
+
 const TABLE_HEAD = ["No", "Name", "Email"];
 
 export default function Index() {
-  const [data, setData] = useState<any>({});
-  const { Table, TableAction } = TableData({
+  const [data, setData] = useState<DataProps>({
+    data: [],
+    page: 0,
+    size: 0,
+  });
+  const { Table } = TableData({
     title: "Users",
     description: "List of users",
     tableHeader: TABLE_HEAD,
     service: userServices,
     realtimeTable: "User",
-    onSuccess: (data: User[]) => setData(data),
+    onSuccess: (data: DataProps) => setData(data),
     // filter: FilterInputList,
     isActionAdd: false,
   });

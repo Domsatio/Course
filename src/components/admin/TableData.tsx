@@ -236,7 +236,7 @@ export default function TableData({
         <table className="w-full min-w-max text-left">
           <thead className="sticky -top-[24.5px] h-8 z-30 bg-blue-gray-50">
             <tr>
-              {tableHeader.map((head: any) => (
+              {tableHeader.map((head: string) => (
                 <th key={head} className="border-y border-blue-gray-100  p-4">
                   <Typography
                     variant="small"

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import {
   Card,
@@ -56,7 +56,7 @@ export const LabelDetailPage = ({
   className = "",
 }: {
   label?: string;
-  children?: any;
+  children?: ReactNode;
   position?: "horizontal" | "vertical";
   className?: string;
 }) => {
