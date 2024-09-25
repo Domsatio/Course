@@ -7,7 +7,7 @@ import CardSkeleton from "@/components/Skeleton/CardSkeleton";
 import { PaginationHook } from "@/hooks/paginationHook";
 import { FetchDataHook, FetchDataHook as FetchCategoryHook } from "@/hooks/fetchDataHook";
 import { SearchHook } from "@/hooks/searchHook";
-import Pagination from "@/components/client/Pagination";
+import Pagination from "@/components/client/pagination";
 import { getQueryParams } from "@/helpers/appFunction";
 import Search from "@/components/client/search";
 import { useRouter } from "next/router";
@@ -16,7 +16,6 @@ import CategorySkeleton from "@/components/Skeleton/CategorySkeleton";
 import ContentWrapper from "@/layouts/client/contentWrapper";
 import { cn } from "@/libs/cn";
 import GenerateMetaData from "@/components/GenerateMetaData";
-import { ca } from "date-fns/locale";
 
 type Params = {
   skip: number;

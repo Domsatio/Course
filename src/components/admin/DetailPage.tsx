@@ -6,14 +6,14 @@ import {
   CardBody,
   IconButton,
   Tooltip,
-  Dialog,
-  DialogHeader,
-  DialogBody,
-  DialogFooter,
-  Button,
 } from "@material-tailwind/react";
-import { ArrowLeftIcon, PencilSquareIcon, TrashIcon } from "@heroicons/react/24/solid";
+import {
+  ArrowLeftIcon,
+  PencilSquareIcon,
+  TrashIcon,
+} from "@heroicons/react/24/solid";
 import Link from "next/link";
+import { ModalConfirmation } from "./ModalConfirmation";
 
 interface DetailPageProps {
   service: any;
@@ -21,30 +21,30 @@ interface DetailPageProps {
 
 export const DetailPage = ({
   title = "",
+  service,
   children,
 }: {
   title: string;
+  service?: any;
   children?: React.ReactNode;
 }) => {
   const { back } = useRouter();
 
   return (
     <Card className="mt-6">
-      <CardHeader color="blue" className="p-3 flex items-center justify-between">
+      <CardHeader
+        color="blue"
+        className="p-3 flex items-center justify-between"
+      >
         <div className="flex items-center gap-3">
-          <IconButton
-            variant="text"
-            onClick={() => back()}
-          >
+          <IconButton variant="text" onClick={() => back()}>
             <ArrowLeftIcon className="h-5 w-5 text-white" />
           </IconButton>
           <h1>Detail {title}</h1>
         </div>
-        <ActionDetailPage />
+        {service && <ActionDetailPage service={service} />}
       </CardHeader>
-      <CardBody className="relative pt-10 lg:pt-4">
-        {children}
-      </CardBody>
+      <CardBody className="relative pt-10 lg:pt-4">{children}</CardBody>
     </Card>
   );
 };
@@ -61,7 +61,11 @@ export const LabelDetailPage = ({
   className?: string;
 }) => {
   return (
-    <div className={`flex mb-2 ${className} ${position === "horizontal" ? "flex-row gap-2" : "flex-col"}`}>
+    <div
+      className={`flex mb-2 ${className} ${
+        position === "horizontal" ? "flex-row gap-2" : "flex-col"
+      }`}
+    >
       <h3 className="font-bold">
         {label}
         {position === "horizontal" ? ":" : ""}
@@ -71,12 +75,23 @@ export const LabelDetailPage = ({
   );
 };
 
-const ActionDetailPage = () => {
-  const { pathname, query: { id } } = useRouter()
-  const [, admin, section, subSection] = pathname.split('/');
-  const updateHref = `/${admin}/${section}${section === "ecommerce" && '/' + subSection}/update/${id}`;
-  console.log("updateHref", updateHref);
+const ActionDetailPage = ({ service }: { service: any }) => {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const {
+    pathname,
+    push,
+    query: { id },
+  } = useRouter();
+  const updateHref = pathname.split("/view")[0] + "/update/" + id;
 
+  const handleDelete = async (id: string, service: any, redirect: string) => {
+    try {
+      await service.deleteItem({ id: id });
+      push(redirect);
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
 
   return (
     <div className="flex gap-2">
@@ -88,58 +103,33 @@ const ActionDetailPage = () => {
         </Link>
       </Tooltip>
       <Tooltip content="Delete">
-        <IconButton color="red">
+        <IconButton color="red" onClick={() => setIsOpen(true)}>
           <TrashIcon className="h-5 w-5" />
         </IconButton>
       </Tooltip>
-      <DeleteModal id={id as string} />
+      <ModalConfirmation
+        isOpen={isOpen}
+        handler={setIsOpen}
+        onConfirm={async () => {
+          await handleDelete(id as string, service, pathname.split("/view")[0]);
+          setIsOpen(false);
+        }}
+      />
     </div>
   );
-}
-
-const handleDelete = async (id: string) => {
-  try {
-    await service.deleteItem({ id: id });
-  } catch (error) {
-    console.log("error", error);
-  }
 };
 
-const DeleteModal = ({ id }: { id: string }) => {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-
-  return (
-    <Dialog size="xs" open={isOpen} handler={() => setIsOpen(true)}>
-      <DialogHeader color="red">Delete Data</DialogHeader>
-      <DialogBody>Are you sure you want to delete this data?</DialogBody>
-      <DialogFooter>
-        <Button
-          variant="outlined"
-          onClick={() => {
-            setIsOpen(false);
-          }}
-        >
-          Cancel
-        </Button>
-        <Button
-          color="red"
-          className="ml-2"
-          onClick={() => handleDelete(id)}
-        >
-          Delete
-        </Button>
-      </DialogFooter>
-    </Dialog>
-  )
-}
-
 const DataDetailPage = ({ service }: DetailPageProps) => {
-  const { query: { id } } = useRouter();
+  const {
+    query: { id },
+  } = useRouter();
   const [data, setData] = useState<any>({});
 
   const fetchData = async () => {
     try {
-      const { data: { data } } = await service.getItem({ id });
+      const {
+        data: { data },
+      } = await service.getItem({ id });
       setData(data);
     } catch (error) {
       console.error("Error fetching data:", error);

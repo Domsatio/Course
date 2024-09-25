@@ -36,7 +36,7 @@ const DetailCoursePage: FC<Course> = (data) => {
 
   return (
     <Fragment>
-      <GenerateMetaData title={NullProof({ input: data, params: "title" })} desc={`Detail ${NullProof({ input: data, params: "title" })}`} />
+      <GenerateMetaData title={NullProof({ input: data, params: "title" })} desc={`Detail ${NullProof({ input: data, params: "title" })}`} thumbnail={data.thumbnail}/>
       <ContentWrapper>
         <Typography variant="h2" color="black">
           {NullProof({ input: data, params: "title" })}

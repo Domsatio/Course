@@ -405,7 +405,7 @@ export default function FormInput({
 
   if (asModal) {
     return (
-      <Dialog open={asModal.isOpen} handler={() => asModal.handler(true)}>
+      <Dialog open={asModal.isOpen} handler={() => asModal.handler(false)}>
         {isUseHeader && <DialogHeader color="blue">{title}</DialogHeader>}
         <DialogBody>
           {customCard ? (

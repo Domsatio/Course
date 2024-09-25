@@ -35,10 +35,12 @@
     "react-dom": "^18",
     "react-player": "^2.10.1",
     "react-quill": "^2.0.0",
+    "react-share": "^5.1.0",
     "supabase": "^1.192.5",
     "tailwind-merge": "^2.5.2",
     "uploadthing": "^6.13.2",
     "use-debounce": "^10.0.3",
+    "usehooks-ts": "^3.1.0",
     "uuid": "^10.0.0",
     "yup": "^1.4.0"
   },

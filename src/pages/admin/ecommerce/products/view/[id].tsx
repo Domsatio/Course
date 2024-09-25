@@ -13,7 +13,7 @@ const DetailProductAdmin: FC<GetProduct> = (data) => {
   return (
     <Fragment>
       <GenerateMetaData title={`Admin | Detail ${NullProof({ input: data, params: "name" })}`} />
-      <DetailPage title="Product">
+      <DetailPage title="Product" service={productServices}>
         <div className="flex flex-row flex-wrap gap-5">
           <Image
             src={data.thumbnail}

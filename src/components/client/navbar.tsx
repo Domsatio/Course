@@ -18,7 +18,7 @@ function NavList() {
   return (
     <ul className="mt-2 mb-4 flex flex-col gap-2 border-black lg:mb-0 lg:mt-0 lg:flex-row lg:items-center">
       {NavRoutes.map(({ label, href }) => (
-        <Link href={href} key={label} className="text-sm py-2 px-4 rounded-full transition-colors duration-100 hover:bg-gray-200">
+        <Link href={href} key={label} className="text-black text-sm py-2 px-4 rounded-full transition-colors duration-100 hover:bg-gray-200">
           {label}
         </Link>
       ))}
@@ -73,7 +73,7 @@ export default function ComplexNavbar() {
       className={`fixed left-0 right-0 max-w-full lg:h-20 p-2 rounded-none transition-all duration-300 z-50 ${isScrollingUp || currentPosition < 68 ? "top-0" : "top-[-100px]"
         }`}
     >
-      <div className="relative container mx-auto 2xl:max-w-[75rem] px-10 h-full flex items-center justify-between lg:justify-between text-blue-gray-900">
+      <div className="relative container mx-auto 2xl:max-w-[75rem] p-4 lg:px-10 h-full flex items-center justify-between lg:justify-between text-blue-gray-900">
         <Typography className="cursor-pointer py-1.5 font-medium">
           DomClub
         </Typography>
