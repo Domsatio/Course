@@ -17,6 +17,7 @@ import {
 import { getQueryParams, convertStringToBoolean } from "@/helpers/appFunction";
 import { children } from "@material-tailwind/react/types/components/accordion";
 import { ArrowLeftIcon, PlusIcon } from "@heroicons/react/24/solid";
+import { cn } from "@/libs/cn";
 
 interface FormInputProps {
   title?: string;
@@ -32,19 +33,14 @@ interface FormInputProps {
     handler: (value: boolean) => void | undefined;
   };
   isFilter?: boolean;
-  redirect?: string;
+  redirect?: string | false;
   isUseHeader?: boolean;
-  customCard?: (children: children) => JSX.Element;
+  customCard?: (child: children) => JSX.Element;
   isUseCancelButton?: boolean;
-  customButtonSubmit?: JSX.Element;
+  CustomButtonSubmit?: (loading: boolean) => React.ReactNode;
 }
 
-export const FormInputHooks = () => {
-  const [disabled, setDisabled] = useState(false);
-  return { disabled, setDisabled };
-};
-
-export default function FormInput({
+export const FormInput = ({
   title = "",
   inputList,
   method,
@@ -59,9 +55,9 @@ export default function FormInput({
   isUseHeader = true,
   customCard,
   isUseCancelButton = true,
-  customButtonSubmit,
-}: FormInputProps) {
-  const { disabled } = FormInputHooks();
+  CustomButtonSubmit,
+}: FormInputProps) => {
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const initialValues = inputList.reduce((acc: Record<string, any>, item) => {
@@ -94,6 +90,7 @@ export default function FormInput({
     initialValues,
     validationSchema,
     onSubmit: async (values) => {
+      setLoading(true);
       let finalValues = values;
       const listInputRemoveOnSubmit = inputList.filter(
         (input) => input.removeOnSubmit === true
@@ -138,17 +135,27 @@ export default function FormInput({
           });
           onSubmit?.(values);
         }
+
         if (response?.data) {
           onSuccess?.(response.data.data);
         }
+        if ((method === "POST" || method === "PUT") && !isFilter) {
+          formik.resetForm();
+        }
+
         asModal?.handler(false);
-        if (redirect) {
+        if (typeof redirect === "string") {
           router.push(redirect);
+        } else if (redirect === false) {
+          return
         } else if (method === "POST" || method === "PUT") {
           router.back();
         }
+
       } catch (error) {
         console.error("Form submission error:", error);
+      } finally {
+        setLoading(false);
       }
     },
     validateOnChange: false,
@@ -265,7 +272,7 @@ export default function FormInput({
 
         if (input.type === "component") {
           return (
-            <div key={index} className={input.className}>
+            <div key={index} className={cn('w-full', input.className)}>
               <label className="after:content-['*'] after:text-red-600 after:ml-1">{input.label}</label>
               {formik.values[input.name] &&
                 formik.values[input.name]?.map((item: any, i: number) => (
@@ -370,7 +377,13 @@ export default function FormInput({
           />
         );
       })}
-      <div className="flex justify-end items-center gap-2 mt-10">
+    </Fragment>
+  );
+
+  const Form = () => (
+    <form onSubmit={formik.handleSubmit} className='w-full flex flex-wrap gap-x-2'>
+      {generateInputForm()}
+      <div className="w-full flex justify-end items-center gap-2">
         {isUseCancelButton && (
           <Button
             variant="text"
@@ -387,20 +400,21 @@ export default function FormInput({
             Cancel
           </Button>
         )}
-        {customButtonSubmit ? (
-          customButtonSubmit
+        {CustomButtonSubmit ? (
+          CustomButtonSubmit(loading)
         ) : (
           <Button
             type="submit"
             className="btn"
             color="green"
-            disabled={disabled}
+            // disabled={disabled}
+            loading={loading}
           >
             {method === "PUT" ? "Update" : isFilter ? "Apply" : "Create"}
           </Button>
         )}
       </div>
-    </Fragment>
+    </form>
   );
 
   if (asModal) {
@@ -410,10 +424,10 @@ export default function FormInput({
         <DialogBody>
           {customCard ? (
             customCard(
-              <form onSubmit={formik.handleSubmit}>{generateInputForm()}</form>
+              Form()
             )
           ) : (
-            <form onSubmit={formik.handleSubmit}>{generateInputForm()}</form>
+            Form()
           )}
         </DialogBody>
       </Dialog>
@@ -424,7 +438,7 @@ export default function FormInput({
     <Fragment>
       {customCard ? (
         customCard(
-          <form onSubmit={formik.handleSubmit}>{generateInputForm()}</form>
+          Form()
         )
       ) : (
         <Card placeholder='' className="mt-6">
@@ -442,7 +456,7 @@ export default function FormInput({
             </CardHeader>
           )}
           <CardBody>
-            <form onSubmit={formik.handleSubmit}>{generateInputForm()}</form>
+            {Form()}
           </CardBody>
         </Card>
       )}

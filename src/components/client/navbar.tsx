@@ -12,19 +12,17 @@ import { useSession } from "next-auth/react";
 import { ProfileMenu } from "../ProfileMenu";
 import { NavRoutes } from "@/constants/client/NavRoutes";
 
-<ProfileMenu />
+{/* <ProfileMenu /> */}
 
-function NavList() {
-  return (
-    <ul className="mt-2 mb-4 flex flex-col gap-2 border-black lg:mb-0 lg:mt-0 lg:flex-row lg:items-center">
-      {NavRoutes.map(({ label, href }) => (
-        <Link href={href} key={label} className="text-black text-sm py-2 px-4 rounded-full transition-colors duration-100 hover:bg-gray-200">
-          {label}
-        </Link>
-      ))}
-    </ul>
-  );
-}
+const NavList = ({onClick}:{onClick?:()=> void}) => (
+  <ul className="mt-2 mb-4 flex flex-col gap-2 border-black lg:mb-0 lg:mt-0 lg:flex-row lg:items-center">
+    {NavRoutes.map(({ label, href }) => (
+      <Link href={href} key={label} onClick={onClick} className="text-black text-sm py-2 px-4 rounded-full transition-colors duration-100 hover:bg-gray-200">
+        {label}
+      </Link>
+    ))}
+  </ul>
+);
 
 export default function ComplexNavbar() {
   const [isNavOpen, setIsNavOpen] = React.useState(false);
@@ -105,7 +103,7 @@ export default function ComplexNavbar() {
         )}
       </div>
       <Collapse open={isNavOpen} className="overflow-x-hidden">
-        <NavList />
+        <NavList onClick={toggleIsNavOpen} />
       </Collapse>
     </Navbar>
   );

@@ -1,5 +1,3 @@
-"use client";
-import React from "react";
 import { useRouter } from "next/router";
 import ComplexNavbar from "@/components/client/navbar";
 import { Footer } from "@/components/client/footer";

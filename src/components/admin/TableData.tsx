@@ -18,14 +18,10 @@ import {
   Input,
   IconButton,
   Tooltip,
-  Dialog,
-  DialogBody,
-  DialogHeader,
-  DialogFooter,
 } from "@material-tailwind/react";
 import TableSkeleton from "../Skeleton/TableSkeleton";
 import { TableDataProps } from "@/types/table.type";
-import FormInput from "@/components/admin/FormInput";
+import {FormInput} from "@/components/admin/FormInput";
 import { supabase } from "@/libs/supabase";
 import { getQueryParams } from "@/helpers/appFunction";
 import { PaginationHook } from "@/hooks/paginationHook";
@@ -33,7 +29,6 @@ import { FetchDataHook } from "@/hooks/fetchDataHook";
 import { SearchHook } from "@/hooks/searchHook";
 import Link from "next/link";
 import { ModalConfirmation } from "./ModalConfirmation";
-import { set } from "date-fns";
 
 export interface TableActionProps {
   action: "update" | "delete" | "view" | "custom";
@@ -139,14 +134,15 @@ export default function TableData({
 
   // a function to handle set query parameter and get data table
   const handleSetQuery = async () => {
-    const res = await router.push(
+    let query: any = { ...getQueryParams(), search: searchQuery || "" };
+    if (query.search === '') {
+      delete query.search;
+    }
+    const res = await router.replace(
       {
         pathname: router.pathname,
-        query: { search: searchQuery || "" },
-      },
-      undefined,
-      { shallow: true }
-    );
+        query: query,
+      });
     if (!isLoad && res) {
       getDataTable();
     }

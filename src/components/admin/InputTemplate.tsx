@@ -25,9 +25,9 @@ import { TrashIcon, EyeIcon } from "@heroicons/react/24/outline";
 import CurrencyInput from "react-currency-input-field";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { FormInputHooks } from "./FormInput";
 import { CheckIcon } from "@heroicons/react/24/solid";
 import QuillEditor from "./QuillEdtor";
+import { cn } from "@/libs/cn";
 
 type FileViewerProps = {
   file: string;
@@ -101,7 +101,6 @@ export const InputListRenderer = ({
   const [search, setSearch] = useState<string>("");
   const [debounceValue] = useDebounce(search, 1500);
   const param = option?.params?.split(/\s*,\s*/) || [];
-  const { setDisabled, disabled: formDisabled } = FormInputHooks();
 
   // a function to fetch data if the data option on the input is from an API
   const getDataApi = async () => {
@@ -172,7 +171,7 @@ export const InputListRenderer = ({
   // a function to handle image upload to upladthing
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
-    setDisabled(true);
+    setIsLoading(true);
     const files = e.target.files?.[0];
     if (files) {
       try {
@@ -213,16 +212,16 @@ export const InputListRenderer = ({
       } catch (error) {
         console.error("Upload failed:", error);
       } finally {
-        setDisabled(false);
+        setIsLoading(false);
       }
     }
   };
 
   return (
-    <div className={`flex flex-col gap-2 mb-3 ${hide && "hidden"} ${className}`}>
-      <label className={`form-label ${isRequired && "after:content-['*'] after:text-red-600 after:ml-1"}`}>
+    <div className={cn('relative w-full flex flex-col gap-2 mb-3', {'hidden': hide}, className)}>
+      {label && <label className={`form-label ${isRequired && "after:content-['*'] after:text-red-600 after:ml-1"}`}>
         {label}
-      </label>
+      </label>}
       {(type === "input" || type === "url") &&
         <Input
           crossOrigin={name}
@@ -240,7 +239,7 @@ export const InputListRenderer = ({
             type === "url" ? "url" : "text"
           }
           labelProps={{
-            className: "hidden",
+            className: "hidden min-w-[100px]",
           }}
         />
       }
@@ -310,12 +309,14 @@ export const InputListRenderer = ({
         </div>
       )}
       {type === "texteditor" && (
-        <QuillEditor
-          value={String(value) || ""}
-          onChange={(content: string) =>
-            onChange?.({ target: { name, value: content } })
-          }
-        />
+        <div>
+          <QuillEditor
+            value={String(value) || ""}
+            onChange={(content: string) =>
+              onChange?.({ target: { name, value: content } })
+            }
+          />
+        </div>
       )}
       {type === "datalist" && (
         <datalist id={name}>
@@ -429,7 +430,7 @@ export const InputListRenderer = ({
         ))}
 
       {type === "label" && (
-        <label className={`form-label ${className}`}>{value}</label>
+        <label className={cn('form-label', className)}>{value}</label>
       )}
       {type === "component" && <div className={className}>{value}</div>}
       {(type === "image" || type === "file") && (
@@ -442,7 +443,7 @@ export const InputListRenderer = ({
               handleOpen={setPreview}
             />
           )}
-          {!value && !formDisabled && (
+          {!value && !isLoading && (
             <input
               name={name}
               type="file"
@@ -455,7 +456,7 @@ export const InputListRenderer = ({
                 file:cursor-pointer file:h-10 file:leading-tight"
             />
           )}
-          {formDisabled && (
+          {isLoading && (
             <div className="w-fit">
               <Chip
                 variant="ghost"

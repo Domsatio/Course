@@ -85,7 +85,10 @@ const ClientCoursePage = () => {
 
   return (
     <ContentWrapper>
-      <GenerateMetaData title="Courses" desc="This page contains various courses" />
+      <GenerateMetaData
+        title="Courses"
+        desc="This page contains various courses"
+      />
       <Typography variant="h2" color="black" placeholder="Blog Page">
         Courses
       </Typography>
@@ -95,35 +98,33 @@ const ClientCoursePage = () => {
           value={searchQuery || ""}
         />
       </div>
-      <div className={cn("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6", {'place-items-center lg:place-items-start': !isLoad})}>
+      <div
+        className={cn("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6", {
+          "place-items-center lg:place-items-start": !isLoad,
+        })}
+      >
         {isLoad ? (
-          <Fragment>
-            {Array.from({ length: 6 }, (_, i) => (
-              <CardSkeleton key={i} />
-            ))}
-          </Fragment>
+          Array.from({ length: 6 }, (_, i) => <CardSkeleton key={i} />)
+        ) : courses.length > 0 ? (
+          courses.map((data: Course, index) => (
+            <PostCard
+              key={index}
+              props={{ ...data, href: `/course/${data.id}` }}
+            />
+          ))
         ) : (
-          <Fragment>
-            {courses.length > 0 ? courses.map((data: Course, index) => (
-              <PostCard
-                key={index}
-                props={{ ...data, href: `/course/${data.id}` }}
-              />
-            )) : (
-              <Typography variant="small" color="gray">
-                No courses found
-              </Typography>
-            )}
-          </Fragment>
+          <Typography variant="small" color="gray">
+            No courses found
+          </Typography>
         )}
       </div>
-      {courses.length > 0 &&
+      {courses.length > 0 && (
         <Pagination
           activePage={activePage}
           setActivePage={(e) => handleSetActivePage(e)}
           totalPages={totalPages}
         />
-      }
+      )}
     </ContentWrapper>
   );
 };
