@@ -1,8 +1,8 @@
+import { accountRoutes } from '@/constants/client/AccountRoutes'
 import { Card, CardBody, CardHeader, Typography } from '@material-tailwind/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React from 'react'
-import { accountRoutes } from '@/constants/client/AccountRoutes'
 
 const AccountLayout = ({ children }: { children: React.ReactNode }) => {
   const { pathname } = useRouter()
