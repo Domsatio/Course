@@ -16,6 +16,10 @@ export default function Create() {
           method="POST"
           service={postServices}
           title="Create Post"
+          toastMessage={{
+            success: "Data created successfully",
+            error: "Failed to create data"
+          }}
         />
       }
     </>
