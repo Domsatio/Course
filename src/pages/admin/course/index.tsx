@@ -14,7 +14,7 @@ type DataProps = {
   size: number;
 }
 
-const TABLE_HEAD = ["No", "Title", "Description", "Publised", "Action"];
+const TABLE_HEAD = ["No", "Title", "Description", "Published", "Action"];
 
 export default function Index() {
   const [data, setData] = useState<DataProps>({
@@ -41,7 +41,7 @@ export default function Index() {
       const isLast = index === data.data.length - 1;
       const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
       return (
-        <tr key={course.id}>
+        <tr key={course.id} className="even:bg-blue-gray-50/50">
           <td className={classes}>
             <Typography
               variant="small"

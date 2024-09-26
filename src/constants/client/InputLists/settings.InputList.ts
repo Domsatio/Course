@@ -1,8 +1,8 @@
 import { InputRenderProps } from "@/components/client/InputRender";
-import { string } from "yup";
+import { Schema, string } from "yup";
 
 interface InputListProps extends InputRenderProps {
-  validator: any;
+  validator: Schema<any>;
 }
 
 export const InputList: InputListProps[] = [

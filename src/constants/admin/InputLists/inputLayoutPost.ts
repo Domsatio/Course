@@ -47,7 +47,7 @@ export const FormInputListRenderer = ({ id }: { id: string }) => {
       type: "multicheckbox",
       validator: Yup.array().optional(),
       value: [],
-      valueID: 'categoryId',
+      valueID: "categoryId",
       option: {
         id: "id",
         type: "multicheckbox",
@@ -55,7 +55,7 @@ export const FormInputListRenderer = ({ id }: { id: string }) => {
         params: "name",
         api: "/api/category",
         data: [],
-      }
+      },
     },
     {
       className: "mt-7",
@@ -63,12 +63,12 @@ export const FormInputListRenderer = ({ id }: { id: string }) => {
       label: "Published",
       type: "checkbox",
       removeOnSubmit: false,
-      validator: Yup.boolean().required("Published is required").default(false),
+      validator: Yup.boolean().required("Published is required"),
       value: false,
-    }
+    },
   ];
   return FormInputList;
-}
+};
 export const FilterInputList: InputListProps[] = [
   {
     className: "",
@@ -93,6 +93,6 @@ export const FilterInputList: InputListProps[] = [
       query: "skip=0&take=all",
       api: "/api/category",
       data: [],
-    }
+    },
   },
 ];

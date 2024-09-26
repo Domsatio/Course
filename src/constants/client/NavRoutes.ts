@@ -1,4 +1,7 @@
-export const NavRoutes = [
+export const NavRoutes: {
+  label: string;
+  href: string;
+}[] = [
   {
     label: "Home",
     href: "/",

@@ -72,7 +72,7 @@ export const FormInputList: InputListProps[] = [
     name: "published",
     label: "Published",
     type: "checkbox",
-    validator: Yup.boolean().required("Published is required").default(false),
+    validator: Yup.boolean().required("Published is required"),
     value: false,
   },
 ];

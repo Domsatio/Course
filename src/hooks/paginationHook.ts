@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 export const PaginationHook = ({ initLimit = 5 }: { initLimit?: number }) => {
   const [activePage, setActivePage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);

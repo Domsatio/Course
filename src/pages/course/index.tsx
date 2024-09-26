@@ -1,11 +1,11 @@
-import PostCard from "@/components/client/CardItem";
+import CardItem from "@/components/client/CardItem";
 import { courseServices } from "@/services/serviceGenerator";
 import { Course } from "@/types/course.type";
 import { Typography } from "@material-tailwind/react";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { PaginationHook } from "@/hooks/paginationHook";
 import { FetchDataHook } from "@/hooks/fetchDataHook";
-import Pagination from "@/components/client/pagination";
+import Pagination from "@/components/client/Pagination";
 import CardSkeleton from "@/components/Skeleton/CardSkeleton";
 import Search from "@/components/client/search";
 import { SearchHook } from "@/hooks/searchHook";
@@ -95,7 +95,7 @@ const ClientCoursePage = () => {
           value={searchQuery || ""}
         />
       </div>
-      <div className={cn("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6", {'place-items-center lg:place-items-start': !isLoad})}>
+      <div className={cn("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6", { 'place-items-center lg:place-items-start': !isLoad })}>
         {isLoad ? (
           <Fragment>
             {Array.from({ length: 6 }, (_, i) => (
@@ -105,7 +105,7 @@ const ClientCoursePage = () => {
         ) : (
           <Fragment>
             {courses.length > 0 ? courses.map((data: Course, index) => (
-              <PostCard
+              <CardItem
                 key={index}
                 props={{ ...data, href: `/course/${data.id}` }}
               />

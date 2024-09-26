@@ -50,7 +50,7 @@ export default function Index() {
         ? "p-4 max-h-min"
         : "p-4 max-h-min border-b border-blue-gray-50";
       return (
-        <tr key={product.id}>
+        <tr key={product.id} className="even:bg-blue-gray-50/50">
           <td className={classes}>
             <Typography
               variant="small"

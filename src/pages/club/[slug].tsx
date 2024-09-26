@@ -2,7 +2,7 @@ import { postServices } from "@/services/serviceGenerator";
 import { GetPost } from "@/types/post.type";
 import { Typography } from "@material-tailwind/react";
 import React, { FC, useState } from "react";
-import { GetServerSideProps} from "next";
+import { GetServerSideProps } from "next";
 import { dateFormater } from "@/helpers/date";
 import { useRouter } from "next/router";
 import ContentWrapper from "@/layouts/client/contentWrapper";
@@ -10,17 +10,18 @@ import Image from "next/image";
 import GenerateMetaData from "@/components/GenerateMetaData";
 import ButtonShare from "@/components/client/ButtonShare";
 import ModalShare from "@/components/ModalShare";
+
 const DetailClubPage: FC<Omit<GetPost, 'id' | 'published' | 'slug'>> = ({ title, thumbnail, body, categories, createdAt }) => {
   const { push } = useRouter()
   const [isOpen, setIsOpen] = useState<boolean>(false)
 
   return (
     <ContentWrapper className="relative">
-      <GenerateMetaData title={title} desc={`Detail ${title}`} thumbnail={thumbnail}/>
+      <GenerateMetaData title={title} desc={`Detail ${title}`} thumbnail={thumbnail} />
       <div className="absolute top-5 right-5">
         <ButtonShare className="px-3 border-none bg-transparent shadow-none hover:shadow-none hover:scale-110" setIsOpen={() => setIsOpen(true)} />
       </div>
-        <ModalShare isOpen={isOpen} handler={setIsOpen} title="Share this post"/>
+      <ModalShare isOpen={isOpen} handler={setIsOpen} title="Share this post" />
       <div className="flex flex-col items-center gap-5">
         <div className="flex gap-3">
           {categories.map(({ categoryId, category }) => (

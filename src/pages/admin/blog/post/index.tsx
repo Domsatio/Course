@@ -49,7 +49,7 @@ export default function Index() {
       const isLast = index === data.data.length - 1;
       const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
       return (
-        <tr key={post.id}>
+        <tr key={post.id} className="even:bg-blue-gray-50/50">
           <td className={classes}>
             <div className="flex items-center gap-3">
               <Typography variant="small" color="blue-gray">
