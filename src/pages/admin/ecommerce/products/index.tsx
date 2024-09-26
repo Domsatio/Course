@@ -7,6 +7,12 @@ import { NullProof, numberlistPagination } from "@/helpers/appFunction";
 import { productServices } from "@/services/serviceGenerator";
 import { GetProduct } from "@/types/product.type";
 
+type DataProps = {
+  data: GetProduct[];
+  page: number;
+  size: number;
+}
+
 const TABLE_HEAD = [
   "No",
   "Thumbnail",
@@ -19,16 +25,20 @@ const TABLE_HEAD = [
 ];
 
 export default function Index() {
-  const [data, setData] = useState<any>({});
-
+  const [data, setData] = useState<DataProps>({
+    data: [],
+    page: 0,
+    size: 0,
+  });
   const { Table, TableAction } = TableData({
     title: "Products",
     description: "List of products",
     tableHeader: TABLE_HEAD,
     realtimeTable: "Product",
-    onSuccess: (data: GetProduct[]) => setData(data),
+    onSuccess: (data: DataProps) => setData(data),
     service: productServices,
   });
+
   return Table(
     NullProof({
       input: data,
@@ -40,7 +50,7 @@ export default function Index() {
         ? "p-4 max-h-min"
         : "p-4 max-h-min border-b border-blue-gray-50";
       return (
-        <tr key={product.id}>
+        <tr key={product.id} className="even:bg-blue-gray-50/50">
           <td className={classes}>
             <Typography
               variant="small"
@@ -69,7 +79,7 @@ export default function Index() {
             </Typography>
           </td>
           <td className={`${classes} max-w-sm`}>
-          <p
+            <p
               color="blue-gray"
               className="font-normal line-clamp-2 text-sm"
             >

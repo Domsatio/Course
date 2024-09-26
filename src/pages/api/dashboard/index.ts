@@ -19,7 +19,7 @@ export default async function handlerDashboard(
       return res.status(200).send({
         status: true,
         statusCode: 200,
-        message: "Get product success",
+        message: "Get dashboard success",
         data,
       });
     } catch (error) {

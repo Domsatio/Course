@@ -3,7 +3,7 @@ import { InputListProps } from "./form.type";
 export type TableDataProps = {
   title: string;
   description?: string;
-  tableHeader: any;
+  tableHeader: string[];
   onSuccess?: (e: any) => void;
   isActionAdd?: boolean;
   filter?: InputListProps[];

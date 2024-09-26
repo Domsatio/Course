@@ -50,7 +50,7 @@ export const FormInputListRenderer = ({ id }: { id: string }) => {
       label: "Published",
       type: "checkbox",
       removeOnSubmit: false,
-      validator: Yup.boolean().required("Published is required").default(false),
+      validator: Yup.boolean().required("Published is required"),
       value: false,
     }
   ];

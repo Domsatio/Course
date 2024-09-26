@@ -1,5 +1,5 @@
 import { UpdateAddress } from "@/types/address.type";
-import { object, string } from "yup";
+import { ValidationError, object, string } from "yup";
 
 export const updateAddressValidation = (payload: UpdateAddress) => {
   const schema = object({
@@ -16,7 +16,10 @@ export const updateAddressValidation = (payload: UpdateAddress) => {
   try {
     const validatedData = schema.validateSync(payload, { abortEarly: false });
     return { validatedData, errors: null };
-  } catch (error: any) {
-    return { validatedData: null, errors: error.errors as string[] };
+  } catch (error) {
+    if (error instanceof ValidationError) {
+      return { validatedData: null, errors: error.errors };
+    }
+    return { validatedData: null, errors: ["An unexpected error occurred"] };
   }
 };

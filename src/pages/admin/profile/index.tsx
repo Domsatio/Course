@@ -55,6 +55,10 @@ const Index = () => {
                       {children}
                     </React.Fragment>
                   )}
+                  toastMessage={{
+                    success: "Profile updated successfully",
+                    error: "Profile update failed"
+                  }}
                 />
               </div>
             </div>

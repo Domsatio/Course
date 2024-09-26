@@ -1,5 +1,5 @@
 import { Post, UpdatePost } from "@/types/post.type";
-import { array, boolean, object, string } from "yup";
+import { ValidationError, array, boolean, object, string } from "yup";
 
 export const createPostValidation = (payload: Post) => {
   const schema = object({
@@ -16,8 +16,11 @@ export const createPostValidation = (payload: Post) => {
   try {
     const validatedData = schema.validateSync(payload, { abortEarly: false });
     return { validatedData, errors: null };
-  } catch (error: any) {
-    return { validatedData: null, errors: error.errors as string[] };
+  } catch (error) {
+    if (error instanceof ValidationError) {
+      return { validatedData: null, errors: error.errors };
+    }
+    return { validatedData: null, errors: ["An unexpected error occurred"] };
   }
 };
 
@@ -34,7 +37,10 @@ export const updatePostValidation = (payload: UpdatePost) => {
   try {
     const validatedData = schema.validateSync(payload, { abortEarly: false });
     return { validatedData, errors: null };
-  } catch (error: any) {
-    return { validatedData: null, errors: error.errors as string[] };
+  } catch (error) {
+    if (error instanceof ValidationError) {
+      return { validatedData: null, errors: error.errors };
+    }
+    return { validatedData: null, errors: ["An unexpected error occurred"] };
   }
 };

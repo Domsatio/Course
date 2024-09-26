@@ -8,6 +8,12 @@ import { dateFormater } from "@/helpers/date";
 import { NullProof, numberlistPagination } from "@/helpers/appFunction";
 import { FilterInputList } from "../../../../constants/admin/InputLists/inputLayoutPost";
 
+type DataProps = {
+  data: GetPost[];
+  page: number;
+  size: number;
+}
+
 const TABLE_HEAD = [
   "No",
   "Title",
@@ -19,14 +25,18 @@ const TABLE_HEAD = [
 ];
 
 export default function Index() {
-  const [data, setData] = useState<any>({});
+  const [data, setData] = useState<DataProps>({
+    data: [],
+    page: 0,
+    size: 0,
+  });
   const { Table, TableAction } = TableData({
     title: "Posts",
     description: "List of posts",
     tableHeader: TABLE_HEAD,
     service: postServices,
     realtimeTable: "Post",
-    onSuccess: (data: GetPost[]) => setData(data),
+    onSuccess: (data: DataProps) => setData(data),
     filter: FilterInputList,
   });
 
@@ -39,7 +49,7 @@ export default function Index() {
       const isLast = index === data.data.length - 1;
       const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
       return (
-        <tr key={post.id}>
+        <tr key={post.id} className="even:bg-blue-gray-50/50">
           <td className={classes}>
             <div className="flex items-center gap-3">
               <Typography variant="small" color="blue-gray">
@@ -56,20 +66,20 @@ export default function Index() {
             <div className="flex items-center gap-3">
               <p
                 color="blue-gray"
-                className="font-bold line-clamp-2"
+                className="line-clamp-2"
               >
                 {NullProof({ input: post, params: "title" })}
               </p>
             </div>
           </td>
           <td className={`${classes} max-w-[370px] max-h-min`}>
-              <article
-                color="blue-gray"
-                className="prose font-normal line-clamp-2 text-sm"
-                dangerouslySetInnerHTML={{
-                  __html: NullProof({ input: post, params: "body" }),
-                }}
-              ></article>
+            <article
+              color="blue-gray"
+              className="prose font-normal line-clamp-2 text-sm"
+              dangerouslySetInnerHTML={{
+                __html: NullProof({ input: post, params: "body" }),
+              }}
+            ></article>
           </td>
           <td className={`${classes} max-w-[370px] max-h-min`}>
             <Typography
@@ -101,9 +111,8 @@ export default function Index() {
                 value={post.published ? "Published" : "Draft"}
                 icon={
                   <span
-                    className={`mx-auto mt-1 block h-2 w-2 rounded-full content-[''] ${
-                      post.published ? "bg-green-900" : "bg-red-900"
-                    }`}
+                    className={`mx-auto mt-1 block h-2 w-2 rounded-full content-[''] ${post.published ? "bg-green-900" : "bg-red-900"
+                      }`}
                   />
                 }
               />

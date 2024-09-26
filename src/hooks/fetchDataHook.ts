@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 export const FetchDataHook = () => {
   const [data, setData] = useState<any>([]);
   const [isLoad, setIsLoad] = useState<boolean>(false);

@@ -17,6 +17,7 @@ import {
 import { getQueryParams, convertStringToBoolean } from "@/helpers/appFunction";
 import { children } from "@material-tailwind/react/types/components/accordion";
 import { ArrowLeftIcon, PlusIcon } from "@heroicons/react/24/solid";
+import toast from 'react-hot-toast';
 
 interface FormInputProps {
   title?: string;
@@ -37,6 +38,10 @@ interface FormInputProps {
   customCard?: (children: children) => JSX.Element;
   isUseCancelButton?: boolean;
   customButtonSubmit?: JSX.Element;
+  toastMessage: {
+    success: string;
+    error: string;
+  }
 }
 
 export const FormInputHooks = () => {
@@ -60,6 +65,7 @@ export default function FormInput({
   customCard,
   isUseCancelButton = true,
   customButtonSubmit,
+  toastMessage,
 }: FormInputProps) {
   const { disabled } = FormInputHooks();
   const router = useRouter();
@@ -145,9 +151,11 @@ export default function FormInput({
         if (redirect) {
           router.push(redirect);
         } else if (method === "POST" || method === "PUT") {
+          toast.success(toastMessage.success);
           router.back();
         }
       } catch (error) {
+        toast.error(toastMessage.error);
         console.error("Form submission error:", error);
       }
     },

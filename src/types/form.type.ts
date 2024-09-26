@@ -1,3 +1,5 @@
+import { Schema } from "yup";
+
 export type FormInputTypeProps =
   | "input"
   | "number"
@@ -42,7 +44,7 @@ export type InputListProps = {
   disabled?: boolean;
   isRequired?: boolean;
   lockData?: boolean;
-  validator: any;
+  validator: Schema<any>;
   value?: string | number | string[] | boolean;
   valueID?: string;
   onChange?: (e: any) => void;

@@ -34,6 +34,7 @@ import { SearchHook } from "@/hooks/searchHook";
 import Link from "next/link";
 import { ModalConfirmation } from "./ModalConfirmation";
 import { set } from "date-fns";
+import toast from "react-hot-toast";
 
 export interface TableActionProps {
   action: "update" | "delete" | "view" | "custom";
@@ -105,11 +106,13 @@ export default function TableData({
 
   const handleDelete = async (id: string) => {
     try {
-      const { data } = await service.deleteItem({ id: id });
+      const { data } = await service.deleteItem({ id });
       if (data) {
         getDataTable();
       }
+      toast.success('Delete data success!')
     } catch (error) {
+      toast.error('Delete data failed!')
       console.log("error", error);
     }
   };
@@ -125,7 +128,6 @@ export default function TableData({
           "postgres_changes",
           { event: "*", schema: "public", table: realtimeTable },
           (payload) => {
-            console.log("Change received!", payload);
             getDataTable();
           }
         )
@@ -219,18 +221,22 @@ export default function TableData({
                   </IconButton>
                 </Tooltip>
                 <FormInput
-                      inputList={filter}
-                      method="GET"
-                      service={service}
-                      title="Filter"
-                      asModal={{
-                        isOpen: modalFilter,
-                        handler: setModalFilter,
-                      }}
-                      onSubmit={(data) => getDataTable()}
-                      onSuccess={(data) => onSuccess?.(data)}
-                      isFilter={true}
-                    />
+                  inputList={filter}
+                  method="GET"
+                  service={service}
+                  title="Filter"
+                  asModal={{
+                    isOpen: modalFilter,
+                    handler: setModalFilter,
+                  }}
+                  onSubmit={(data) => getDataTable()}
+                  onSuccess={(data) => onSuccess?.(data)}
+                  isFilter={true}
+                  toastMessage={{
+                    success: "Filter success",
+                    error: "Filter failed"
+                  }}
+                />
               </Fragment>
             )}
           </div>
@@ -240,7 +246,7 @@ export default function TableData({
         <table className="w-full min-w-max text-left">
           <thead className="sticky -top-[24.5px] h-8 z-30 bg-blue-gray-50">
             <tr>
-              {tableHeader.map((head: any) => (
+              {tableHeader.map((head: string) => (
                 <th key={head} className="border-y border-blue-gray-100  p-4">
                   <Typography
                     variant="small"

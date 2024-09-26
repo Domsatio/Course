@@ -16,6 +16,10 @@ export default function Update() {
         method="PUT"
         id={id as string}
         title="Update Category"
+        toastMessage={{
+          success: "Category updated successfully",
+          error: "Failed to update category",
+        }}
       />
     </div>
   );
