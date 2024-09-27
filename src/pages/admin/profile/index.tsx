@@ -1,6 +1,6 @@
 import React from "react";
 import { Card } from "@material-tailwind/react";
-import FormInput from "@/components/admin/FormInput";
+import {FormInput} from "@/components/admin/FormInput";
 import { FormInputList } from "../../../constants/admin/InputLists/inputLayoutProfile";
 import { userServices } from "@/services/serviceGenerator";
 import { useSession } from "next-auth/react";

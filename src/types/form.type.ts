@@ -35,7 +35,7 @@ export type InputListOptionProps = {
 export type InputListProps = {
   className?: string;
   name: string;
-  label: string;
+  label?: string;
   protect?: string[];
   placeholder?: string;
   type: FormInputTypeProps;

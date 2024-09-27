@@ -1,16 +1,15 @@
-'use client';
-import React from "react";
-import FormInput from "@/components/admin/FormInput";
+import {FormInput} from "@/components/admin/FormInput";
 import { FormInputListRenderer } from "../../../../constants/admin/InputLists/inputLayoutPost";
 import { useSession } from "next-auth/react";
 import { postServices } from "@/services/serviceGenerator";
 import GenerateMetaData from "@/components/GenerateMetaData";
+import { Fragment } from "react";
 
 export default function Create() {
   const { data: session, status } = useSession();
 
   return (
-    <>
+    <Fragment>
       <GenerateMetaData title="Create Post" desc="Create Post Page" />
       {status !== "loading" &&
         <FormInput
@@ -24,7 +23,7 @@ export default function Create() {
           }}
         />
       }
-    </>
+    </Fragment>
   );
 }
 

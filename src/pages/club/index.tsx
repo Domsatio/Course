@@ -5,9 +5,12 @@ import { Button, Typography } from "@material-tailwind/react";
 import React, { Fragment, useEffect, useState } from "react";
 import CardSkeleton from "@/components/Skeleton/CardSkeleton";
 import { PaginationHook } from "@/hooks/paginationHook";
-import { FetchDataHook, FetchDataHook as FetchCategoryHook } from "@/hooks/fetchDataHook";
+import {
+  FetchDataHook,
+  FetchDataHook as FetchCategoryHook,
+} from "@/hooks/fetchDataHook";
 import { SearchHook } from "@/hooks/searchHook";
-import Pagination from "@/components/client/Pagination";
+import Pagination from "@/components/client/pagination";
 import { getQueryParams } from "@/helpers/appFunction";
 import Search from "@/components/client/search";
 import { useRouter } from "next/router";
@@ -26,19 +29,26 @@ type Params = {
 };
 
 const ClientClubPage = () => {
-  const [posts, setPosts] = useState<Omit<GetPost, "published" | "createdAt">[]>([]);
-  const [categories, setCategories] = useState<Omit<GetCategory, "posts">[]>([]);
+  const [posts, setPosts] = useState<
+    Omit<GetPost, "published" | "createdAt">[]
+  >([]);
+  const [categories, setCategories] = useState<Omit<GetCategory, "posts">[]>(
+    []
+  );
   const [activeCategory, setActiveCategory] = useState<string | null>("");
   const { isLoad, setIsLoad } = FetchDataHook();
-  const { isLoad: isCategoryLoad, setIsLoad: setIsCategoryLoad } = FetchCategoryHook();
-  const { activePage, totalPages, take, setActivePage, handleSetTotalPages } = PaginationHook({ initLimit: 6 });
-  const { debounceValue, searchQuery, setSearchQuery } = SearchHook({ delay: 800, });
+  const { isLoad: isCategoryLoad, setIsLoad: setIsCategoryLoad } =
+    FetchCategoryHook();
+  const { activePage, totalPages, take, setActivePage, handleSetTotalPages } =
+    PaginationHook({ initLimit: 6 });
+  const { debounceValue, searchQuery, setSearchQuery } = SearchHook({
+    delay: 800,
+  });
   const { replace } = useRouter();
-
 
   const getPostsData = async () => {
     const postParams: Params = {
-      skip: (Number(getQueryParams()['page']) || 1) * take - take,
+      skip: (Number(getQueryParams()["page"]) || 1) * take - take,
       take,
       search: getQueryParams()["search"] || "",
       category: getQueryParams()["category"]
@@ -82,9 +92,9 @@ const ClientClubPage = () => {
     });
   }, []);
 
-  const handleSetActivePage = async (page: number) => {
-    setActivePage(page);
-  }
+  // const handleSetActivePage = async (page: number) => {
+  //   setActivePage(page);
+  // };
 
   useEffect(() => {
     if (searchQuery === null) {
@@ -118,7 +128,10 @@ const ClientClubPage = () => {
 
   return (
     <ContentWrapper>
-      <GenerateMetaData title="Club" desc="This page contains various articles" />
+      <GenerateMetaData
+        title="Club"
+        desc="This page contains various articles"
+      />
       <Typography variant="h2" color="black" placeholder="Blog Page">
         Club
       </Typography>
@@ -141,50 +154,46 @@ const ClientClubPage = () => {
         value={searchQuery || ""}
         onChange={(e) => setSearchQuery(e.target.value)}
       />
-      <div className={cn("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6", { 'place-items-center lg:place-items-start': !isLoad })}>
+      <div
+        className={cn("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6", {
+          "place-items-center lg:place-items-start": !isLoad,
+        })}
+      >
         {isLoad ? (
-          <Fragment>
-            {Array.from({ length: 6 }, (_, i) => (
-              <CardSkeleton key={i} />
-            ))}
-          </Fragment>
+          Array.from({ length: 6 }, (_, i) => <CardSkeleton key={i} />)
+        ) : posts.length > 0 ? (
+          posts.map((data: Omit<GetPost, "published" | "createdAt">, index) => (
+            <CardItem
+              key={index}
+              props={{ ...data, href: `/club/${data.slug}` }}
+              category={
+                <div className="flex flex-wrap gap-2">
+                  {data.categories.map(({ category }, i) => (
+                    <Typography
+                      key={i}
+                      variant="small"
+                      className="text-[#c28833] flex capitalize group-hover:text-[#c28833]/80"
+                    >
+                      {category.name}
+                    </Typography>
+                  ))}
+                </div>
+              }
+            />
+          ))
         ) : (
-          <Fragment>
-            {posts.length > 0 ? posts.map(
-              (data: Omit<GetPost, "published" | "createdAt">, index) => (
-                <CardItem
-                  key={index}
-                  props={{ ...data, href: `/club/${data.slug}` }}
-                  category={
-                    <div className="flex flex-wrap gap-2">
-                      {data.categories.map(({ category }, i) => (
-                        <Typography
-                          key={i}
-                          variant="small"
-                          className="text-[#c28833] flex capitalize group-hover:text-[#c28833]/80"
-                        >
-                          {category.name}
-                        </Typography>
-                      ))}
-                    </div>
-                  }
-                />
-              )
-            ) : (
-              <Typography variant="small" color="gray">
-                No posts found
-              </Typography>
-            )}
-          </Fragment>
+          <Typography variant="small" color="gray">
+            No posts found
+          </Typography>
         )}
       </div>
-      {posts.length > 0 &&
+      {posts.length > 0 && (
         <Pagination
           activePage={activePage}
           setActivePage={setActivePage}
           totalPages={totalPages}
         />
-      }
+      )}
     </ContentWrapper>
   );
 };

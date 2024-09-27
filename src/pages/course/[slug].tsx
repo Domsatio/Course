@@ -1,5 +1,5 @@
-import { FC, Fragment, useEffect, useState } from "react";
-import { GetServerSideProps, Metadata } from "next";
+import { FC, Fragment, useEffect, useState, useRef } from "react";
+import { GetServerSideProps } from "next";
 import { courseServices } from "@/services/serviceGenerator";
 import { Course } from "@/types/course.type";
 import { NullProof } from "@/helpers/appFunction";
@@ -11,13 +11,14 @@ import ContentWrapper from "@/layouts/client/contentWrapper";
 import Link from "next/link";
 import Image from "next/image";
 import GenerateMetaData from "@/components/GenerateMetaData";
+import ReactPlayer from "react-player";
 
 type VideoUrl = {
   video: string;
   thumbnailUrl?: string;
   description: string;
   file?: string;
-}
+};
 
 const DetailCoursePage: FC<Course> = (data) => {
   const OPTIONS: EmblaOptionsType = {};
@@ -28,15 +29,25 @@ const DetailCoursePage: FC<Course> = (data) => {
     file: "",
   });
 
+  // const iframeRef = useRef<HTMLIFrameElement>(null);
+
   useEffect(() => {
     if (data.video?.length > 0) {
       setVideoUrl(data.video[0]);
     }
   }, [data]);
 
+  // useEffect(() => {
+  //   console.log(iframeRef.current?.name, "videoUrl");
+  // }, [videoUrl]);
+
   return (
     <Fragment>
-      <GenerateMetaData title={NullProof({ input: data, params: "title" })} desc={`Detail ${NullProof({ input: data, params: "title" })}`} thumbnail={data.thumbnail}/>
+      <GenerateMetaData
+        title={NullProof({ input: data, params: "title" })}
+        desc={`Detail ${NullProof({ input: data, params: "title" })}`}
+        thumbnail={data.thumbnail}
+      />
       <ContentWrapper>
         <Typography variant="h2" color="black">
           {NullProof({ input: data, params: "title" })}
@@ -49,6 +60,7 @@ const DetailCoursePage: FC<Course> = (data) => {
           options={OPTIONS}
           PreviewChild={({ item }) => (
             <iframe
+              name={item.video}
               className="rounded-xl"
               width="864"
               height="486"
@@ -92,7 +104,7 @@ const DetailCoursePage: FC<Course> = (data) => {
       </ContentWrapper>
     </Fragment>
   );
-}
+};
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.query;
@@ -108,9 +120,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   //     };
   // }
   try {
-    const { data: { data } } = await courseServices.getItem({ slug });
+    const {
+      data: { data },
+    } = await courseServices.getItem({ slug });
     return {
-      props: data
+      props: data,
     };
   } catch (error) {
     console.error("Error fetching data:", error);
