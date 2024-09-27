@@ -13,6 +13,10 @@ export default function Create() {
         method="POST"
         service={categoryServices}
         title="Create Category"
+        toastMessage={{
+          success: "Category created successfully",
+          error: "Failed to create category",
+        }}
       />
     </Fragment>
   );

@@ -1,5 +1,5 @@
 import { Order, OrderStatus, UpdateOrder } from "@/types/order.type";
-import { object, number, string, mixed } from "yup";
+import { object, number, string, mixed, ValidationError } from "yup";
 
 export const createOrderValidation = (payload: Order) => {
   const schema = object({
@@ -13,8 +13,11 @@ export const createOrderValidation = (payload: Order) => {
   try {
     const validatedData = schema.validateSync(payload, { abortEarly: false });
     return { validatedData, errors: null };
-  } catch (error: any) {
-    return { validatedData: null, errors: error.errors as string[] };
+  } catch (error) {
+    if (error instanceof ValidationError) {
+      return { validatedData: null, errors: error.errors };
+    }
+    return { validatedData: null, errors: ["An unexpected error occurred"] };
   }
 };
 
@@ -27,7 +30,10 @@ export const updateOrderValidation = (payload: UpdateOrder) => {
   try {
     const validatedData = schema.validateSync(payload, { abortEarly: false });
     return { validatedData, errors: null };
-  } catch (error: any) {
-    return { validatedData: null, errors: error.errors as string[] };
+  } catch (error) {
+    if (error instanceof ValidationError) {
+      return { validatedData: null, errors: error.errors };
+    }
+    return { validatedData: null, errors: ["An unexpected error occurred"] };
   }
 };

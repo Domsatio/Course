@@ -12,6 +12,10 @@ export default function Create() {
         inputList={FormInputList}
         method='POST'
         service={productServices}
+        toastMessage={{
+          success: 'Product created successfully',
+          error: 'Failed to create product'
+        }}
       />
     </div>
   )

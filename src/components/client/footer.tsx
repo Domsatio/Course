@@ -59,6 +59,10 @@ export const Footer = () => {
                 Contact Us
               </Typography>
             <FormInput
+              toastMessage={{ 
+                success: "Email sent successfully",
+                error: "Failed to send email"
+               }}
               method="POST"
               service={emailServices}
               inputList={InputList}

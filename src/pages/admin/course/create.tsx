@@ -12,6 +12,10 @@ export default function Create() {
         method="POST"
         service={courseServices}
         title="Create Course"
+        toastMessage={{
+          success: "Course created successfully",
+          error: "Failed to create course"
+        }}
       />
     </div>
   );

@@ -11,3 +11,9 @@ export type UpdateUser = {
   currentPassword?: string;
   newPassword?: string;
 };
+
+export interface GetUser extends User {
+  isSubscribed: boolean;
+  subscribeStart: string;
+  subscribeEnd: string;
+}

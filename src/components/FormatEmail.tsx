@@ -28,6 +28,7 @@ const main = {
 const container = {
   margin: "0 auto",
   width: "100%",
+  padding: "0px 4px",
 };
 
 const heading = {

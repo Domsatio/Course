@@ -54,7 +54,7 @@ export const FormInputList: InputListProps[] = [
     name: "discount",
     label: "Discount",
     type: "number",
-    validator: Yup.number().typeError('Input should be a number').optional().default(0),
+    validator: Yup.number().typeError('Input should be a number').optional(),
     value: 0,
     placeholder: "Input discount here",
     isRequired: false,

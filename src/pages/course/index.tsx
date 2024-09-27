@@ -1,4 +1,4 @@
-import PostCard from "@/components/client/CardItem";
+import CardItem from "@/components/client/CardItem";
 import { courseServices } from "@/services/serviceGenerator";
 import { Course } from "@/types/course.type";
 import { Typography } from "@material-tailwind/react";
@@ -107,7 +107,7 @@ const ClientCoursePage = () => {
           Array.from({ length: 6 }, (_, i) => <CardSkeleton key={i} />)
         ) : courses.length > 0 ? (
           courses.map((data: Course, index) => (
-            <PostCard
+            <CardItem
               key={index}
               props={{ ...data, href: `/course/${data.id}` }}
             />

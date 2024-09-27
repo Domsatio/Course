@@ -1,5 +1,4 @@
-import { AdminProfileMenuItems } from "@/constants/admin/ProfileMenuItems";
-import { ClientProfileMenuItems } from "@/constants/client/ProfileMenuItems";
+import { getProfileMenuItems } from "@/constants/ProfileMenuItems";
 import { ChevronDownIcon } from "@heroicons/react/24/solid";
 import { Button, Menu, MenuHandler, MenuItem, MenuList, Typography } from "@material-tailwind/react";
 import { signOut, useSession } from "next-auth/react";
@@ -16,15 +15,15 @@ export const ProfileMenu = () => {
 
   if (session?.user.role === "ADMIN" && !pathname.startsWith("/admin")) {
     return (
-        <Link href="/admin/dashboard">
-          <Button size="sm" variant="outlined" className="rounded-full">
-              Admin Panel
-          </Button>
-        </Link>
+      <Link href="/admin/dashboard">
+        <Button size="sm" variant="outlined" className="rounded-full">
+          Admin Panel
+        </Button>
+      </Link>
     )
   }
 
-  const ProfileMenuItems = pathname.startsWith("/admin") ? AdminProfileMenuItems : ClientProfileMenuItems;
+  const ProfileMenuItems = getProfileMenuItems(pathname);
 
   return (
     <Menu open={isMenuOpen} handler={setIsMenuOpen} placement="bottom-end">

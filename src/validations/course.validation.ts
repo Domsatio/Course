@@ -1,5 +1,5 @@
 import { Course, UpdateCourse } from "@/types/course.type";
-import { object, string, array, boolean } from "yup";
+import { object, string, array, boolean, ValidationError } from "yup";
 
 export const createCourseValidation = (payload: Course) => {
   const schema = object({
@@ -21,8 +21,11 @@ export const createCourseValidation = (payload: Course) => {
   try {
     const validatedData = schema.validateSync(payload, { abortEarly: false });
     return { validatedData, errors: null };
-  } catch (error: any) {
-    return { validatedData: null, errors: error.errors as string[] };
+  } catch (error) {
+    if (error instanceof ValidationError) {
+      return { validatedData: null, errors: error.errors };
+    }
+    return { validatedData: null, errors: ["An unexpected error occurred"] };
   }
 };
 
@@ -45,7 +48,10 @@ export const updateCourseValidation = (payload: UpdateCourse) => {
   try {
     const validatedData = schema.validateSync(payload, { abortEarly: false });
     return { validatedData, errors: null };
-  } catch (error: any) {
-    return { validatedData: null, errors: error.errors as string[] };
+  } catch (error) {
+    if (error instanceof ValidationError) {
+      return { validatedData: null, errors: error.errors };
+    }
+    return { validatedData: null, errors: ["An unexpected error occurred"] };
   }
 };
