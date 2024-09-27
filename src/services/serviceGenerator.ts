@@ -6,6 +6,7 @@ import { Order, UpdateOrder } from "@/types/order.type";
 import { Post, UpdatePost } from "@/types/post.type";
 import { Product, UpdateProduct } from "@/types/product.type";
 import { UpdateUser, User } from "@/types/user.type";
+import { Email } from "@/types/email.type";
 
 const tokenHeader = (token: string) => ({
   headers: { Authorization: `Bearer ${token}` },
@@ -31,6 +32,7 @@ export const orderServices = createService<Order, UpdateOrder>("order");
 export const postServices = createService<Post, UpdatePost>("post");
 export const productServices = createService<Product, UpdateProduct>("product");
 export const userServices = createService<User, UpdateUser>("user");
+export const emailServices = createService<Email, Email>("email");
 export const addressServices = createService<UpdateAddress, UpdateAddress>(
   "address"
 );

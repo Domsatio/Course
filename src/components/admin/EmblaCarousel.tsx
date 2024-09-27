@@ -4,15 +4,17 @@ import React, {
   useEffect,
   useState,
   useMemo,
-  memo,
+  useRef,
 } from "react";
 import { EmblaOptionsType } from "embla-carousel";
 import useEmblaCarousel from "embla-carousel-react";
+import ReactPlayer from "react-player";
+import { se } from "date-fns/locale";
 
 type PropTypeUmblaCarousel = {
   slides: any[];
   options?: EmblaOptionsType;
-  PreviewChild: (item: any) => ReactNode;
+  PreviewChild?: (item: any) => ReactNode;
   ThumChild: ({
     item,
     onClick,
@@ -31,6 +33,7 @@ const EmblaCarousel: React.FC<PropTypeUmblaCarousel> = (props) => {
     containScroll: "keepSnaps",
     dragFree: true,
   });
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const onThumbClick = useCallback(
     (index: number) => {
@@ -58,10 +61,14 @@ const EmblaCarousel: React.FC<PropTypeUmblaCarousel> = (props) => {
   }, [selectedIndex]);
 
   const SlideMemo = useMemo(() => {
+
     return (
       <>
         <div className="overflow-hidden" ref={emblaMainRef}>
-          <div className="flex touch-pan-y touch-pinch-zoom -ml-4">
+          <div
+            ref={iframeRef}
+            className="flex touch-pan-y touch-pinch-zoom -ml-4"
+          >
             {Array.isArray(slides) &&
               slides.map((item, index: number) => (
                 <div
@@ -69,37 +76,46 @@ const EmblaCarousel: React.FC<PropTypeUmblaCarousel> = (props) => {
                   key={index}
                 >
                   <div className="flex items-center justify-center select-none">
-                    <PreviewChild item={item} />
+                    {PreviewChild ? (
+                      <PreviewChild item={item} />
+                    ) : (
+                      <ReactPlayer
+                        url={`https://www.youtube.com/embed/${item.video || ""}`}
+                        controls={true} 
+                        playing={selectedIndex === index}
+                        width="864"
+                        height="486"
+                      />
+                    )}
                   </div>
                 </div>
-              ))
-            }
+              ))}
           </div>
         </div>
         <div className="mt-3">
           <div className="overflow-hidden" ref={emblaThumbsRef}>
             <div
-              className={`flex justify-center ${Array.isArray(slides) && slides.length > 6 && "ml-[75px]"
-                } gap-2`}
+              className={`flex justify-center ${
+                Array.isArray(slides) && slides.length > 6 && "ml-[75px]"
+              } gap-2`}
             >
               {Array.isArray(slides) &&
                 slides.map((item, index: number) => (
                   <React.Fragment key={index}>
-                    <ThumChild item={item} onClick={() => onThumbClick(index)} />
+                    <ThumChild
+                      item={item}
+                      onClick={() => onThumbClick(index)}
+                    />
                   </React.Fragment>
                 ))}
             </div>
           </div>
         </div>
       </>
-    )
-  }, [slides, emblaMainApi, emblaThumbsApi])
+    );
+  }, [slides, emblaMainApi, emblaThumbsApi, selectedIndex]);
 
-  return (
-    <div className="max-w-full m-auto">
-      {SlideMemo}
-    </div>
-  );
+  return <div className="max-w-full m-auto">{SlideMemo}</div>;
 };
 
 export default EmblaCarousel;

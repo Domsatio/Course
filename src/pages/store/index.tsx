@@ -1,9 +1,9 @@
-import StoreCard from "@/components/client/StoreCard"
+import StoreCard from "@/components/client/StoreCard";
 import { FetchDataHook } from "@/hooks/fetchDataHook";
 import { PaginationHook } from "@/hooks/paginationHook";
 import { productServices } from "@/services/serviceGenerator";
 import { GetProduct } from "@/types/product.type";
-import { Typography } from "@material-tailwind/react"
+import { Typography } from "@material-tailwind/react";
 import React, { useEffect, useState } from "react";
 import Search from "@/components/client/search";
 import { SearchHook } from "@/hooks/searchHook";
@@ -19,13 +19,16 @@ type Params = {
   take: number | string;
   search?: string;
   filter?: any;
-}
+};
 
 const ClientStorePage = () => {
   const [products, setProducts] = useState<Omit<GetProduct, "createdAt">[]>([]);
-  const { activePage, totalPages, take, setActivePage, handleSetTotalPages } = PaginationHook({ initLimit: 12 });
+  const { activePage, totalPages, take, setActivePage, handleSetTotalPages } =
+    PaginationHook({ initLimit: 12 });
   const { isLoad, setIsLoad } = FetchDataHook();
-  const { debounceValue, searchQuery, setSearchQuery } = SearchHook({ delay: 1000 });
+  const { debounceValue, searchQuery, setSearchQuery } = SearchHook({
+    delay: 1000,
+  });
   const router = useRouter();
 
   const getProductsData = async () => {
@@ -36,12 +39,14 @@ const ClientStorePage = () => {
       search: getQueryParams()["search"] ? getQueryParams()["search"] : "",
     };
     setIsLoad(true);
-    await productServices.getItems(productParams).then(({ data: { totalData, data } }) => {
-      setProducts(data);
-      handleSetTotalPages(totalData);
-    })
+    await productServices
+      .getItems(productParams)
+      .then(({ data: { totalData, data } }) => {
+        setProducts(data);
+        handleSetTotalPages(totalData);
+      });
     setIsLoad(false);
-  }
+  };
 
   const handleSetSearchQuery = async (value: string) => {
     await router.replace({
@@ -49,7 +54,7 @@ const ClientStorePage = () => {
       query: { search: value },
     });
     setSearchQuery(value);
-  }
+  };
 
   useEffect(() => {
     getProductsData();
@@ -58,27 +63,28 @@ const ClientStorePage = () => {
   return (
     <ContentWrapper className="bg-transparent">
       <GenerateMetaData title="Store" desc="" />
-      <Typography variant="h2" color="black" placeholder='Blog Page'>
+      <Typography variant="h2" color="black" placeholder="Blog Page">
         Store
       </Typography>
       <Search
         onChange={(e) => handleSetSearchQuery(e.target.value)}
         value={searchQuery || ""}
       />
-      <div className={cn("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6", { 'place-items-center lg:place-items-start': !isLoad })}>
-        {isLoad ? Array.from({ length: 12 }).map((_, index) => (
-          <StoreSkeletonCard key={index} />
-        )) :
-          <React.Fragment>
-            {products.map((product) =>
+      <div
+        className={cn("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6", {
+          "place-items-center lg:place-items-start": !isLoad,
+        })}
+      >
+        {isLoad
+          ? Array.from({ length: 12 }).map((_, index) => (
+              <StoreSkeletonCard key={index} />
+            ))
+          : products.map((product) => (
               <StoreCard key={product.id} {...product} />
-            )}
-          </React.Fragment>
-        }
-
+            ))}
       </div>
     </ContentWrapper>
-  )
-}
+  );
+};
 
-export default ClientStorePage
+export default ClientStorePage;
