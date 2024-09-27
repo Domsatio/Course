@@ -34,7 +34,13 @@ export const userServices = createService<User, UpdateUser>("user");
 export const addressServices = createService<UpdateAddress, UpdateAddress>(
   "address"
 );
+
 export const dashboardServices = {
   getDashboard: (token: string) =>
     instance.get("/api/dashboard", tokenHeader(token)),
+};
+
+export const resetPasswordServices = {
+  resetPassword: (token: string, password: string) =>
+    instance.post("/api/auth/reset-password", { password }, tokenHeader(token)),
 };
