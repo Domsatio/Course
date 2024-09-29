@@ -19,7 +19,7 @@ export default async function handler(
     req.body.id = uuidv4();
     const { userId } = req.query;
 
-    if (token.id !== userId) {
+    if (token.id !== userId && !token) {
       res.status(403).json({ message: "Forbidden" });
       return;
     }
@@ -32,9 +32,9 @@ export default async function handler(
         .status(422)
         .send({ status: false, statusCode: 422, message: errors });
     }
-
+    const id = userId || token.id;
     try {
-      await upsertAddress(userId as string, validatedData);
+      await upsertAddress(id as string, validatedData);
       console.log("update address success");
       return res.status(201).send({
         status: true,
@@ -54,14 +54,17 @@ export default async function handler(
     }
 
     const { userId } = req.query;
+    console.log(token.id);
+    
 
-    if (token.id !== userId) {
+    if (token.id !== userId && !token.id) {
       res.status(403).json({ message: "Forbidden" });
       return;
     }
 
+    const id = userId || token.id;
     try {
-      const data = await getOneAddress(userId as string);
+      const data = await getOneAddress((id as string));
       console.info("Get address success");
       return res.status(200).send({
         status: true,

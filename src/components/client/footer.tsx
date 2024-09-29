@@ -69,7 +69,7 @@ export const Footer = () => {
               isUseCancelButton={false}
               redirect={false}
               customCard={(children: React.ReactNode) => <div>{children}</div>}
-              CustomButtonSubmit={(loading) =>
+              customButtonSubmit={(loading) =>
                 <Button
                   type="submit"
                   color="green"
