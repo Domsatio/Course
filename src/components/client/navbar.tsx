@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Navbar,
   Typography,
@@ -11,6 +11,7 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { ProfileMenu } from "../ProfileMenu";
 import { NavRoutes } from "@/constants/client/NavRoutes";
+import { NavCart } from "./NavCart";
 
 {/* <ProfileMenu /> */}
 
@@ -25,7 +26,7 @@ const NavList = ({onClick}:{onClick?:()=> void}) => (
 );
 
 export default function ComplexNavbar() {
-  const [isNavOpen, setIsNavOpen] = React.useState(false);
+  const [isNavOpen, setIsNavOpen] = useState(false);
   const [isScrollingUp, setIsScrollingUp] = useState(false);
   const [currentPosition, setCurrentPosition] = useState(0);
   const { data: session } = useSession();
@@ -88,8 +89,13 @@ export default function ComplexNavbar() {
           <Bars2Icon className="h-6 w-6" />
         </IconButton>
 
+
+
         {session ? (
-          <ProfileMenu />
+          <div className=" flex items-center gap-3 lg:gap-5 cursor-pointer">
+            <NavCart />
+            <ProfileMenu />
+          </div>
         ) : (
           <Link href="/sign-in">
             <Button

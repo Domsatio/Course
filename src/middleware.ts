@@ -19,7 +19,13 @@ export default withAuth(async function middleware(req: NextRequestWithAuth) {
     }
   }
 
+  if (pathname.startsWith("/cart")) {
+    if (!token || token?.role !== "USER") {
+      return NextResponse.redirect(new URL("/sign-in", req.url));
+    }
+  }
+
   return NextResponse.next();
 });
 
-export const config = { matcher: ["/admin/:path*", "/account/:path*"] };
+export const config = { matcher: ["/admin/:path*", "/account/:path*", "/cart/:path*"] };

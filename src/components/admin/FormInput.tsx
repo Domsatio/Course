@@ -8,7 +8,6 @@ import {
   Button,
   Dialog,
   DialogHeader,
-  DialogBody,
   Card,
   CardHeader,
   CardBody,
@@ -16,9 +15,9 @@ import {
 } from "@material-tailwind/react";
 import { getQueryParams, convertStringToBoolean } from "@/helpers/appFunction";
 import { children } from "@material-tailwind/react/types/components/accordion";
-import { ArrowLeftIcon, PlusIcon } from "@heroicons/react/24/solid";
+import { ArrowLeftIcon, PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { cn } from "@/libs/cn";
-import toast from 'react-hot-toast';
+import toast from "react-hot-toast";
 
 interface FormInputProps {
   title?: string;
@@ -26,23 +25,25 @@ interface FormInputProps {
   method: "POST" | "PUT" | "GET";
   id?: string;
   service: any;
+  serviceGet?: any;
   onSubmit?: (data?: any) => void;
   onSuccess?: (data: any) => void;
   onChange?: (e: any) => void;
   asModal?: {
     isOpen: boolean;
     handler: (value: boolean) => void | undefined;
+    isUseCloseButton?: boolean;
   };
   isFilter?: boolean;
   redirect?: string | false;
   isUseHeader?: boolean;
   customCard?: (child: children) => JSX.Element;
   isUseCancelButton?: boolean;
-  CustomButtonSubmit?: (loading: boolean) => React.ReactNode;
+  customButtonSubmit?: (loading: boolean) => React.ReactNode;
   toastMessage: {
     success: string;
     error: string;
-  }
+  };
 }
 
 export const FormInput = ({
@@ -50,6 +51,7 @@ export const FormInput = ({
   inputList,
   method,
   service,
+  serviceGet,
   id = "",
   onSubmit,
   onSuccess,
@@ -60,10 +62,11 @@ export const FormInput = ({
   isUseHeader = true,
   customCard,
   isUseCancelButton = true,
-  CustomButtonSubmit,
+  customButtonSubmit,
   toastMessage,
 }: FormInputProps) => {
   const [loading, setLoading] = useState(false);
+  const [errorFetch, setErrorFetch] = useState(false);
   const router = useRouter();
 
   const initialValues = inputList.reduce((acc: Record<string, any>, item) => {
@@ -99,13 +102,13 @@ export const FormInput = ({
       setLoading(true);
       let finalValues = values;
       const listInputRemoveOnSubmit = inputList.filter(
-        (input) => input.removeOnSubmit === true
+        (input) => input.removeOnSubmit === true || input.type === "component" || input.type === 'label'
       );
       listInputRemoveOnSubmit.forEach((input) => {
         delete finalValues[input.name];
       });
       try {
-        let response;
+        let response 
         if (method === "POST") {
           response = await service.addItem(finalValues);
         } else if (method === "PUT") {
@@ -143,7 +146,8 @@ export const FormInput = ({
         }
 
         if (response?.data) {
-          onSuccess?.(response.data.data);
+          
+          onSuccess?.(finalValues);
         }
         if ((method === "POST" || method === "PUT") && !isFilter) {
           formik.resetForm();
@@ -154,11 +158,10 @@ export const FormInput = ({
         if (typeof redirect === "string") {
           router.push(redirect);
         } else if (redirect === false) {
-          return
+          return;
         } else if (method === "POST" || method === "PUT") {
           router.back();
         }
-
       } catch (error) {
         toast.error(toastMessage.error);
         console.error("Form submission error:", error);
@@ -182,9 +185,10 @@ export const FormInput = ({
   // a function to take the data to be edited if method is PUT
   const fetchData = async () => {
     try {
-      const {
-        data: { data },
-      } = await service.getItems({ id });
+      const {data: { data }} =  serviceGet
+        ? await serviceGet.getItems({id})
+        : await service.getItems({ id });
+
       // set data as required by the form input
       Object.keys(data).forEach((key) => {
         const input = inputList.filter((input) => input.name === key);
@@ -199,14 +203,18 @@ export const FormInput = ({
           formik.setFieldValue(key, ArrayValue);
         }
       });
+      setErrorFetch(false);
     } catch (error) {
       console.error("Form submission error:", error);
+      setErrorFetch(true);
     }
   };
 
   useEffect(() => {
-    if (method === "PUT") {
-      if (!id) return;
+    if(asModal?.isOpen !== false && method === "PUT") {
+      fetchData();
+    } 
+    else if (method === "PUT" || serviceGet) {
       fetchData();
     } else if (isFilter) {
       // get query parameter from url and set it to formik values
@@ -228,7 +236,7 @@ export const FormInput = ({
         }
       });
     }
-  }, [method, id]);
+  }, [method, id, asModal?.isOpen]);
 
   const resetForm = () => {
     formik.resetForm();
@@ -254,11 +262,11 @@ export const FormInput = ({
         const checkIsDisabled =
           listWatchInput.length > 0
             ? listWatchInput.some(
-              (item) =>
-                formik.values[item] === "" ||
-                (Array.isArray(formik.values[item]) &&
-                  formik.values[item].length === 0)
-            )
+                (item) =>
+                  formik.values[item] === "" ||
+                  (Array.isArray(formik.values[item]) &&
+                    formik.values[item].length === 0)
+              )
             : false;
         let option_query = input?.option?.query ? input.option.query : null;
         if (option_query && listWatchInput.length > 0) {
@@ -274,17 +282,26 @@ export const FormInput = ({
               }
             });
             return buildQueryString(queryObj);
-          }
-          option_query = updateQueryString(listWatchInput, option_query, formik.values);
+          };
+          option_query = updateQueryString(
+            listWatchInput,
+            option_query,
+            formik.values
+          );
         }
 
         if (input.type === "component") {
           return (
-            <div key={index} className={cn('w-full', input.className)}>
-              <label className="after:content-['*'] after:text-red-600 after:ml-1">{input.label}</label>
+            <div key={index} className={cn("w-full", input.className)}>
+              <label className="after:content-['*'] after:text-red-600 after:ml-1">
+                {input.label}
+              </label>
               {formik.values[input.name] &&
                 formik.values[input.name]?.map((item: any, i: number) => (
-                  <div key={i} className="flex flex-col p-5 mt-2 rounded-lg border border-gray-300">
+                  <div
+                    key={i}
+                    className="flex flex-col p-5 mt-2 rounded-lg border border-gray-300"
+                  >
                     {/* setup input component */}
                     {input.component?.map(
                       (component: InputListProps, ii: number) => (
@@ -310,10 +327,10 @@ export const FormInput = ({
                               input.name
                             ] as FormikErrors<any>[][0])
                               ? (
-                                formik.errors[
-                                input.name
-                                ] as FormikErrors<any>[]
-                              )[i]?.[component.name]?.toString()
+                                  formik.errors[
+                                    input.name
+                                  ] as FormikErrors<any>[]
+                                )[i]?.[component.name]?.toString()
                               : ""
                           }
                         />
@@ -371,11 +388,11 @@ export const FormInput = ({
             option={
               option_query
                 ? {
-                  ...input.option,
-                  query: option_query,
-                  type: input.option?.type || "select",
-                  id: input.option?.id || "",
-                }
+                    ...input.option,
+                    query: option_query,
+                    type: input.option?.type || "select",
+                    id: input.option?.id || "",
+                  }
                 : input.option
             }
             onChange={(data: any) => {
@@ -389,9 +406,17 @@ export const FormInput = ({
   );
 
   const Form = () => (
-    <form onSubmit={formik.handleSubmit} className='w-full flex flex-wrap gap-x-2'>
-      {generateInputForm()}
-      <div className="w-full flex justify-end items-center gap-2">
+    <form
+      onSubmit={formik.handleSubmit}
+      className="relative flex flex-col p-4"
+    >
+      {errorFetch && (
+        <ModalError onClick={() => fetchData()} />
+      )}
+      <div className={cn("flex flex-row flex-wrap justify-between", {'max-h-[550px] overflow-y-scroll px-3': asModal})}>
+        {generateInputForm()}
+      </div>
+      <div className={cn("w-full flex justify-end items-center gap-2", {'mt-5': asModal})}>
         {isUseCancelButton && (
           <Button
             variant="text"
@@ -408,8 +433,8 @@ export const FormInput = ({
             Cancel
           </Button>
         )}
-        {CustomButtonSubmit ? (
-          CustomButtonSubmit(loading)
+        {customButtonSubmit ? (
+          customButtonSubmit(loading)
         ) : (
           <Button
             type="submit"
@@ -427,17 +452,12 @@ export const FormInput = ({
 
   if (asModal) {
     return (
-      <Dialog open={asModal.isOpen} handler={() => asModal.handler(false)}>
-        {isUseHeader && <DialogHeader color="blue">{title}</DialogHeader>}
-        <DialogBody>
-          {customCard ? (
-            customCard(
-              Form()
-            )
-          ) : (
-            Form()
-          )}
-        </DialogBody>
+      <Dialog open={asModal.isOpen} handler={() => asModal.handler(true)}>
+        {isUseHeader && <DialogHeader color="blue" className="relative flex justify-between">
+          {title}
+          <XMarkIcon className="h-5 w-5 cursor-pointer" onClick={() => asModal.handler(false)} />
+        </DialogHeader>}
+        {customCard ? customCard(Form()) : Form()}
       </Dialog>
     );
   }
@@ -445,29 +465,39 @@ export const FormInput = ({
   return (
     <Fragment>
       {customCard ? (
-        customCard(
-          Form()
-        )
+        customCard(Form())
       ) : (
-        <Card placeholder='' className="mt-6">
+        <Card placeholder="" className="mt-6">
           {isUseHeader && (
             <CardHeader color="blue" className="p-3">
               <div className="flex items-center gap-3">
-                <IconButton
-                  variant="text"
-                  onClick={() => router.back()}
-                >
+                <IconButton variant="text" onClick={() => router.back()}>
                   <ArrowLeftIcon className="h-5 w-5 text-white" />
                 </IconButton>
                 <h1>{title}</h1>
               </div>
             </CardHeader>
           )}
-          <CardBody>
-            {Form()}
-          </CardBody>
+          <CardBody>{Form()}</CardBody>
         </Card>
       )}
-    </Fragment>
+      </Fragment>
   );
+};
+
+
+interface ModalErrorProps {
+  onClick: () => void;
 }
+
+const ModalError = ({ onClick }: ModalErrorProps) => (
+ <div className="absolute z-10 flex justify-center items-center bg-white opacity-90 top-0 bottom-0 right-0 left-0 w-full h-full">
+    <div className="bg-transparent flex flex-col items-center">
+      <h1 className="text-2xl font-bold">Error</h1>
+      <p className="text-lg">Failed get data</p>
+      <Button onClick={onClick} color="blue" className="mt-3">
+        Refresh Form
+      </Button>
+    </div>
+ </div>
+);
