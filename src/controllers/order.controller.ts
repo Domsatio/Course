@@ -9,7 +9,6 @@ export const getOrders = async (skip: number = 0, take: number = 5) => {
       skip,
       take,
       include: {
-        product: true,
         user: true,
       },
       orderBy: {
@@ -25,7 +24,6 @@ export const getOrder = async (id: string) => {
   return prisma.order.findUnique({
     where: { id },
     include: {
-      product: true,
       user: true,
     },
   });

@@ -5,7 +5,7 @@ import {
   InputList,
 } from "@/constants/client/InputLists/checkout.InputList";
 import { addressServices } from "@/services/serviceGenerator";
-import { Button, Checkbox } from "@material-tailwind/react";
+import { Button } from "@material-tailwind/react";
 import { useState } from "react";
 import { GetServerSideProps } from "next";
 import cookie from "cookie";
@@ -15,7 +15,6 @@ import { GetCarts } from "@/types/cart.type";
 import { ConvertCurrency } from "@/helpers/appFunction";
 
 export default function Checkout(data: any) {
-  console.log(data);
   const [isOpenAddress, setIsOpenAddress] = useState<boolean>(false);
   const [address, setAddress] = useState<UpdateAddress>(data.address);
   const [carts, setCarts] = useState(data.carts);

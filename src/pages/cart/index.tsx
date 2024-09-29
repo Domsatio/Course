@@ -12,11 +12,22 @@ import toast from 'react-hot-toast';
 import { ConvertCurrency } from '@/helpers/appFunction';
 import Link from 'next/link';
 
-export default function index(data: any) {
+export default function Index({data}: any) {
   const [loading, setLoading] = useState<boolean>(false);
-  const [carts, setCarts] = useState<GetCarts[]>(data.data);
+  const [carts, setCarts] = useState<GetCarts[]>(data);
   const [selectedCart, setSelectedCart] = useState<string[]>([]);
   const [totalPrice, setTotalPrice] = useState<number>(0);
+
+  // const getCarts = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const { data: {data}} = await cartServices.getItems();
+  //     setCarts(data);
+  //   } catch (error) {
+  //     console.error("Error getting cart:", error);
+  //   }
+  //   setLoading(false);
+  // }
 
   const handleDeleteSelectedCart = async () => {
     setLoading(true);
@@ -55,6 +66,10 @@ export default function index(data: any) {
       }, 0)
     );
   }, [selectedCart]);
+
+  // useEffect(() => {
+  //   getCarts();
+  // }, []);
   
   return (
     <ContentWrapper>

@@ -32,12 +32,10 @@ const HomeView = () => {
             </h2>
           </div>
           <div className="lg:basis-1/2">
-            <p className="text-xl text-black">
-              Step into our digital classroom and unlock limitless
-              opportunities. Don't just learn, become a part of the future of
-              education. Welcome to the modern renaissance era where learning
-              and progress meet.
-            </p>
+          <p className="text-xl text-black">
+  Step into our digital classroom and unlock limitless opportunities. Don&apos;t just learn, become a part of the future of education. Welcome to the modern renaissance era where learning and progress meet.
+</p>
+
           </div>
         </div>
       </section>
@@ -92,7 +90,7 @@ const HomeView = () => {
             <p className="mt-10 w-full">
               Apart from courses, you also get access to a variety of products
               that <br /> can take your learning to another level. From learning
-              kits to tools <br /> and accessories, we've everything covered.
+              kits to tools <br /> and accessories, we&apos;ve everything covered.
             </p>
             <p className="mt-10 w-full">
               Subscribe to unlock the wealth of knowledge. Damage the shackles{" "}
@@ -116,7 +114,7 @@ const HomeView = () => {
             Give your learning journey a powerful boost. Gear up to <br />{" "}
             become a part of the DomClub family. Click below –{" "}
           </p>
-          <p className="mt-2.5">let's ignite the spark of knowledge.</p>
+          <p className="mt-2.5">let&apos;s ignite the spark of knowledge.</p>
           <button className="self-stretch px-4 py-3 mt-6 text-sm leading-4 text-white bg-black rounded-lg min-h-[40px]">
             Register Now
           </button>
