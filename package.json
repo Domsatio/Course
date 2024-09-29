@@ -41,6 +41,7 @@
     "react-player": "^2.10.1",
     "react-quill": "^2.0.0",
     "react-share": "^5.1.0",
+    "react-webcam": "^7.2.0",
     "supabase": "^1.192.5",
     "tailwind-merge": "^2.5.2",
     "uploadthing": "^6.13.2",

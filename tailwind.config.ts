@@ -11,6 +11,9 @@ module.exports = withMT({
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      flexBasis: {
+        '1/2': '49%',
+      }
     },
   },
   plugins: [],

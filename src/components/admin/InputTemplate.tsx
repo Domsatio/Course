@@ -218,8 +218,8 @@ export const InputListRenderer = ({
   };
 
   return (
-    <div className={cn('relative w-full flex flex-col gap-2 mb-3', {'hidden': hide}, className)}>
-      {label && <label className={`form-label ${isRequired && "after:content-['*'] after:text-red-600 after:ml-1"}`}>
+    <div className={cn('relative basis-full flex flex-col gap-2 mb-3', {'hidden': hide}, className)}>
+      {label && <label className={cn('form-label text-black', {"after:content-['*'] after:text-red-600 after:ml-1": isRequired})}>
         {label}
       </label>}
       {(type === "input" || type === "url") &&
@@ -428,10 +428,6 @@ export const InputListRenderer = ({
             />
           </div>
         ))}
-
-      {type === "label" && (
-        <label className={cn('form-label', className)}>{value}</label>
-      )}
       {type === "component" && <div className={className}>{value}</div>}
       {(type === "image" || type === "file") && (
         <Fragment>

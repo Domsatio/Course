@@ -7,6 +7,7 @@ import { Post, UpdatePost } from "@/types/post.type";
 import { Product, UpdateProduct } from "@/types/product.type";
 import { UpdateUser, User } from "@/types/user.type";
 import { Email } from "@/types/email.type";
+import { CreateCart, UpdateCart } from "@/types/cart.type";
 
 const tokenHeader = (token: string) => ({
   headers: { Authorization: `Bearer ${token}` },
@@ -36,7 +37,7 @@ export const emailServices = createService<Email, Email>("email");
 export const addressServices = createService<UpdateAddress, UpdateAddress>(
   "address"
 );
-
+export const cartServices = createService<CreateCart, UpdateCart>("cart");
 export const dashboardServices = {
   getDashboard: (token: string) =>
     instance.get("/api/dashboard", tokenHeader(token)),

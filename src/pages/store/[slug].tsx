@@ -9,6 +9,9 @@ import GenerateMetaData from "@/components/GenerateMetaData";
 import ModalShare from "@/components/ModalShare";
 import ContentWrapper from "@/layouts/client/contentWrapper";
 import ButtonShare from "@/components/client/ButtonShare";
+import { useRouter } from "next/router";
+import { cartServices } from "@/services/serviceGenerator";
+import toast from "react-hot-toast";
 
 const FinalPrice = ({
   price,
@@ -39,10 +42,26 @@ const FinalPrice = ({
   );
 };
 
-const DetailStore: FC<Omit<GetProduct, "id" | "createdAt" | "updatedAt">> = (
+const DetailStore: FC<Omit<GetProduct, "createdAt" | "updatedAt">> = (
   data
 ) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const { push } = useRouter();
+
+  const addToCart = async () => {
+    try {
+      const { data: cart } = await cartServices.addItem({
+        productId: data.id,
+        quantity: 1,
+      });
+      toast.success("Added to cart");
+      console.log("Cart:", cart);
+    } catch (error) {
+      toast.error("Failed to add to cart");
+      console.error("Error adding to cart:", error);
+    }
+  };
+
   return (
     <Fragment>
       <GenerateMetaData title={data.name} desc={`Detail ${data.name}`} thumbnail={data.thumbnail} />
@@ -63,7 +82,9 @@ const DetailStore: FC<Omit<GetProduct, "id" | "createdAt" | "updatedAt">> = (
           </Typography>
           <FinalPrice price={data.price} discount={data.discount} />
           <div className="flex items-center gap-3">
-            <Button className="rounded-full px-10 py-[14px]">Buy</Button>
+            <Button className="rounded-full px-8 py-[14px]" onClick={() => push('/cart/check-out')}>Buy</Button>
+            <Button className="rounded-full px-8 py-[14px]" onClick={() => addToCart()}>+ Cart</Button>
+
             <ButtonShare name="share" setIsOpen={setIsOpen} />
             <ModalShare
               isOpen={isOpen}

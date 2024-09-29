@@ -10,3 +10,5 @@ export default function ContentWrapper({ className, children }: { className?: st
     </main>
   );
 }
+
+// lg:bg-[#f4f4f4]
