@@ -17,6 +17,10 @@ const nextConfig = {
       },
       {
         protocol: "https",
+        hostname: "cdn.builder.io",
+      },
+      {
+        protocol: "https",
         hostname: "utfs.io",
         port: "",
       },

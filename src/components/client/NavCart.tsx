@@ -52,11 +52,11 @@ export function NavCart() {
   return (
     <Menu open={openMenu} handler={setOpenMenu} allowHover>
       <MenuHandler>
-        <Button className="text-black bg-transparent shadow-none outline-none hover:shadow-none p-0">
+        <Link href="/cart">
           <Badge content={totalCart} withBorder placement="top-end">
-            <ShoppingCartIcon className="h-7 w-7" onClick={() => push('/cart')} />
+            <ShoppingCartIcon className="h-7 w-7" />
           </Badge>
-        </Button>
+        </Link>
       </MenuHandler>
       <MenuList className="hidden w-[36rem] gap-3 overflow-visible lg:grid">
         <ul className="col-span-4 flex w-full flex-col gap-1">

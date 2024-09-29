@@ -1,6 +1,7 @@
 import { Typography } from "@material-tailwind/react";
 import React from "react";
 import ContentWrapper from "@/layouts/client/contentWrapper";
+import Image from "next/image";
 
 interface CourseItem {
   year: string;
@@ -32,10 +33,12 @@ const HomeView = () => {
             </h2>
           </div>
           <div className="lg:basis-1/2">
-          <p className="text-xl text-black">
-  Step into our digital classroom and unlock limitless opportunities. Don&apos;t just learn, become a part of the future of education. Welcome to the modern renaissance era where learning and progress meet.
-</p>
-
+            <p className="text-xl text-black">
+              Step into our digital classroom and unlock limitless
+              opportunities. Don&apos;t just learn, become a part of the future
+              of education. Welcome to the modern renaissance era where learning
+              and progress meet.
+            </p>
           </div>
         </div>
       </section>
@@ -90,7 +93,8 @@ const HomeView = () => {
             <p className="mt-10 w-full">
               Apart from courses, you also get access to a variety of products
               that <br /> can take your learning to another level. From learning
-              kits to tools <br /> and accessories, we&apos;ve everything covered.
+              kits to tools <br /> and accessories, we&apos;ve everything
+              covered.
             </p>
             <p className="mt-10 w-full">
               Subscribe to unlock the wealth of knowledge. Damage the shackles{" "}
@@ -101,11 +105,13 @@ const HomeView = () => {
       </section>
       <section className="flex flex-col items-center px-20 pt-44 pb-24 text-base leading-6 text-center bg-white text-slate-900 max-md:px-5 max-md:pt-24 max-md:max-w-full">
         <div className="flex flex-col items-center max-w-full w-[509px]">
-          <img
+          <Image
             loading="lazy"
             src="https://cdn.builder.io/api/v1/image/assets/TEMP/54dc50573ed938f5c0e1edfaced4f371b276a250174256d7a2b634143bb52687?placeholderIfAbsent=true&apiKey=5dda444a603d48518e58263dc5959bda"
             alt="Call to action illustration"
             className="object-contain max-w-full aspect-[3.34] stroke-[10px] stroke-slate-900 w-[167px]"
+            height={167}
+            width={557}
           />
           <h2 className="self-stretch mt-24 text-5xl font-bold leading-[60px] max-md:mt-10 max-md:max-w-full max-md:text-4xl">
             Ready to Discover?
@@ -131,16 +137,16 @@ const HomeView = () => {
                 key={index}
                 className="flex overflow-hidden items-center flex-wrap gap-4 lg:gap-9 py-0.5 mt-2.5 w-full max-md:max-w-full"
               >
-                <div className="leading-8 text-sky-950">
-                  {item.year}
-                </div>
+                <div className="leading-8 text-sky-950">{item.year}</div>
                 <div className="flex flex-wrap flex-auto gap-3 items-center leading-9 text-black">
                   <div className="grow self-stretch my-auto">{item.title}</div>
-                  <img
+                  <Image
                     loading="lazy"
                     src="https://cdn.builder.io/api/v1/image/assets/TEMP/af75d4b8cc7401d1bebdaf0ae6837ad07b9815ef8d3758c94875b8341b00cc8d?placeholderIfAbsent=true&apiKey=5dda444a603d48518e58263dc5959bda"
                     alt="Course icon"
                     className="object-contain shrink-0 self-stretch aspect-square w-[50px]"
+                    height={50}
+                    width={50}
                   />
                 </div>
               </div>
@@ -150,18 +156,21 @@ const HomeView = () => {
       </section>
       <section className="flex overflow-hidden flex-col justify-center items-center lg:px-96 py-24 text-black px-5">
         <div className="flex flex-wrap gap-10 justify-center max-w-full min-h-[480px] w-[1000px]">
-          <img
-            loading="lazy"
+          <Image
             src="https://cdn.builder.io/api/v1/image/assets/TEMP/f94b2ac746c3d0b4c9d42db94b0163e68e6bff78d1e5a5a0834971c0d7e8101a?placeholderIfAbsent=true&apiKey=5dda444a603d48518e58263dc5959bda"
             alt="Unlock new heights illustration"
             className="object-contain aspect-[0.98] min-w-[240px] w-[470px] max-md:max-w-full"
+            height={480}
+            width={470}
+            loading="lazy"
           />
           <div className="flex overflow-hidden flex-col flex-1 shrink items-start pr-16 my-auto basis-0 min-w-[240px] max-md:pt-24 max-md:max-w-full">
             <h2 className="text-3xl lg:text-7xl font-bold leading-10">
               Unlock New Heights
             </h2>
             <p className="mt-5 text-base leading-6">
-              Witness the charisma of learning blended with state the art technology.
+              Witness the charisma of learning blended with state the art
+              technology.
             </p>
           </div>
         </div>
@@ -198,11 +207,13 @@ interface ImageCardProps {
 const ImageCard: React.FC<ImageCardProps> = ({ src, alt }) => {
   return (
     <div className="flex flex-col justify-center items-center px-11 w-full aspect-square bg-zinc-100 min-h-[320px] max-md:px-5 max-md:mt-5">
-      <img
+      <Image
         loading="lazy"
         src={src}
         alt={alt}
         className="object-contain max-w-full aspect-square w-[232px]"
+        height={232}
+        width={232}
       />
     </div>
   );

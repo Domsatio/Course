@@ -13,6 +13,7 @@ import { BASE_URL } from "@/libs/axios/instance";
 import { UpdateAddress } from "@/types/address.type";
 import { GetCarts } from "@/types/cart.type";
 import { ConvertCurrency } from "@/helpers/appFunction";
+import Image from "next/image";
 
 export default function Checkout(data: any) {
   const [isOpenAddress, setIsOpenAddress] = useState<boolean>(false);
@@ -67,10 +68,12 @@ export default function Checkout(data: any) {
                 <div key={index} className="flex items-center justify-between gap-3 shadow-md rounded-lg p-4">
                   <div className="flex items-center gap-2">
                     <div className="w-20 h-20 relative">
-                      <img
+                      <Image
                         src={cart.product.thumbnail}
                         alt={cart.product.name}
                         className="w-full h-full object-cover"
+                        height={80}
+                        width={80}
                       />
                     </div>
                     <div className="flex flex-col gap-2">

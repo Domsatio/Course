@@ -11,6 +11,7 @@ import { cartServices } from '@/services/serviceGenerator';
 import toast from 'react-hot-toast';
 import { ConvertCurrency } from '@/helpers/appFunction';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Index({data}: any) {
   const [loading, setLoading] = useState<boolean>(false);
@@ -90,10 +91,12 @@ export default function Index({data}: any) {
                   <div className="flex items-center gap-2">
                     <Checkbox color="success" checked={selectedCart.includes(cart.id)} onChange={() => handleChangeSelectedCart(cart.id)} />
                     <div className="w-20 h-20 relative">
-                      <img
+                      <Image
                         src={cart.product.thumbnail}
                         alt={cart.product.name}
                         className="w-full h-full object-cover"
+                        height={80}
+                        width={80}
                       />
                     </div>
                     <div className="flex flex-col gap-2">
