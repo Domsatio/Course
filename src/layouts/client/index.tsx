@@ -7,7 +7,7 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
 
   const noNavPaths = ["/sign-in", "/register", "/404", "/forgot-password"];
 
-  const isAuthRoute = noNavPaths.includes(pathname);
+  const isAuthRoute = noNavPaths.some(path => pathname.startsWith(path));
 
   if (isAuthRoute) {
     return <>{children}</>;

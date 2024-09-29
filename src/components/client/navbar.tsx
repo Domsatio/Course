@@ -11,13 +11,17 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { ProfileMenu } from "../ProfileMenu";
 import { NavRoutes } from "@/constants/client/NavRoutes";
+import { useRouter } from "next/router";
 
-{/* <ProfileMenu /> */}
-
-const NavList = ({onClick}:{onClick?:()=> void}) => (
+const NavList = ({ onClick, pathname }: { onClick?: () => void, pathname: string }) => (
   <ul className="mt-2 mb-4 flex flex-col gap-2 border-black lg:mb-0 lg:mt-0 lg:flex-row lg:items-center">
     {NavRoutes.map(({ label, href }) => (
-      <Link href={href} key={label} onClick={onClick} className="text-black text-sm py-2 px-4 rounded-full transition-colors duration-100 hover:bg-gray-200">
+      <Link
+        href={href}
+        key={label}
+        onClick={onClick}
+        className={`text-black text-sm py-2 px-4 rounded-full transition-colors duration-100 hover:bg-gray-200 ${pathname === href && "bg-gray-300"}`}
+      >
         {label}
       </Link>
     ))}
@@ -29,6 +33,7 @@ export default function ComplexNavbar() {
   const [isScrollingUp, setIsScrollingUp] = useState(false);
   const [currentPosition, setCurrentPosition] = useState(0);
   const { data: session } = useSession();
+  const { pathname } = useRouter();
 
   const toggleIsNavOpen = () => setIsNavOpen((cur) => !cur);
 
@@ -76,7 +81,7 @@ export default function ComplexNavbar() {
           DomClub
         </Typography>
         <div className="hidden min-w-min lg:border-black lg:block ">
-          <NavList />
+          <NavList pathname={pathname} />
         </div>
         <IconButton
           size="sm"
@@ -103,7 +108,7 @@ export default function ComplexNavbar() {
         )}
       </div>
       <Collapse open={isNavOpen} className="overflow-x-hidden">
-        <NavList onClick={toggleIsNavOpen} />
+        <NavList onClick={toggleIsNavOpen} pathname={pathname} />
       </Collapse>
     </Navbar>
   );

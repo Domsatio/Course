@@ -1,5 +1,6 @@
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/solid'
 import { IconButton } from '@material-tailwind/react'
+import { FC } from 'react';
 
 type PaginationProps = {
   activePage: number;
@@ -7,7 +8,7 @@ type PaginationProps = {
   totalPages: number;
 }
 
-export default function Pagination({ activePage, setActivePage, totalPages }: PaginationProps) {
+const Pagination: FC<PaginationProps> = ({ activePage, setActivePage, totalPages }) => {
   return (
     <div className='flex justify-center items-center gap-20'>
       <IconButton
@@ -41,3 +42,5 @@ export default function Pagination({ activePage, setActivePage, totalPages }: Pa
     </div>
   )
 }
+
+export default Pagination;

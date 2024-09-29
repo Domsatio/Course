@@ -5,7 +5,7 @@ import {
   getCourses,
   updateCourse,
 } from "@/controllers/course.controller";
-import { stringToSlug } from "@/helpers/slug";
+import { stringToSlug } from "@/utils/slug";
 import {
   createCourseValidation,
   updateCourseValidation,

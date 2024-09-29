@@ -1,5 +1,7 @@
 import GenerateMetaData from '@/components/GenerateMetaData';
+import { resetPasswordServices } from '@/services/serviceGenerator';
 import { Button, Input, Typography } from '@material-tailwind/react';
+import Link from 'next/link';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 
@@ -11,27 +13,21 @@ const ForgotPassword = () => {
     e.preventDefault();
     setIsLoading(true)
 
-    const res = await fetch('/api/auth/forgot-password', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email }),
-    });
-
-    const data = await res.json();
-    if (data.success) {
-      toast.success('Password reset link sent to your email');
+    try {
+      const { data } = await resetPasswordServices.sendEmail(email);
+      toast.success(data.message);
+    } catch (error: any) {
       setIsLoading(false);
-    } else {
-      toast.error('Error: ' + data.message);
-      setIsLoading(false);
+      toast.error('Error: ' + error.message);
+      console.error(error);
     }
+
+    setIsLoading(false);
   };
 
   return (
     <section className="flex gap-4 justify-center min-h-screen items-center">
-      <GenerateMetaData title="Sign In" desc="Sign In Page" />
+      <GenerateMetaData title="Forgot Password" desc="Forgot Password Page" />
       <div className="w-full lg:w-3/5">
         <div className="text-center">
           <Typography variant="h2" className="font-bold mb-4">
@@ -59,6 +55,8 @@ const ForgotPassword = () => {
             </Typography>
             <Input
               crossOrigin={"email"}
+              name='email'
+              id='email'
               type="email"
               size="lg"
               placeholder="name@mail.com"
@@ -73,8 +71,17 @@ const ForgotPassword = () => {
           </div>
 
           <Button type="submit" className="mt-6" loading={isLoading} fullWidth>
-            Send Email
+            {isLoading ? 'Sending Email...' : 'Send Email'}
           </Button>
+
+          <Typography
+            variant="paragraph"
+            className="text-center text-blue-gray-500 font-medium mt-4"
+          >
+            <Link href="/sign-in" className="text-gray-900 ml-1">
+              Back to Sign In
+            </Link>
+          </Typography>
         </form>
       </div>
     </section>

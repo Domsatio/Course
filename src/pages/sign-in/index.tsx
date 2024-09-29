@@ -72,6 +72,8 @@ export default function SignIn() {
             </Typography>
             <Input
               crossOrigin={"email"}
+              name="email"
+              id="email"
               type="email"
               size="lg"
               placeholder="name@mail.com"
@@ -92,6 +94,8 @@ export default function SignIn() {
             </Typography>
             <Input
               crossOrigin={"password"}
+              name="password"
+              id="password"
               type="password"
               size="lg"
               placeholder="********"
@@ -110,7 +114,7 @@ export default function SignIn() {
           </div>
 
           <Button type="submit" className="mt-6" loading={isLoading} fullWidth>
-            Sign In
+            {isLoading ? "Signing In..." : "Sign In"}
           </Button>
 
           <div className="space-y-4 mt-8">

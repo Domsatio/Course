@@ -6,12 +6,13 @@ import { NullProof } from "@/helpers/appFunction";
 import { LabelDetailPage } from "@/components/admin/DetailPage";
 import EmblaCarousel from "@/components/admin/EmblaCarousel";
 import { EmblaOptionsType } from "embla-carousel";
-import { Button, Typography } from "@material-tailwind/react";
+import { Button, Card, CardBody, Typography } from "@material-tailwind/react";
 import ContentWrapper from "@/layouts/client/contentWrapper";
 import Link from "next/link";
 import Image from "next/image";
 import GenerateMetaData from "@/components/GenerateMetaData";
 import ReactPlayer from "react-player";
+import SubscribersOnly from "./subscribe-warning";
 
 type VideoUrl = {
   video: string;
@@ -52,7 +53,8 @@ const DetailCoursePage: FC<Course> = (data) => {
         <Typography variant="h2" color="black">
           {NullProof({ input: data, params: "title" })}
         </Typography>
-        <Typography variant="paragraph">
+        <SubscribersOnly />
+        {/* <Typography variant="paragraph">
           {NullProof({ input: data, params: "description" })}
         </Typography>
         <EmblaCarousel
@@ -100,7 +102,7 @@ const DetailCoursePage: FC<Course> = (data) => {
               </Link>
             </Button>
           </LabelDetailPage>
-        )}
+        )} */}
       </ContentWrapper>
     </Fragment>
   );

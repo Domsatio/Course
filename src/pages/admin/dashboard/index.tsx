@@ -5,6 +5,7 @@ import cookie from "cookie";
 import { NullProof } from "@/helpers/appFunction";
 import GenerateMetaData from "@/components/GenerateMetaData";
 import { FC } from "react";
+import Link from "next/link";
 
 type DataProps = {
   totalPosts: number;
@@ -16,30 +17,32 @@ type DataProps = {
 }
 
 const Index: FC<DataProps> = (data) => {
-  const DataWrapper = ({ data, param, titleValue, }: { data: any, param: string, titleValue: string }) => {
+  const DataWrapper = ({ data, param, titleValue, href }: { data: any, param: string, titleValue: string, href: string }) => {
     return (
-      <div className="flex flex-wrap justify-between transform transition-transform duration-300 p-3 rounded-lg mb-2 shadow-lg cursor-pointer">
+      <Link href={href} className="flex flex-wrap justify-between transform transition-transform duration-300 p-3 rounded-lg mb-2 shadow-lg cursor-pointer">
         <p>{titleValue}</p>
         <p>{NullProof({ input: data, params: param })}</p>
-      </div>)
+      </Link>
+    );
   }
+
   return (
     <div className="pt-6">
       <GenerateMetaData title="Admin | Dashboard" />
       <div className="grid grid-cols-1 gap-x-3 sm:grid-cols-2 md:grid-cols-3 gap-y-10">
         <DashboardCard title="Blog">
-          <DataWrapper titleValue='Posts' param='totalPosts' data={data} />
-          <DataWrapper titleValue='Categories' param='totalCategories' data={data} />
+          <DataWrapper titleValue='Posts' param='totalPosts' data={data} href="/admin/blog/post" />
+          <DataWrapper titleValue='Categories' param='totalCategories' data={data} href="/admin/blog/category" />
         </DashboardCard>
         <DashboardCard title="Course">
-          <DataWrapper titleValue='Courses' param='totalCourses' data={data} />
+          <DataWrapper titleValue='Courses' param='totalCourses' data={data} href="/admin/course" />
         </DashboardCard>
         <DashboardCard title="Ecommerce">
-          <DataWrapper titleValue='Orders' param='totalOrders' data={data} />
-          <DataWrapper titleValue='Products' param='totalProducts' data={data} />
+          <DataWrapper titleValue='Orders' param='totalOrders' data={data} href="/admin/ecommerce/order" />
+          <DataWrapper titleValue='Products' param='totalProducts' data={data} href="/admin/ecommerce/products" />
         </DashboardCard>
         <DashboardCard title="User">
-          <DataWrapper titleValue='Users' param='totalUsers' data={data} />
+          <DataWrapper titleValue='Users' param='totalUsers' data={data} href="/admin/user" />
         </DashboardCard>
       </div>
     </div>

@@ -17,7 +17,7 @@ export const adminRoutes: MenuItemProps[] = [
   },
   {
     isPage: true,
-    href: "/course",
+    href: "/courses",
     label: "Courses",
     icon: VideoCameraIcon,
   },
@@ -39,8 +39,8 @@ export const adminRoutes: MenuItemProps[] = [
       },
       {
         isheader: true,
-        label: "Finance",
         href: "/finance",
+        label: "Finance",
         icon: CurrencyDollarIcon,
         children: [
           {
@@ -65,19 +65,19 @@ export const adminRoutes: MenuItemProps[] = [
     children: [
       {
         isPage: true,
-        href: "/post",
-        label: "Post",
+        href: "/posts",
+        label: "Posts",
       },
       {
         isPage: true,
-        href: "/category",
-        label: "Category",
+        href: "/categories",
+        label: "Categories",
       },
     ],
   },
   {
     isPage: true,
-    href: "/user",
+    href: "/users",
     label: "Users",
     icon: UsersIcon,
   },

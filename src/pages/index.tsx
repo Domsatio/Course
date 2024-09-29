@@ -1,15 +1,17 @@
 import HomeView from "@/views/client";
 import GenerateMetaData from "@/components/GenerateMetaData";
-import React from "react";
+import React, { Fragment } from "react";
 
-export default function Home() {
+const Home = () => {
   return (
-    <React.Fragment>
+    <Fragment>
       <GenerateMetaData
         title="Home"
         desc="Home page"
       />
       <HomeView />
-    </React.Fragment>
+    </Fragment>
   );
 }
+
+export default Home

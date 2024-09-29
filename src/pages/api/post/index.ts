@@ -13,7 +13,7 @@ import {
 import type { NextApiRequest, NextApiResponse } from "next";
 import { v4 as uuidv4 } from "uuid";
 import { getToken } from "next-auth/jwt";
-import { stringToSlug } from "@/helpers/slug";
+import { stringToSlug } from "@/utils/slug";
 import { ca } from "date-fns/locale";
 
 export default async function handlerPost(
@@ -133,7 +133,7 @@ export default async function handlerPost(
       }
     } else {
       try {
-        const { skip, take, search='',  category='', published } = req.query;
+        const { skip, take, search = "", category = "", published } = req.query;
         console.log("req.query", req.query);
         if (token?.role !== "ADMIN") {
           const { totalData, data } = await getPublishedPosts(
