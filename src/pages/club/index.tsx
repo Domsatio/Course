@@ -10,7 +10,7 @@ import {
   FetchDataHook as FetchCategoryHook,
 } from "@/hooks/fetchDataHook";
 import { SearchHook } from "@/hooks/searchHook";
-import Pagination from "@/components/client/Pagination";
+import Pagination from "@/components/client/pagination";
 import { getQueryParams } from "@/helpers/appFunction";
 import Search from "@/components/client/search";
 import { useRouter } from "next/router";

@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import bcrypt from "bcrypt";
 import { verifyJWT } from "@/utils/jwt";
 import { updateUser } from "@/controllers/user.controller";
+import { hashing } from "@/utils/hasing";
 
 export default async function handler(
   req: NextApiRequest,
@@ -20,7 +20,7 @@ export default async function handler(
       });
     }
 
-    const hashedPassword = await bcrypt.hash(req.body as string, 10);
+    const hashedPassword = hashing(req.body as string);
 
     try {
       await updateUser(decoded.userId, { newPassword: hashedPassword });

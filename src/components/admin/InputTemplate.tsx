@@ -218,8 +218,8 @@ export const InputListRenderer = ({
   };
 
   return (
-    <div className={cn('relative basis-full flex flex-col gap-2 mb-3', {'hidden': hide}, className)}>
-      {label && <label className={cn('form-label text-black', {"after:content-['*'] after:text-red-600 after:ml-1": isRequired})}>
+    <div className={cn('relative basis-full flex flex-col gap-2 mb-3', { 'hidden': hide }, className)}>
+      {label && <label className={cn('form-label text-black', { "after:content-['*'] after:text-red-600 after:ml-1": isRequired })}>
         {label}
       </label>}
       {(type === "input" || type === "url") &&

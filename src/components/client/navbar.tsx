@@ -93,9 +93,6 @@ export default function ComplexNavbar() {
         >
           <Bars2Icon className="h-6 w-6" />
         </IconButton>
-
-
-
         {session ? (
           <div className=" flex items-center gap-3 lg:gap-5 cursor-pointer">
             <NavCart />
