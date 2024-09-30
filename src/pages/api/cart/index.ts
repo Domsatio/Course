@@ -105,6 +105,7 @@ export default async function handlerCart(
     }
   } else if (req.method === "GET") {
     try {
+
       if (!token) {
         return res.status(401).json({ message: "Unauthorized" });
       }

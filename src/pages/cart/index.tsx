@@ -145,6 +145,16 @@ const Cart: FC<{ data: GetCart[] }> = ({ data = [] }) => {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const cookies = cookie.parse(context.req.headers.cookie || "");
   const token = cookies["next-auth.session-token"];
+
+  if(!token){
+    return {
+      redirect: {
+        destination: '/sign-in',
+        permanent: false
+      }
+    }
+  }
+
   try {
     const response = await fetch(`${BASE_URL}/api/cart`, {
       method: "GET",
@@ -152,10 +162,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-    }).then((res) => res.json());
+    })
+
+    const result = await response.json();
 
     return {
-      props: { data: response.data },
+      props: { data: result.data },
     };
   } catch (error) {
     console.error("Error fetching data:", error);
