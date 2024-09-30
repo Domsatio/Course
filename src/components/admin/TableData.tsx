@@ -19,9 +19,9 @@ import {
   IconButton,
   Tooltip,
 } from "@material-tailwind/react";
-import TableSkeleton from "../Skeleton/TableSkeleton";
+import TableSkeleton from "../Skeleton/table.skeletton";
 import { TableDataProps } from "@/types/table.type";
-import {FormInput} from "@/components/admin/FormInput";
+import { FormInput } from "@/components/admin/FormInput";
 import { supabase } from "@/libs/supabase";
 import { getQueryParams } from "@/helpers/appFunction";
 import { PaginationHook } from "@/hooks/paginationHook";

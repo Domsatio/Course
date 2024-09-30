@@ -37,21 +37,21 @@ model Session {
 }
 
 model User {
-  id              String    @id @default(uuid())
-  email           String    @unique
-  password        String?
-  emailVerified   DateTime?
-  name            String
-  role            UserRole  @default(USER)
-  isSubscribed    Boolean   @default(false)
-  subscribeStart  DateTime?
-  subscribeEnd    DateTime?
-  accounts        Account[]
-  orders          Order[]
-  posts           Post[]
-  sessions        Session[]
-  address         Address?
-  cart            Cart[]
+  id             String    @id @default(uuid())
+  email          String    @unique
+  password       String?
+  emailVerified  DateTime?
+  name           String
+  role           UserRole  @default(USER)
+  isSubscribed   Boolean   @default(false)
+  subscribeEnd   DateTime?
+  subscribeStart DateTime?
+  accounts       Account[]
+  address        Address?
+  cart           Cart[]
+  orders         Order[]
+  posts          Post[]
+  sessions       Session[]
 }
 
 model VerificationToken {
@@ -111,11 +111,11 @@ model Cart {
 model Order {
   id        String       @id @default(uuid())
   userId    String
-  products  Json[]
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
   quantity  Int          @default(1)
   status    OrderStatus? @default(PENDING)
+  products  Json[]
   user      User         @relation(fields: [userId], references: [id])
 
   @@index([userId])

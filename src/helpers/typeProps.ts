@@ -18,39 +18,6 @@ declare module "next-auth/jwt" {
   }
 }
 
-type FormInputTypeProps =
-  | "input"
-  | "password"
-  | "number"
-  | "url"
-  | "select"
-  | "checkbox"
-  | "multicheckbox"
-  | "datalist"
-  | "textarea"
-  | "texteditor"
-  | "label"
-  | "component"
-  | "csv"
-  | "date"
-  | "currency"
-  | "image"
-  | "file"
-  | "multipleImage"
-  | "multipleInput"
-  | "checkbox";
-
-interface InputListOptionProps {
-  type: "select" | "checkbox" | "multicheckbox" | "datalist" | "csv";
-  params?: string;
-  query?: string;
-  id: string;
-  api?: string;
-  data?: any[];
-  value?: string;
-  watch?: string;
-}
-
 interface MenuItemProps {
   isheader?: boolean;
   isPage?: boolean;
@@ -58,12 +25,6 @@ interface MenuItemProps {
   label: string;
   icon?: any;
   children?: MenuItemProps[];
-}
-
-interface ProfileMenuItemProps {
-  label: string;
-  icon: React.ReactElement;
-  href?: string;
 }
 
 interface RouteItemsProps {
@@ -86,4 +47,4 @@ interface FilterProps {
   error?: string;
 }
 
-export type { MenuItemProps, ProfileMenuItemProps, RouteItemsProps };
+export type { MenuItemProps, RouteItemsProps };

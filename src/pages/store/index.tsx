@@ -10,7 +10,7 @@ import { SearchHook } from "@/hooks/searchHook";
 import { useRouter } from "next/router";
 import { getQueryParams } from "@/helpers/appFunction";
 import ContentWrapper from "@/layouts/client/contentWrapper";
-import StoreSkeletonCard from "@/components/Skeleton/StoreSkeleton";
+import StoreSkeletonCard from "@/components/Skeleton/store.skeleton";
 import { cn } from "@/libs/cn";
 import GenerateMetaData from "@/components/GenerateMetaData";
 
@@ -77,11 +77,11 @@ const ClientStorePage = () => {
       >
         {isLoad
           ? Array.from({ length: 12 }).map((_, index) => (
-              <StoreSkeletonCard key={index} />
-            ))
+            <StoreSkeletonCard key={index} />
+          ))
           : products.map((product) => (
-              <StoreCard key={product.id} {...product} />
-            ))}
+            <StoreCard key={product.id} {...product} />
+          ))}
       </div>
     </ContentWrapper>
   );

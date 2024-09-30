@@ -1,5 +1,10 @@
-import { ProfileMenuItemProps } from "@/helpers/typeProps";
 import { Cog6ToothIcon, PowerIcon, UserCircleIcon } from "@heroicons/react/24/solid";
+
+type ProfileMenuItemProps = {
+  label: string;
+  icon: React.ReactElement;
+  href?: string;
+}
 
 export const getProfileMenuItems = (pathname: string): ProfileMenuItemProps[] => {
   const isAdmin = pathname.startsWith("/admin");

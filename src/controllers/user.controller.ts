@@ -66,7 +66,3 @@ export const getAllUsers = async (
     { maxWait: 5000, timeout: 20000 }
   );
 };
-
-export const loginUser = async (data: User) => {
-  return prisma.user.findFirst({ where: data });
-};

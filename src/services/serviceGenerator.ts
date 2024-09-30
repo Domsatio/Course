@@ -42,3 +42,10 @@ export const dashboardServices = {
   getDashboard: (token: string) =>
     instance.get("/api/dashboard", tokenHeader(token)),
 };
+
+export const resetPasswordServices = {
+  sendEmail: (email: string) =>
+    instance.post("/api/reset-password/send-email", email),
+  resetPassword: (token: string, password: string) =>
+    instance.post("/api/reset-password", password, { params: { token } }),
+};

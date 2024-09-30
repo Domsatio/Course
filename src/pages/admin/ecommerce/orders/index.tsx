@@ -7,7 +7,7 @@ import {
 import { GetOrder } from "@/types/order.type";
 import TableData, { TableActionProps } from "@/components/admin/TableData";
 import { orderServices } from "@/services/serviceGenerator";
-import { dateFormater } from "@/helpers/date";
+import { dateFormater } from "@/utils/date";
 import { NullProof } from "@/helpers/appFunction";
 
 const TABLE_HEAD = [
@@ -107,10 +107,10 @@ export default function Index() {
           <td className={classes}>
             <Chip
               value={order.status}
-              />
+            />
           </td>
           <td className={classes}>
-            {TableAction({data: dataAction, id: order.id})}
+            {TableAction({ data: dataAction, id: order.id })}
           </td>
         </tr>
       );

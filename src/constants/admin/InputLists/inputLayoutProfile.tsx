@@ -9,6 +9,7 @@ export const FormInputList: InputListProps[] = [
     type: "input",
     validator: Yup.string().required("Name is required"),
     value: "",
+    isRequired: true,
   },
   {
     className: "",
@@ -17,5 +18,6 @@ export const FormInputList: InputListProps[] = [
     type: "input",
     validator: Yup.string().required("Email is required"),
     value: "",
+    isRequired: true,
   },
 ];

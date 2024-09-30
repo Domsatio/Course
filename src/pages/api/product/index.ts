@@ -5,7 +5,7 @@ import {
   getProduct,
   getProducts,
 } from "@/controllers/product.controller";
-import { stringToSlug } from "@/helpers/slug";
+import { stringToSlug } from "@/utils/slug";
 import {
   createProductValidation,
   updateProductValidation,

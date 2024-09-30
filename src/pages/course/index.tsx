@@ -6,7 +6,7 @@ import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { PaginationHook } from "@/hooks/paginationHook";
 import { FetchDataHook } from "@/hooks/fetchDataHook";
 import Pagination from "@/components/client/pagination";
-import CardSkeleton from "@/components/Skeleton/CardSkeleton";
+import CardSkeleton from "@/components/Skeleton/card.skeleton";
 import Search from "@/components/client/search";
 import { SearchHook } from "@/hooks/searchHook";
 import { getQueryParams } from "@/helpers/appFunction";
@@ -109,7 +109,7 @@ const ClientCoursePage = () => {
           courses.map((data: Course, index) => (
             <CardItem
               key={index}
-              props={{ ...data, href: `/course/${data.id}` }}
+              props={{ ...data, href: `/course/${data.slug}` }}
             />
           ))
         ) : (

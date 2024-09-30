@@ -5,11 +5,12 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import GenerateMetaData from "@/components/GenerateMetaData";
+import toast from "react-hot-toast";
 
 export default function SignIn() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const { push } = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -23,7 +24,8 @@ export default function SignIn() {
     });
 
     if (signInData?.error) {
-      alert(signInData.error);
+      toast.error(signInData.error);
+      setIsLoading(false);
     }
 
     push('/')
@@ -35,7 +37,7 @@ export default function SignIn() {
   const authUseGoogle = async () => {
     const signInData = await signIn("google");
     if (signInData?.error) {
-      alert(signInData.error);
+      toast.error(signInData.error);
     }
     push('/')
   };
@@ -70,6 +72,8 @@ export default function SignIn() {
             </Typography>
             <Input
               crossOrigin={"email"}
+              name="email"
+              id="email"
               type="email"
               size="lg"
               placeholder="name@mail.com"
@@ -90,6 +94,8 @@ export default function SignIn() {
             </Typography>
             <Input
               crossOrigin={"password"}
+              name="password"
+              id="password"
               type="password"
               size="lg"
               placeholder="********"
@@ -101,9 +107,14 @@ export default function SignIn() {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
+
+            <Link href='/forgot-password' className="text-sm">
+              Forgot Password?
+            </Link>
           </div>
+
           <Button type="submit" className="mt-6" loading={isLoading} fullWidth>
-            Sign In
+            {isLoading ? "Signing In..." : "Sign In"}
           </Button>
 
           <div className="space-y-4 mt-8">

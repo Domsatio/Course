@@ -108,7 +108,7 @@ export const FormInput = ({
         delete finalValues[input.name];
       });
       try {
-        let response 
+        let response
         if (method === "POST") {
           response = await service.addItem(finalValues);
         } else if (method === "PUT") {
@@ -184,8 +184,8 @@ export const FormInput = ({
   // a function to take the data to be edited if method is PUT
   const fetchData = async () => {
     try {
-      const {data: { data }} =  serviceGet
-        ? await serviceGet.getItems({id})
+      const { data: { data } } = serviceGet
+        ? await serviceGet.getItems({ id })
         : await service.getItems({ id });
 
       // set data as required by the form input
@@ -211,9 +211,9 @@ export const FormInput = ({
   };
 
   useEffect(() => {
-    if(asModal?.isOpen !== false && method === "PUT") {
+    if (asModal?.isOpen !== false && method === "PUT") {
       fetchData();
-    } 
+    }
     else if (method === "PUT" || serviceGet) {
       fetchData();
     } else if (isFilter) {
@@ -262,11 +262,11 @@ export const FormInput = ({
         const checkIsDisabled =
           listWatchInput.length > 0
             ? listWatchInput.some(
-                (item) =>
-                  formik.values[item] === "" ||
-                  (Array.isArray(formik.values[item]) &&
-                    formik.values[item].length === 0)
-              )
+              (item) =>
+                formik.values[item] === "" ||
+                (Array.isArray(formik.values[item]) &&
+                  formik.values[item].length === 0)
+            )
             : false;
         let option_query = input?.option?.query ? input.option.query : null;
         if (option_query && listWatchInput.length > 0) {
@@ -293,7 +293,7 @@ export const FormInput = ({
         if (input.type === "component") {
           return (
             <div key={index} className={cn("w-full", input.className)}>
-              <label className="after:content-['*'] after:text-red-600 after:ml-1">
+              <label className="after:content-['*'] after:text-red-600 after:ml-1 text-black">
                 {input.label}
               </label>
               {formik.values[input.name] &&
@@ -327,10 +327,10 @@ export const FormInput = ({
                               input.name
                             ] as FormikErrors<any>[][0])
                               ? (
-                                  formik.errors[
-                                    input.name
-                                  ] as FormikErrors<any>[]
-                                )[i]?.[component.name]?.toString()
+                                formik.errors[
+                                input.name
+                                ] as FormikErrors<any>[]
+                              )[i]?.[component.name]?.toString()
                               : ""
                           }
                         />
@@ -388,11 +388,11 @@ export const FormInput = ({
             option={
               option_query
                 ? {
-                    ...input.option,
-                    query: option_query,
-                    type: input.option?.type || "select",
-                    id: input.option?.id || "",
-                  }
+                  ...input.option,
+                  query: option_query,
+                  type: input.option?.type || "select",
+                  id: input.option?.id || "",
+                }
                 : input.option
             }
             onChange={(data: any) => {
@@ -413,10 +413,10 @@ export const FormInput = ({
       {errorFetch && (
         <ModalError onClick={() => fetchData()} />
       )}
-      <div className={cn("flex flex-row flex-wrap justify-between", {'max-h-[550px] overflow-y-scroll px-3': asModal})}>
+      <div className={cn("flex flex-row flex-wrap justify-between", { 'max-h-[550px] overflow-y-scroll px-3': asModal })}>
         {generateInputForm()}
       </div>
-      <div className={cn("w-full flex justify-end items-center gap-2", {'mt-5': asModal})}>
+      <div className={cn("w-full flex justify-end items-center gap-2", { 'mt-5': asModal })}>
         {isUseCancelButton && (
           <Button
             variant="text"
@@ -481,7 +481,7 @@ export const FormInput = ({
           <CardBody>{Form()}</CardBody>
         </Card>
       )}
-      </Fragment>
+    </Fragment>
   );
 };
 
@@ -491,7 +491,7 @@ interface ModalErrorProps {
 }
 
 const ModalError = ({ onClick }: ModalErrorProps) => (
- <div className="absolute z-10 flex justify-center items-center bg-white opacity-90 top-0 bottom-0 right-0 left-0 w-full h-full">
+  <div className="absolute z-10 flex justify-center items-center bg-white opacity-90 top-0 bottom-0 right-0 left-0 w-full h-full">
     <div className="bg-transparent flex flex-col items-center">
       <h1 className="text-2xl font-bold">Error</h1>
       <p className="text-lg">Failed get data</p>
@@ -499,5 +499,5 @@ const ModalError = ({ onClick }: ModalErrorProps) => (
         Refresh Form
       </Button>
     </div>
- </div>
+  </div>
 );

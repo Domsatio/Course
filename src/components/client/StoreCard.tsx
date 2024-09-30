@@ -14,19 +14,19 @@ const FinalPrice = ({ price, discount }: { price: number, discount: number }) =>
   const discountedPrice = discount !== undefined ? price - (price * discount) / 100 : price;
 
   return (
-    <div className="mt-7 min-h-max">
-      <Typography color="blue-gray" className="text-xl font-bold">
+    <div className="flex gap-3">
+      <Typography color="blue-gray" className="text-xl font-bold text-black">
         {ConvertCurrency(discountedPrice)}
       </Typography>
       {discount > 0 && (
-        <div className='flex gap-2 mt-2'>
-          <Typography className="text-sm py-1 px-2 bg-green-200 text-green-900 font-semibold rounded-lg">
-            -{discount}%
-          </Typography>
-          <Typography color="gray" className="line-through text-base">
-            {ConvertCurrency(price)}
-          </Typography>
-        </div>
+        <Typography color="gray" className="line-through text-base self-start">
+          {ConvertCurrency(price)}
+        </Typography>
+      )}
+      {discount > 0 && (
+        <Typography className="text-sm py-1 px-2 bg-black text-white rounded-lg self-start">
+          -{discount}% Off
+        </Typography>
       )}
     </div>
   );
@@ -40,8 +40,7 @@ const StoreCard: FC<Omit<GetProduct, 'createdAt' | 'updatedAt' | 'quantity' | 'd
           <Image
             src={thumbnail}
             alt={name + " thumbnail"}
-            className="h-full w-full"
-            style={{ objectFit: "cover" }}
+            className="h-full w-full object-contain"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             priority
             fill

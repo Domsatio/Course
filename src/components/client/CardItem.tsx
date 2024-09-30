@@ -29,13 +29,12 @@ const CardItem = ({ props, category }: typeCard) => {
           floated={false}
           shadow={false}
           color="transparent"
-          className="m-0 aspect-video"
+          className="m-0 aspect-video relative"
         >
           <Image
             src={props.thumbnail}
-            alt={props.title + " thumbnail"}
-            className="transform transition-transform duration-500 group-hover:scale-110"
-            style={{ objectFit: "cover" }}
+            alt={`${props.title} thumbnail`}
+            className="object-cover w-auto h-auto transform transition-transform duration-500 group-hover:scale-110"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             priority
             fill
