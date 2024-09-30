@@ -7,17 +7,24 @@ import { useRouter } from "next/router";
 import { signIn } from "next-auth/react";
 import { userServices } from "@/services/serviceGenerator";
 import GenerateMetaData from "@/components/GenerateMetaData";
+import toast from "react-hot-toast";
 
 export default function Register() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [name, setName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const { push } = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+
+    if (password !== confirmPassword) {
+      setIsLoading(false)
+      return toast.error('Passwords do not match');
+    }
 
     try {
       await userServices.addItem({
@@ -27,8 +34,10 @@ export default function Register() {
         password
       });
       push("/sign-in");
-    } catch (error) {
+    } catch (error: any) {
+      setIsLoading(false);
       console.error(error);
+      toast.error("Error: " + error.message);
     }
 
     setIsLoading(false);
@@ -40,7 +49,7 @@ export default function Register() {
   const authUseGoogle = async () => {
     const signInData = await signIn("google");
     if (signInData?.error) {
-      alert(signInData.error);
+      toast.error(signInData.error);
     }
   };
 
@@ -74,6 +83,8 @@ export default function Register() {
             </Typography>
             <Input
               crossOrigin={"name"}
+              name="name"
+              id="name"
               type="text"
               size="lg"
               placeholder="Your name"
@@ -94,6 +105,8 @@ export default function Register() {
             </Typography>
             <Input
               crossOrigin={"email"}
+              name="email"
+              id="email"
               type="email"
               size="lg"
               placeholder="name@mail.com"
@@ -114,6 +127,8 @@ export default function Register() {
             </Typography>
             <Input
               crossOrigin={"password"}
+              name="password"
+              id="password"
               type="password"
               size="lg"
               placeholder="********"
@@ -125,9 +140,31 @@ export default function Register() {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
+            <Typography
+              variant="small"
+              color="blue-gray"
+              className="-mb-3 font-medium"
+            >
+              Confirm Password
+            </Typography>
+            <Input
+              crossOrigin={"confirmPassword"}
+              name="confirmPassword"
+              id="confirmPassword"
+              type="password"
+              size="lg"
+              placeholder="********"
+              className=" !border !border-gray-300 bg-white text-gray-900 shadow-lg shadow-gray-900/5 ring-4 ring-transparent placeholder:text-gray-500 placeholder:opacity-100 focus:!border-gray-900 focus:!border-t-gray-900 focus:ring-gray-900/10"
+              labelProps={{
+                className: "hidden",
+              }}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+            />
           </div>
           <Button type="submit" className="mt-6" loading={isLoading} fullWidth>
-            Register
+            {isLoading ? "Registering..." : "Register"}
           </Button>
 
           <div className="space-y-4 mt-8">

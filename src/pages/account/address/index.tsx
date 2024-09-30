@@ -53,6 +53,7 @@ const ClientAccountAddressPage: FC = () => {
           color: 'green'
         })
       } catch (error: any) {
+        setIsLoading(false)
         console.error("Form submission error:", error.response.data.message);
         setDisplayAlert({
           open: true,
@@ -115,8 +116,8 @@ const ClientAccountAddressPage: FC = () => {
             error={formik.errors[name]?.toString() || ''}
           />
         )}
-        <Button type='submit'>
-          Save Changes
+        <Button type='submit' loading={isLoading}>
+          {isLoading ? 'Saving...' : 'Save Changes'}
         </Button>
       </form>
     </AccountLayout>

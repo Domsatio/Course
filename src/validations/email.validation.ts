@@ -1,4 +1,4 @@
-import { object, string } from "yup";
+import { ValidationError, object, string } from "yup";
 import { Email } from "@/types/email.type";
 
 export const createEmailValidation = (payload: Email) => {
@@ -11,7 +11,10 @@ export const createEmailValidation = (payload: Email) => {
   try {
     const validatedData = schema.validateSync(payload, { abortEarly: false });
     return { validatedData, errors: null };
-  } catch (error: any) {
-    return { validatedData: null, errors: error.errors as string[] };
+  } catch (error) {
+    if (error instanceof ValidationError) {
+      return { validatedData: null, errors: error.errors };
+    }
+    return { validatedData: null, errors: ["An unexpected error occurred"] };
   }
 };

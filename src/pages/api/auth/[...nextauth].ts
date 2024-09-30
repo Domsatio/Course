@@ -2,11 +2,9 @@ import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import bcrypt from "bcrypt";
 import { existingUser } from "@/controllers/user.controller";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { checkPassword } from "@/utils/hasing";
+import prisma from "@/libs/prisma/db";
 
 export const authOptions: NextAuthOptions = {
   debug: process.env.NODE_ENV === "development",
@@ -43,7 +41,7 @@ export const authOptions: NextAuthOptions = {
         };
         const user: any = await existingUser(email);
         if (user) {
-          const passwordConfirm = await bcrypt.compare(password, user.password);
+          const passwordConfirm = checkPassword(password, user.password);
           if (passwordConfirm) return user;
           return null;
         }
@@ -55,7 +53,7 @@ export const authOptions: NextAuthOptions = {
   },
   session: {
     strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60,
+    maxAge: 24 * 60 * 60,
   },
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {

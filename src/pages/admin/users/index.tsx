@@ -6,7 +6,7 @@ import { NullProof, numberlistPagination } from "@/helpers/appFunction";
 import { FilterInputList } from "../../../constants/admin/InputLists/inputLayoutUser";
 import { userServices } from "@/services/serviceGenerator";
 import { GetUser } from "@/types/user.type";
-import { dateFormater } from "@/helpers/date";
+import { dateFormater } from "@/utils/date";
 
 type DataProps = {
   data: GetUser[];
@@ -22,7 +22,6 @@ export default function Index() {
     page: 0,
     size: 0,
   });
-  console.log(data);
 
   const { Table } = TableData({
     title: "Users",

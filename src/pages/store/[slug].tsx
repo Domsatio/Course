@@ -12,6 +12,7 @@ import ButtonShare from "@/components/client/ButtonShare";
 import { useRouter } from "next/router";
 import { cartServices } from "@/services/serviceGenerator";
 import toast from "react-hot-toast";
+import Link from "next/link";
 
 const FinalPrice = ({
   price,
@@ -20,23 +21,22 @@ const FinalPrice = ({
   price: number;
   discount: number;
 }) => {
-  const discountedPrice =
-    discount !== undefined ? price - (price * discount) / 100 : price;
+  const discountedPrice = discount !== undefined ? price - (price * discount) / 100 : price;
 
   return (
-    <div>
-      <Typography color="blue-gray" className="text-2xl font-bold">
+    <div className="flex gap-3">
+      <Typography color="blue-gray" className="text-4xl font-bold text-black">
         {ConvertCurrency(discountedPrice)}
       </Typography>
       {discount > 0 && (
-        <div className="flex gap-2 mt-2">
-          <Typography className="text-base py-1 px-2 bg-green-200 text-green-900 font-semibold rounded-lg">
-            -{discount}%
-          </Typography>
-          <Typography color="gray" className="line-through text-base">
-            {ConvertCurrency(price)}
-          </Typography>
-        </div>
+        <Typography color="gray" className="line-through text-base self-start">
+          {ConvertCurrency(price)}
+        </Typography>
+      )}
+      {discount > 0 && (
+        <Typography className="text-sm py-1 px-2 bg-black text-white rounded-lg self-start">
+          -{discount}% Off
+        </Typography>
       )}
     </div>
   );
@@ -46,7 +46,6 @@ const DetailStore: FC<Omit<GetProduct, "createdAt" | "updatedAt">> = (
   data
 ) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const { push } = useRouter();
 
   const addToCart = async () => {
     try {
@@ -73,28 +72,37 @@ const DetailStore: FC<Omit<GetProduct, "createdAt" | "updatedAt">> = (
             width={400}
             height={400}
             priority
-            className="rounded-lg h-full w-full object-cover"
+            className="rounded-lg h-full w-full object-contain"
           />
         </div>
-        <div className="flex flex-col gap-5 lg:gap-10">
-          <Typography color="black" className="font-medium text-2xl">
+        <div className="flex flex-col gap-7">
+          <Typography variant="h3" color="black">
             {data.name}
           </Typography>
           <FinalPrice price={data.price} discount={data.discount} />
-          <div className="flex items-center gap-3">
-            <Button className="rounded-full px-8 py-[14px]" onClick={() => push('/cart/check-out')}>Buy</Button>
-            <Button className="rounded-full px-8 py-[14px]" onClick={() => addToCart()}>+ Cart</Button>
+          <div className="space-y-2">
+            <Typography variant="h5" color="black">
+              Description
+            </Typography>
+            <Typography variant="paragraph" color="blue-gray">
+              {data.description}
+            </Typography>
+          </div>
+          <div className="grid grid-cols-5 gap-2">
+            <Link href='/cart/checkout' className="col-span-2">
+              <Button className="rounded-full w-full">Buy Now</Button>
+            </Link>
+            <Button variant='outlined' className="rounded-full col-span-2" onClick={() => addToCart()}>
+              Add to Cart
+            </Button>
 
-            <ButtonShare name="share" setIsOpen={setIsOpen} />
+            <ButtonShare setIsOpen={setIsOpen} className="rounded-full" />
             <ModalShare
               isOpen={isOpen}
               handler={setIsOpen}
-              title="Share this product"
+              title="Share This Product"
             />
           </div>
-          <Typography variant="paragraph" color="black">
-            {data.description}
-          </Typography>
         </div>
       </ContentWrapper>
     </Fragment>

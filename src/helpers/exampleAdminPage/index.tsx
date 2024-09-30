@@ -4,7 +4,7 @@ import { TableActionProps } from "@/components/admin/TableData";
 import { Typography, Chip } from "@material-tailwind/react";
 import { postServices } from "@/services/serviceGenerator";
 import { CategoryPost, GetPost } from "@/types/post.type";
-import { dateFormater } from "@/helpers/date";
+import { dateFormater } from "@/utils/date";
 import { NullProof, numberlistPagination } from "@/helpers/appFunction";
 import { FilterInputList } from "./inputLayout";
 

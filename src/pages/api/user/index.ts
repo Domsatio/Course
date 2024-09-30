@@ -1,4 +1,3 @@
-import bcrypt from "bcrypt";
 import type { NextApiRequest, NextApiResponse } from "next";
 import {
   createUser,
@@ -14,6 +13,7 @@ import {
 } from "@/validations/user.validation";
 import { getToken } from "next-auth/jwt";
 import { v4 as uuidv4 } from "uuid";
+import { checkPassword, hashing } from "@/utils/hasing";
 
 export default async function handlerUser(
   req: NextApiRequest,
@@ -35,7 +35,7 @@ export default async function handlerUser(
 
     req.body.id = uuidv4();
 
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    const hashedPassword = hashing(req.body.password);
     req.body.password = hashedPassword;
 
     const { validatedData, errors } = createUserValidation(req.body);
@@ -94,7 +94,7 @@ export default async function handlerUser(
       }
 
       if (user.password && validatedData.currentPassword) {
-        const isPasswordMatch = await bcrypt.compare(
+        const isPasswordMatch = checkPassword(
           validatedData.currentPassword,
           user.password
         );
@@ -108,7 +108,7 @@ export default async function handlerUser(
         }
       }
 
-      const hashedPassword = await bcrypt.hash(validatedData.newPassword, 10);
+      const hashedPassword = hashing(validatedData.newPassword);
       validatedData.newPassword = hashedPassword;
     }
 
@@ -209,7 +209,7 @@ export default async function handlerUser(
       }
 
       try {
-        const { skip, take, search='' } = req.query;
+        const { skip, take, search = "" } = req.query;
         const { totalData, data } = await getAllUsers(
           Number(skip),
           Number(take),

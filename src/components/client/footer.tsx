@@ -2,31 +2,30 @@ import { Button, Typography } from "@material-tailwind/react";
 import { FormInput } from "../admin/FormInput";
 import { InputList } from "@/constants/client/InputLists/InputListFooter";
 import { emailServices } from "@/services/serviceGenerator";
-import { useRouter } from "next/router";
 
 const SITEMAP: {
   title: string;
   links: string[];
 }[] = [
-  {
-    title: "Company",
-    links: ["About Us", "Careers", "Our Team", "Projects"],
-  },
-  {
-    title: "Help Center",
-    links: ["Discord", "Twitter", "GitHub", "Contact Us"],
-  },
-];
+    {
+      title: "Company",
+      links: ["About Us", "Careers", "Our Team", "Projects"],
+    },
+    {
+      title: "Help Center",
+      links: ["Discord", "Twitter", "GitHub", "Contact Us"],
+    },
+  ];
 
 const currentYear = new Date().getFullYear();
+
 export const Footer = () => {
-  const { pathname } = useRouter();
   return (
     <footer className="relative w-full">
       <div className="w-full bg-[#1b1b1b]">
         <div className="mx-auto container p-5 lg:px-24 grid w-full gap-8 py-12 grid-cols-2 lg:grid-cols-3">
-          {SITEMAP.map(({ title, links }, key) => (
-            <div key={key} className="w-full">
+          {SITEMAP.map(({ title, links }) => (
+            <div key={title} className="w-full">
               <Typography
                 variant="small"
                 className="mb-4 font-bold uppercase text-gray-300 opacity-50"
@@ -34,9 +33,9 @@ export const Footer = () => {
                 {title}
               </Typography>
               <ul className="space-y-1">
-                {links.map((link, key) => (
+                {links.map((link) => (
                   <Typography
-                    key={key}
+                    key={link}
                     as="li"
                     className="font-normal text-gray-300"
                   >
@@ -51,18 +50,18 @@ export const Footer = () => {
               </ul>
             </div>
           ))}
-          <div className="flex flex-col text-white">
-          <Typography
-                variant="small"
-                className="mb-4 font-bold uppercase text-gray-300 opacity-50 lg:mb-5"
-              >
-                Contact Us
-              </Typography>
+          <div className="flex flex-col text-white col-span-2 lg:col-span-1">
+            <Typography
+              variant="small"
+              className="mb-4 font-bold uppercase text-gray-300 opacity-50 lg:mb-5"
+            >
+              Contact Us
+            </Typography>
             <FormInput
-              toastMessage={{ 
+              toastMessage={{
                 success: "Email sent successfully",
                 error: "Failed to send email"
-               }}
+              }}
               method="POST"
               service={emailServices}
               inputList={InputList}
@@ -72,10 +71,10 @@ export const Footer = () => {
               customButtonSubmit={(loading) =>
                 <Button
                   type="submit"
-                  color="green"
+                  color="white"
                   loading={loading}
                 >
-                  Send
+                  {loading ? "Sending..." : "Send"}
                 </Button>
               }
             />

@@ -3,7 +3,7 @@ import { GetPost } from "@/types/post.type";
 import { Typography } from "@material-tailwind/react";
 import React, { FC, useState } from "react";
 import { GetServerSideProps } from "next";
-import { dateFormater } from "@/helpers/date";
+import { dateFormater } from "@/utils/date";
 import { useRouter } from "next/router";
 import ContentWrapper from "@/layouts/client/contentWrapper";
 import Image from "next/image";

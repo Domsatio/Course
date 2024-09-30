@@ -23,12 +23,14 @@ import {
 } from "@heroicons/react/24/outline";
 import { ProfileMenu } from "../ProfileMenu";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 <ProfileMenu />
 
-export default function AdminNavbar({ children }: { children: React.ReactNode }) {
+const AdminNavbar: FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const routeLoader = topLoader();
+  const { pathname } = useRouter();
 
   const openDrawer = () => setIsDrawerOpen(true);
   const closeDrawer = () => setIsDrawerOpen(false);
@@ -104,6 +106,7 @@ export default function AdminNavbar({ children }: { children: React.ReactNode })
                 <ListItem
                   key={label}
                   onClick={() => onClickMenuItem(currentRoute ?? "")}
+                  className={`${pathname === currentRoute && "bg-gray-200"}`}
                 >
                   {icon &&
                     React.createElement(icon, {
@@ -157,7 +160,7 @@ export default function AdminNavbar({ children }: { children: React.ReactNode })
           </IconButton>
           <div className="flex items-center gap-5">
             <Link href="/">
-              <Button variant="outlined" className='flex items-center gap-3 py-2 px-4 rounded-full capitalize'>
+              <Button variant="outlined" className='flex items-center gap-3 py-2 px-4 border-gray-600 rounded-full capitalize'>
                 Client
               </Button>
             </Link>
@@ -172,3 +175,5 @@ export default function AdminNavbar({ children }: { children: React.ReactNode })
     </div>
   );
 }
+
+export default AdminNavbar;

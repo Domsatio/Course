@@ -47,7 +47,7 @@ export default function ModalShare({
         className="h-6 w-6 text-black absolute top-0 right-0 lg:top-3 lg:right-3 cursor-pointer hover:scale-110"
         onClick={() => handler(false)}
       />
-      <h1 className="text-lg font-bold">{title}</h1>
+      <h1 className="text-lg font-bold text-black">{title}</h1>
       <div className="flex gap-3">
         <FacebookShareButton url={pathname}>
           <FacebookIcon size={40} round />
@@ -71,15 +71,15 @@ export default function ModalShare({
           copy(currentUrl);
           setCopied(true);
         }}
-        className="flex text-white bg-black rounded-lg items-center gap-x-3 px-4 py-2.5 lowercase cursor-pointer"
+        className="flex text-black rounded-lg border border-gray-400 items-center gap-x-3 px-4 py-2.5 lowercase cursor-pointer"
       >
         <div className="relative border-r border-gray-400/50 pr-3 max-w-[300px] font-normal overflow-hidden whitespace-nowrap">
           {currentUrl}
         </div>
         {copied ? (
-          <CheckIcon className="h-4 w-4 text-white" />
+          <CheckIcon className="h-4 w-4" />
         ) : (
-          <DocumentDuplicateIcon className="h-4 w-4 text-white" />
+          <DocumentDuplicateIcon className="h-4 w-4" />
         )}
       </div>
     </div>
@@ -97,7 +97,7 @@ export default function ModalShare({
     </Drawer>
   ) : (
     <Dialog size="xs" open={isOpen} handler={() => handler(false)}>
-        <Content />
+      <Content />
     </Dialog>
   );
 }

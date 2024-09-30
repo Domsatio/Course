@@ -1,24 +1,27 @@
 import React from "react";
-import ContentWrapper from "@/layouts/client/contentWrapper";
-import { Button } from "@material-tailwind/react";
-import { useRouter } from "next/router";
-import GenerateMetaData from "@/components/GenerateMetaData";
+import { Button, Card, CardBody, Typography } from "@material-tailwind/react";
+import Link from "next/link";
 
-export default function SubscribeWarning() {
-  const router = useRouter();
+const SubscribersOnly = () => {
   return (
-    <ContentWrapper>
-      <GenerateMetaData title="Subscription Warning" desc="Subscription Warning Page" />
-      <div className="flex flex-col items-center justify-center gap-5">
-        <h1 className="text-2xl font-bold text-center font">Subscription</h1>
-        <p className="text-center">
-          You need to subscribe to access this page. Please subscribe to access
-          this page.
-        </p>
-        <Button color="blue" ripple={true} className="rounded-full px-10" onClick={() => router.push('/course/subscription')}>
-          Subscribe
-        </Button>
-      </div>
-    </ContentWrapper>
+    <div className="flex justify-center">
+      <Card className="overflow-hidden border border-gray-300 shadow-sm w-96 items-center">
+        <CardBody className="space-y-5 flex flex-col items-center">
+          <Typography variant="h5" color="black">
+            For Subscribers Only
+          </Typography>
+          <Typography variant="paragraph">
+            You need to subscribe to access this course
+          </Typography>
+          <Link href='/course/subscribe'>
+            <Button color="blue">
+              Subscribe Now
+            </Button>
+          </Link>
+        </CardBody>
+      </Card>
+    </div>
   );
 }
+
+export default SubscribersOnly;

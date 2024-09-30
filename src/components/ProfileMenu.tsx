@@ -16,7 +16,7 @@ export const ProfileMenu = () => {
   if (session?.user.role === "ADMIN" && !pathname.startsWith("/admin")) {
     return (
       <Link href="/admin/dashboard">
-        <Button size="sm" variant="outlined" className="rounded-full">
+        <Button size="sm" variant="outlined" className="rounded-full border-gray-600">
           Admin Panel
         </Button>
       </Link>
@@ -28,7 +28,7 @@ export const ProfileMenu = () => {
   return (
     <Menu open={isMenuOpen} handler={setIsMenuOpen} placement="bottom-end">
       <MenuHandler>
-        <Button variant="outlined" className={`flex items-center gap-3 py-2 px-4 rounded-full capitalize ${pathname.startsWith('/admin') && 'lg:ml-auto'}`}>
+        <Button variant="outlined" className={`flex border-gray-600 items-center gap-3 py-2 px-4 rounded-full capitalize ${pathname.startsWith('/admin') && 'lg:ml-auto'}`}>
           {session?.user.name}
           <ChevronDownIcon className="h-3 w-3" />
         </Button>

@@ -3,7 +3,7 @@ import { GetCategory } from "@/types/category.type";
 import { GetPost } from "@/types/post.type";
 import { Button, Typography } from "@material-tailwind/react";
 import React, { Fragment, useEffect, useState } from "react";
-import CardSkeleton from "@/components/Skeleton/CardSkeleton";
+import CardSkeleton from "@/components/Skeleton/card.skeleton";
 import { PaginationHook } from "@/hooks/paginationHook";
 import {
   FetchDataHook,
@@ -15,7 +15,7 @@ import { getQueryParams } from "@/helpers/appFunction";
 import Search from "@/components/client/search";
 import { useRouter } from "next/router";
 import CardItem from "@/components/client/CardItem";
-import CategorySkeleton from "@/components/Skeleton/CategorySkeleton";
+import CategorySkeleton from "@/components/Skeleton/category.skeleton";
 import ContentWrapper from "@/layouts/client/contentWrapper";
 import { cn } from "@/libs/cn";
 import GenerateMetaData from "@/components/GenerateMetaData";
@@ -29,21 +29,13 @@ type Params = {
 };
 
 const ClientClubPage = () => {
-  const [posts, setPosts] = useState<
-    Omit<GetPost, "published" | "createdAt">[]
-  >([]);
-  const [categories, setCategories] = useState<Omit<GetCategory, "posts">[]>(
-    []
-  );
+  const [posts, setPosts] = useState<Omit<GetPost, "published" | "createdAt">[]>([]);
+  const [categories, setCategories] = useState<Omit<GetCategory, "posts">[]>([]);
   const [activeCategory, setActiveCategory] = useState<string | null>("");
   const { isLoad, setIsLoad } = FetchDataHook();
-  const { isLoad: isCategoryLoad, setIsLoad: setIsCategoryLoad } =
-    FetchCategoryHook();
-  const { activePage, totalPages, take, setActivePage, handleSetTotalPages } =
-    PaginationHook({ initLimit: 6 });
-  const { debounceValue, searchQuery, setSearchQuery } = SearchHook({
-    delay: 800,
-  });
+  const { isLoad: isCategoryLoad, setIsLoad: setIsCategoryLoad } = FetchCategoryHook();
+  const { activePage, totalPages, take, setActivePage, handleSetTotalPages } = PaginationHook({ initLimit: 6 });
+  const { debounceValue, searchQuery, setSearchQuery } = SearchHook({ delay: 800 });
   const { replace } = useRouter();
 
   const getPostsData = async () => {
@@ -167,15 +159,17 @@ const ClientClubPage = () => {
               key={index}
               props={{ ...data, href: `/club/${data.slug}` }}
               category={
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 text-[#c28833] group-hover:text-[#c28833]/80">
                   {data.categories.map(({ category }, i) => (
-                    <Typography
-                      key={i}
-                      variant="small"
-                      className="text-[#c28833] flex capitalize group-hover:text-[#c28833]/80"
-                    >
-                      {category.name}
-                    </Typography>
+                    <Fragment key={category.id}>
+                      <Typography
+                        variant="small"
+                        className="capitalize"
+                      >
+                        {category.name}
+                      </Typography>
+                      {i !== data.categories.length - 1 && <Typography variant="small">•</Typography>}
+                    </Fragment>
                   ))}
                 </div>
               }

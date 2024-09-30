@@ -1,6 +1,6 @@
 import { Typography } from "@material-tailwind/react";
 import GenerateMetaData from "@/components/GenerateMetaData";
-import { Fragment} from "react";
+import { Fragment } from "react";
 import ContentWrapper from "@/layouts/client/contentWrapper";
 
 const ClientAboutPage = () => {
@@ -11,10 +11,10 @@ const ClientAboutPage = () => {
         <Typography variant="h2" className="text-center mt-10 lg:px-32">
           &quot;You miss 100% of the shots you don&apos;t take.&quot;
         </Typography>
-        <Typography variant="paragraph" className="lg:px-72 text-center">
+        <Typography variant="paragraph" className="text-center">
           - Wayne Gretzky
         </Typography>
-        <Typography variant="paragraph" className="p-5 lg:px-72">
+        <Typography variant="paragraph" className="p-5 xl:px-72">
           I’m a full-stack developer with a passion for building innovative web
           applications and exploring the latest trends in technology. My journey
           into coding started about six years ago, and ever since, I’ve been
