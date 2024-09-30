@@ -15,7 +15,7 @@ import Image from 'next/image';
 
 export default function Index({data}: any) {
   const [loading, setLoading] = useState<boolean>(false);
-  const [carts, setCarts] = useState<GetCarts[]>(data);
+  const [carts, setCarts] = useState<GetCarts[]>([]);
   const [selectedCart, setSelectedCart] = useState<string[]>([]);
   const [totalPrice, setTotalPrice] = useState<number>(0);
 
@@ -68,9 +68,9 @@ export default function Index({data}: any) {
     );
   }, [selectedCart]);
 
-  // useEffect(() => {
-  //   getCarts();
-  // }, []);
+  useEffect(() => {
+    setCarts(data);
+  }, [data]);
   
   return (
     <ContentWrapper>

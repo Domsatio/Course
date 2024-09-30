@@ -26,7 +26,7 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const { validatedData, errors } = createEmailValidation(req.body);
-
+  
   if (errors) {
     console.error("ERR: order - create = ", errors);
     return res
