@@ -6,7 +6,7 @@ import {
 } from "@/constants/client/InputLists/checkout.InputList";
 import { addressServices } from "@/services/serviceGenerator";
 import { Button, Typography } from "@material-tailwind/react";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
 import cookie from "cookie";
 import { BASE_URL } from "@/libs/axios/instance";
@@ -31,15 +31,18 @@ type CheckoutProps = {
 }
 
 const Checkout: FC<CheckoutProps> = (data) => {
-  console.log(data);
-
   const [isOpenAddress, setIsOpenAddress] = useState<boolean>(false);
   const [address, setAddress] = useState<UpdateAddress>(data.address);
-  const [carts, setCarts] = useState(data.carts);
+  const [carts, setCarts] = useState<GetCart[]>([]);
   const totalPrice = carts.reduce((acc: number, cart: GetCart) => {
     return acc + cart.product.price * cart.quantity;
   }, 0);
   const shippingAddress = address.address + ", " + address.city + ", " + address.state + ", " + address.country + ", " + address.zip + ", " + address.phone;
+
+useEffect(() => {
+  setAddress(data.address);
+  setCarts(data.carts);
+}, [data])
 
   return (
     <ContentWrapper>

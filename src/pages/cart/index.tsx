@@ -30,7 +30,7 @@ const EmptyCart = () => {
 
 const Cart: FC<{ data: GetCart[] }> = ({ data }) => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [carts, setCarts] = useState<GetCart[]>(data);
+  const [carts, setCarts] = useState<GetCart[]>([]);
   const [selectedCart, setSelectedCart] = useState<string[]>([]);
   const [totalPrice, setTotalPrice] = useState<number>(0);
 
@@ -83,9 +83,9 @@ const Cart: FC<{ data: GetCart[] }> = ({ data }) => {
     );
   }, [selectedCart]);
 
-  // useEffect(() => {
-  //   getCarts();
-  // }, []);
+  useEffect(() => {
+    setCarts(data);
+  }, [data]);
 
   return (
     <ContentWrapper className='bg-transparent'>
