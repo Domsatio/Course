@@ -144,7 +144,7 @@ const Cart: FC<{ data: GetCart[] }> = ({ data = [] }) => {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const cookies = cookie.parse(context.req.headers.cookie || "");
-  const token = cookies["next-auth.session-token"];
+  const token = cookies["__Secure-next-auth.session-token"];
 
   if(!token){
     return {
