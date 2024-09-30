@@ -28,22 +28,11 @@ const EmptyCart = () => {
   )
 }
 
-const Cart: FC<{ data: GetCart[] }> = ({ data }) => {
+const Cart: FC<{ data: GetCart[] }> = ({ data = [] }) => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [carts, setCarts] = useState<GetCart[]>([]);
+  const [carts, setCarts] = useState<GetCart[]>(data); 
   const [selectedCart, setSelectedCart] = useState<string[]>([]);
   const [totalPrice, setTotalPrice] = useState<number>(0);
-
-  // const getCarts = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const { data: {data}} = await cartServices.getItems();
-  //     setCarts(data);
-  //   } catch (error) {
-  //     console.error("Error getting cart:", error);
-  //   }
-  //   setLoading(false);
-  // }
 
   const handleDeleteSelectedCart = async () => {
     setLoading(true);
@@ -54,7 +43,7 @@ const Cart: FC<{ data: GetCart[] }> = ({ data }) => {
       console.error("Error deleting cart:", error);
     }
     setLoading(false);
-  }
+  };
 
   const handleChangeSelectedCart = (id: string) => {
     if (selectedCart.includes(id)) {
@@ -70,7 +59,7 @@ const Cart: FC<{ data: GetCart[] }> = ({ data }) => {
     } else {
       setSelectedCart(carts.map((cart: GetCart) => cart.id));
     }
-  }
+  };
 
   useEffect(() => {
     setTotalPrice(
@@ -84,7 +73,9 @@ const Cart: FC<{ data: GetCart[] }> = ({ data }) => {
   }, [selectedCart]);
 
   useEffect(() => {
-    setCarts(data);
+    if (data?.length) {
+      setCarts(data);
+    }
   }, [data]);
 
   return (
@@ -101,7 +92,7 @@ const Cart: FC<{ data: GetCart[] }> = ({ data }) => {
                   <Checkbox color="success" checked={selectedCart.length === carts.length} onChange={() => handleSelectAll()} />
                   <p className='font-semibold'>Select All <span className='font-normal'>({carts.length})</span></p>
                 </div>
-                {selectedCart.length > 0 && <Button variant='text' color='red' onClick={() => { }}>Remove</Button>}
+                {selectedCart.length > 0 && <Button variant='text' color='red' onClick={handleDeleteSelectedCart}>Remove</Button>}
               </div>
               {carts.map((cart, index: number) => (
                 <div key={cart.id} className={`flex items-center justify-between gap-3 shadow-md p-4 ${index === carts.length - 1 && 'rounded-b-lg'}`}>
@@ -120,7 +111,6 @@ const Cart: FC<{ data: GetCart[] }> = ({ data }) => {
                       <Link href={`/store/${cart.product.slug}`} className="flex items-center gap-2">
                         <h2 className='font-semibold'>{cart.product.name}</h2>
                       </Link>
-                      {/* <p className="text-sm text-gray-600 line-clamp-2">{cart.product.description}</p> */}
                     </div>
                   </div>
                   <div className='self-start'>
@@ -148,6 +138,7 @@ const Cart: FC<{ data: GetCart[] }> = ({ data }) => {
     </ContentWrapper >
   )
 }
+
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const cookies = cookie.parse(context.req.headers.cookie || "");
