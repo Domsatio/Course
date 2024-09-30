@@ -30,7 +30,7 @@ const EmptyCart = () => {
 
 const Cart: FC<{ data: GetCart[] }> = ({ data = [] }) => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [carts, setCarts] = useState<GetCart[]>(data); 
+  const [carts, setCarts] = useState<GetCart[]>(data || []); 
   const [selectedCart, setSelectedCart] = useState<string[]>([]);
   const [totalPrice, setTotalPrice] = useState<number>(0);
 
@@ -62,14 +62,16 @@ const Cart: FC<{ data: GetCart[] }> = ({ data = [] }) => {
   };
 
   useEffect(() => {
-    setTotalPrice(
-      carts.reduce((acc: number, cart: GetCart) => {
-        if (selectedCart.includes(cart.id)) {
-          return acc + cart.product.price;
-        }
-        return acc;
-      }, 0)
-    );
+    if(carts.length){
+      setTotalPrice(
+        carts.reduce((acc: number, cart: GetCart) => {
+          if (selectedCart.includes(cart.id)) {
+            return acc + cart.product.price;
+          }
+          return acc;
+        }, 0)
+      );
+    }
   }, [selectedCart]);
 
   useEffect(() => {
@@ -150,18 +152,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-    });
-
-    const { data } = await response.json();
+    }).then((res) => res.json());
 
     return {
-      props: { data },
+      props: { data: response.data },
     };
   } catch (error) {
     console.error("Error fetching data:", error);
     return {
       props: {
-        data: {},
+        data: [],
       },
     };
   }
