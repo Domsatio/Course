@@ -1,5 +1,6 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { Typography, Button } from "@material-tailwind/react";
+
 const TableSkeleton = ({
   long,
   isLoading,
@@ -12,7 +13,7 @@ const TableSkeleton = ({
   onRefresh: () => void;
 }) => {
   return (
-    <React.Fragment>
+    <Fragment>
       {[...Array(!isError ? 5 : 7)].map((_, i) => (
         <tr key={i}>
           {[...Array(long)].map((_, ii) => (
@@ -22,11 +23,10 @@ const TableSkeleton = ({
             >
               {isLoading && (
                 <Typography
+                  as='div'
                   variant="small"
-                  color="blue-gray"
-                  className="font-normal leading-none opacity-70"
+                  className="font-normal h-3 w-28 leading-none bg-gray-200 rounded"
                 >
-                  {" "}
                   &nbsp;
                 </Typography>
               )}
@@ -50,7 +50,7 @@ const TableSkeleton = ({
           ))}
         </tr>
       ))}
-    </React.Fragment>
+    </Fragment>
   );
 };
 
