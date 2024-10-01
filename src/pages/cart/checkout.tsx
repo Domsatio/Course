@@ -6,7 +6,7 @@ import {
 } from "@/constants/client/InputLists/checkout.InputList";
 import { addressServices } from "@/services/serviceGenerator";
 import { Button, Typography } from "@material-tailwind/react";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
 import cookie from "cookie";
 import { BASE_URL } from "@/libs/axios/instance";
@@ -33,23 +33,38 @@ type CheckoutProps = {
 }
 
 const Checkout: FC<CheckoutProps> = (data) => {
-  console.log(data);
-
   const [isOpenAddress, setIsOpenAddress] = useState<boolean>(false);
-  const [address, setAddress] = useState<UpdateAddress>(data.address);
-  const [carts, setCarts] = useState<Carts[]>(data.carts);
+  const [address, setAddress] = useState<UpdateAddress | null>(
+    data.address || null
+  );
+  const [carts, setCarts] = useState<GetCart[]>(data.carts || []);
+  const [shippingAddress, setShippingAddress] = useState<string>(
+    `${data.address.address}, ${data.address.city}, ${data.address.state}, ${data.address.country}, ${data.address.zip}, ${data.address.phone}` ||
+    "No address available"
+  );
+
   const totalPrice = carts.reduce((acc: number, cart: GetCart) => {
     return acc + cart.product.price * cart.quantity;
   }, 0);
-  const shippingAddress = address.address + ", " + address.city + ", " + address.state + ", " + address.country + ", " + address.zip + ", " + address.phone;
+
+  useEffect(() => {
+    setAddress(data.address || null);
+    setCarts(data.carts || []);
+  }, [data]);
+
+  useEffect(() => {
+    const shippingAddress = address
+      ? `${address.address}, ${address.city}, ${address.state}, ${address.country}, ${address.zip}, ${address.phone}`
+      : "No address available";
+    setShippingAddress(shippingAddress);
+  }, [address]);
 
   return (
     <ContentWrapper>
-      <Typography variant="h2" color="black" className='flex justify-center'>
+      <Typography variant="h2" color="black" className="flex justify-center">
         Checkout
       </Typography>
       <div className="flex flex-col-reverse lg:flex-row justify-between gap-5">
-
         {/* Billing Details */}
         <div className="w-full lg:w-4/6 flex flex-col gap-7">
           <div className="space-y-4">
@@ -62,6 +77,7 @@ const Checkout: FC<CheckoutProps> = (data) => {
               >
                 Change
               </p>
+              {/* FormInput for updating address */}
               <FormInput
                 inputList={InputListAddress}
                 method="PUT"
@@ -86,32 +102,45 @@ const Checkout: FC<CheckoutProps> = (data) => {
           <div className="space-y-4">
             <h2 className="text-xl font-semibold">Items</h2>
             <div className="space-y-2">
-              {carts.map(({ id, quantity, product }) => (
-                <div key={id} className="flex items-center justify-between gap-3 shadow-md rounded-lg p-4">
-                  <div className="flex gap-3">
-                    <div className="w-20 h-20 relative">
-                      <Image
-                        src={product.thumbnail}
-                        alt={product.name}
-                        className="w-full h-full object-contain"
-                        height={60}
-                        width={60}
-                      />
+              {carts.length > 0 ? (
+                carts.map(({ id, product, quantity }) => (
+                  <div
+                    key={id}
+                    className="flex items-center justify-between gap-3 shadow-md rounded-lg p-4"
+                  >
+                    <div className="flex gap-3">
+                      <div className="w-20 h-20 relative">
+                        <Image
+                          src={product.thumbnail}
+                          alt={product.name}
+                          className="w-full h-full object-contain"
+                          height={60}
+                          width={60}
+                        />
+                      </div>
+                      <div className="self-start">
+                        <Link
+                          href={`/store/${product.slug}`}
+                          className="flex items-center gap-2"
+                        >
+                          <h2 className="font-semibold">{product.name}</h2>
+                        </Link>
+                      </div>
                     </div>
                     <div className="self-start">
-                      <Link href={`/store/${product.slug}`} className="flex items-center gap-2">
-                        <h2 className='font-semibold'>{product.name}</h2>
-                      </Link>
+                      <p className="font-semibold">
+                        {quantity} X {ConvertCurrency(product.price)}
+                      </p>
                     </div>
                   </div>
-                  <div className='self-start'>
-                    <p className="font-semibold">{quantity} X {ConvertCurrency(product.finalPrice)}</p>
-                  </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                <p>No items in the cart.</p>
+              )}
             </div>
           </div>
 
+          {/* Submit form */}
           <FormInput
             inputList={InputList}
             method="POST"
@@ -138,31 +167,18 @@ const Checkout: FC<CheckoutProps> = (data) => {
         <div className="w-full lg:w-2/6">
           <div className="rounded-lg flex flex-col shadow-md p-4 gap-2">
             <h2 className="text-lg font-semibold">Order Summary</h2>
-            {/* <ul className="space-y-4">
-            <li className="flex justify-between">
-              <span>Item 1</span>
-              <span>$50.00</span>
-            </li>
-            <li className="flex justify-between">
-              <span>Item 2</span>
-              <span>$30.00</span>
-              </li>
-            <li className="flex justify-between">
-              <span>Item 3</span>
-              <span>$20.00</span>
-            </li>
-          </ul> */}
-
-            <div className=" flex justify-between items-center">
+            <div className="flex justify-between items-center">
               <span>Total</span>
-              <span className="font-semibold">{ConvertCurrency(totalPrice)}</span>
+              <span className="font-semibold">
+                {carts.length > 0 ? ConvertCurrency(totalPrice) : "-"}
+              </span>
             </div>
           </div>
         </div>
       </div>
     </ContentWrapper>
   );
-}
+};
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const cookies = cookie.parse(context.req.headers.cookie || "");

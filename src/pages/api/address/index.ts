@@ -54,15 +54,13 @@ export default async function handler(
     }
 
     const { userId } = req.query;
-    console.log(token.id);
-    
 
-    if (token.id !== userId && !token.id) {
+    if (!token) {
       res.status(403).json({ message: "Forbidden" });
       return;
     }
 
-    const id = userId || token.id;
+    const id = token.id;
     try {
       const data = await getOneAddress((id as string));
       console.info("Get address success");

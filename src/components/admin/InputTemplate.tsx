@@ -25,9 +25,11 @@ import { TrashIcon, EyeIcon } from "@heroicons/react/24/outline";
 import CurrencyInput from "react-currency-input-field";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { CheckIcon } from "@heroicons/react/24/solid";
+import { CheckIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import QuillEditor from "./QuillEdtor";
 import { cn } from "@/libs/cn";
+import WebcamCapture from "../Webcam";
+import { tr } from "date-fns/locale";
 
 type FileViewerProps = {
   file: string;
@@ -36,12 +38,18 @@ type FileViewerProps = {
   handleOpen: (value: boolean) => void;
 };
 
-const FileViewer = ({
+type WebcamCaptureProps = {
+  isOpen: boolean;
+  handleOpen: (value: boolean) => void;
+  onCapture: (imageSrc: File) => void;
+};
+
+const FileViewer: React.FC<FileViewerProps> = ({
   file = "",
   isImage = true,
   isOpen,
   handleOpen,
-}: FileViewerProps) => {
+}) => {
   return (
     <Dialog
       size={isImage ? "sm" : "md"}
@@ -79,6 +87,29 @@ const FileViewer = ({
   );
 };
 
+const ModalTakePicture = ({ isOpen, handleOpen ,onCapture }: WebcamCaptureProps) => {
+  return (
+    <Fragment>
+    <Button className="hidden bg-transparent border-2 border-black text-black lg:block" onClick={() => handleOpen(true)}>Take Picture</Button>
+    <Dialog
+      size="sm"
+      open={isOpen}
+      handler={() => handleOpen(true)}
+    >
+      <DialogHeader className="flex justify-between border-b">
+        Take Picture 
+        <IconButton className="bg-transparent text-black shadow-none hover:shadow-none"  onClick={() => handleOpen(false)}>
+          <XMarkIcon className="h-5 w-5" aria-hidden="true" />
+        </IconButton>
+      </DialogHeader>
+      <DialogBody className="h-[500px]">
+        <WebcamCapture onCapture={onCapture} />
+      </DialogBody>
+    </Dialog>
+    </Fragment>
+  );
+}
+
 export const InputListRenderer = ({
   className = "",
   name = "",
@@ -98,6 +129,7 @@ export const InputListRenderer = ({
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [preview, setPreview] = useState<boolean>(false);
+  const [takePicture, setTakePicture] = useState<boolean>(false);
   const [search, setSearch] = useState<string>("");
   const [debounceValue] = useDebounce(search, 1500);
   const param = option?.params?.split(/\s*,\s*/) || [];
@@ -169,10 +201,12 @@ export const InputListRenderer = ({
   // };
 
   // a function to handle image upload to upladthing
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement> | File) => {
+    if ('target' in e) {
+      e.preventDefault();
+    }
     setIsLoading(true);
-    const files = e.target.files?.[0];
+    const files: File = e instanceof Event && 'target' in e && e.target instanceof HTMLInputElement && e.target.files ? e.target.files[0] : e as File;
     if (files) {
       try {
         const { data } = await axios.post(
@@ -206,6 +240,7 @@ export const InputListRenderer = ({
             },
           });
           setPreviewImage(fileUrl);
+          setTakePicture(false);
         } else {
           console.error("Upload failed:", response.data);
         }
@@ -440,17 +475,20 @@ export const InputListRenderer = ({
             />
           )}
           {!value && !isLoading && (
-            <input
-              name={name}
-              type="file"
-              onChange={(e) => handleImageUpload(e)}
-              className="block w-64 text-sm text-gray-500
-                file:py-2 file:px-4 file:rounded-full file:border-0
-                file:text-sm file:font-semibold
-                file:bg-blue-50 file:text-blue-700
-                hover:file:bg-blue-100
-                file:cursor-pointer file:h-10 file:leading-tight"
-            />
+            <div className="flex gap-2">
+              <input
+                name={name}
+                type="file"
+                onChange={(e) => handleImageUpload(e)}
+                className="block w-64 text-sm text-gray-500
+                  file:py-2 file:px-4 file:rounded-full file:border-0
+                  file:text-sm file:font-semibold
+                  file:bg-blue-50 file:text-blue-700
+                  hover:file:bg-blue-100
+                  file:cursor-pointer file:h-10 file:leading-tight"
+              />
+              <ModalTakePicture isOpen={takePicture} handleOpen={(e) => setTakePicture(e)} onCapture={(e) => handleImageUpload(e)}  />
+            </div>
           )}
           {isLoading && (
             <div className="w-fit">
