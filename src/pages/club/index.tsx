@@ -154,7 +154,7 @@ const ClientClubPage = () => {
         {isLoad ? (
           Array.from({ length: 6 }, (_, i) => <CardSkeleton key={i} />)
         ) : posts.length > 0 ? (
-          posts.map((data: Omit<GetPost, "published" | "createdAt">, index) => (
+          posts.map((data, index) => (
             <CardItem
               key={index}
               props={{ ...data, href: `/club/${data.slug}` }}
