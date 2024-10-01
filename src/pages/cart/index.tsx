@@ -103,28 +103,27 @@ const Cart: FC<{ data: GetCart[] }> = ({ data }) => {
                 </div>
                 {selectedCart.length > 0 && <Button variant='text' color='red' onClick={() => { }}>Remove</Button>}
               </div>
-              {carts.map((cart, index: number) => (
-                <div key={cart.id} className={`flex items-center justify-between gap-3 shadow-md p-4 ${index === carts.length - 1 && 'rounded-b-lg'}`}>
+              {carts.map(({ id, product, quantity }, index: number) => (
+                <div key={id} className={`flex items-center justify-between gap-3 shadow-md p-4 ${index === carts.length - 1 && 'rounded-b-lg'}`}>
                   <div className="flex gap-3">
-                    <Checkbox color="success" className='self-center' checked={selectedCart.includes(cart.id)} onChange={() => handleChangeSelectedCart(cart.id)} />
+                    <Checkbox color="success" className='self-center' checked={selectedCart.includes(id)} onChange={() => handleChangeSelectedCart(id)} />
                     <div className="w-20 h-20 relative">
                       <Image
-                        src={cart.product.thumbnail}
-                        alt={cart.product.name}
+                        src={product.thumbnail}
+                        alt={product.name}
                         className="w-full h-full object-contain"
                         height={60}
                         width={60}
                       />
                     </div>
                     <div className="self-start">
-                      <Link href={`/store/${cart.product.slug}`} className="flex items-center gap-2">
-                        <h2 className='font-semibold'>{cart.product.name}</h2>
+                      <Link href={`/store/${product.slug}`} className="flex items-center gap-2">
+                        <h2 className='font-semibold'>{product.name}</h2>
                       </Link>
-                      {/* <p className="text-sm text-gray-600 line-clamp-2">{cart.product.description}</p> */}
                     </div>
                   </div>
                   <div className='self-start'>
-                    <p className="font-semibold">{cart.quantity} X {ConvertCurrency(cart.product.price)}</p>
+                    <p className="font-semibold">{quantity} X {ConvertCurrency(product.finalPrice)}</p>
                   </div>
                 </div>
               ))}

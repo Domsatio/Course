@@ -33,30 +33,51 @@ export const getProducts = async (
     );
   }
 
-  return prisma.$transaction(async (tx) => {
-    const totalData = await tx.product.count({
-      where: whereCondition,
-    });
+  return prisma.$transaction(
+    async (tx) => {
+      const totalData = await tx.product.count({
+        where: whereCondition,
+      });
 
-    const data = await tx.product.findMany({
-      where: whereCondition,
-      skip,
-      take,
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+      const res = await tx.product.findMany({
+        where: whereCondition,
+        skip,
+        take,
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
 
-    return { totalData, data };
-  }, { maxWait: 5000, timeout: 20000 });
+      const data = res.map((item) => ({
+        ...item,
+        finalPrice: item.discount
+          ? item.price - (item.price * item.discount) / 100
+          : item.price,
+      }));
+
+      return { totalData, data };
+    },
+    { maxWait: 5000, timeout: 20000 }
+  );
 };
 
 export const getProduct = async (param: string) => {
-  return prisma.product.findFirst({
+  const res = await prisma.product.findFirst({
     where: {
       OR: [{ id: param }, { slug: param }],
     },
   });
+
+  if (!res) return null;
+
+  const data = {
+    ...res,
+    finalPrice: res.discount
+      ? res.price - (res.price * res.discount) / 100
+      : res.price,
+  };
+
+  return data;
 };
 
 export const createProduct = async (data: Product) => {

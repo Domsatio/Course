@@ -1,4 +1,4 @@
-import { Product } from "./product.type";
+import { GetProduct } from "./product.type";
 
 export type Cart = {
   id: string;
@@ -20,5 +20,5 @@ export type GetCart = {
   userId: string;
   productId: string;
   quantity: number;
-  product: Product;
+  product: GetProduct;
 };

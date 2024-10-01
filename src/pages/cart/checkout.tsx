@@ -86,27 +86,26 @@ const Checkout: FC<CheckoutProps> = (data) => {
           <div className="space-y-4">
             <h2 className="text-xl font-semibold">Items</h2>
             <div className="space-y-2">
-              {carts.map((cart: GetCart, index: number) => (
-                <div key={index} className="flex items-center justify-between gap-3 shadow-md rounded-lg p-4">
+              {carts.map(({ id, quantity, product }) => (
+                <div key={id} className="flex items-center justify-between gap-3 shadow-md rounded-lg p-4">
                   <div className="flex gap-3">
                     <div className="w-20 h-20 relative">
                       <Image
-                        src={cart.product.thumbnail}
-                        alt={cart.product.name}
+                        src={product.thumbnail}
+                        alt={product.name}
                         className="w-full h-full object-contain"
                         height={60}
                         width={60}
                       />
                     </div>
                     <div className="self-start">
-                      <Link href={`/store/${cart.product.slug}`} className="flex items-center gap-2">
-                        <h2 className='font-semibold'>{cart.product.name}</h2>
+                      <Link href={`/store/${product.slug}`} className="flex items-center gap-2">
+                        <h2 className='font-semibold'>{product.name}</h2>
                       </Link>
-                      {/* <p className="text-sm text-gray-600 line-clamp-2">{cart.product.description}</p> */}
                     </div>
                   </div>
                   <div className='self-start'>
-                    <p className="font-semibold">{cart.quantity} X {ConvertCurrency(cart.product.price)}</p>
+                    <p className="font-semibold">{quantity} X {ConvertCurrency(product.finalPrice)}</p>
                   </div>
                 </div>
               ))}

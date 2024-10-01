@@ -10,7 +10,7 @@ export const getCarts = async (id: string) => {
         },
       });
 
-      const data = await tx.cart.findMany({
+      const res = await tx.cart.findMany({
         where: {
           userId: id,
         },
@@ -18,6 +18,17 @@ export const getCarts = async (id: string) => {
           product: true,
         },
       });
+
+      const data = res.map((item) => ({
+        ...item,
+        product: {
+          ...item.product,
+          finalPrice: item.product.discount
+            ? item.product.price -
+              (item.product.price * item.product.discount) / 100
+            : item.product.price,
+        },
+      }));
 
       return { totalData, data };
     },
@@ -49,9 +60,9 @@ export const updateCart = async (id: string, data: UpdateCart) => {
   });
 };
 
-export const deleteCart = async (id:string, idCart: string[]) => {
+export const deleteCart = async (id: string, idCart: string[]) => {
   return prisma.cart.deleteMany({
-    where: { 
+    where: {
       userId: id,
       id: {
         in: idCart,
