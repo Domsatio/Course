@@ -9,7 +9,7 @@ import { Button, Typography } from "@material-tailwind/react";
 import { FC, useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
 import cookie from "cookie";
-import { BASE_URL } from "@/libs/axios/instance";
+import { BASE_URL, NODE_ENV } from "@/libs/axios/instance";
 import { UpdateAddress } from "@/types/address.type";
 import { GetCart } from "@/types/cart.type";
 import { ConvertCurrency } from "@/helpers/appFunction";
@@ -182,7 +182,10 @@ const Checkout: FC<CheckoutProps> = (data) => {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const cookies = cookie.parse(context.req.headers.cookie || "");
-  const token = cookies["next-auth.session-token"];
+  const token = NODE_ENV === "development"
+    ? cookies["next-auth.session-token"]
+    : cookies["__Secure-next-auth.session-token"];
+
   try {
     const res_address = await fetch(`${BASE_URL}/api/address`, {
       method: "GET",

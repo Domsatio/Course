@@ -1,6 +1,6 @@
 import { GetServerSideProps } from 'next/types';
 import cookie from 'cookie';
-import { BASE_URL } from '@/libs/axios/instance';
+import { BASE_URL, NODE_ENV } from '@/libs/axios/instance';
 import { GetCart } from '@/types/cart.type';
 import ContentWrapper from '@/layouts/client/contentWrapper';
 import { Button, Typography } from '@material-tailwind/react';
@@ -28,22 +28,11 @@ const EmptyCart = () => {
   )
 }
 
-const Cart: FC<{ data: GetCart[] }> = ({ data }) => {
+const Cart: FC<{ data: GetCart[] }> = ({ data = [] }) => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [carts, setCarts] = useState<GetCart[]>(data);
+  const [carts, setCarts] = useState<GetCart[]>(data || []);
   const [selectedCart, setSelectedCart] = useState<string[]>([]);
   const [totalPrice, setTotalPrice] = useState<number>(0);
-
-  // const getCarts = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const { data: {data}} = await cartServices.getItems();
-  //     setCarts(data);
-  //   } catch (error) {
-  //     console.error("Error getting cart:", error);
-  //   }
-  //   setLoading(false);
-  // }
 
   const handleDeleteSelectedCart = async () => {
     setLoading(true);
@@ -54,7 +43,7 @@ const Cart: FC<{ data: GetCart[] }> = ({ data }) => {
       console.error("Error deleting cart:", error);
     }
     setLoading(false);
-  }
+  };
 
   const handleChangeSelectedCart = (id: string) => {
     if (selectedCart.includes(id)) {
@@ -70,22 +59,26 @@ const Cart: FC<{ data: GetCart[] }> = ({ data }) => {
     } else {
       setSelectedCart(carts.map((cart: GetCart) => cart.id));
     }
-  }
+  };
 
   useEffect(() => {
-    setTotalPrice(
-      carts.reduce((acc: number, cart: GetCart) => {
-        if (selectedCart.includes(cart.id)) {
-          return acc + cart.product.price;
-        }
-        return acc;
-      }, 0)
-    );
+    if (carts.length) {
+      setTotalPrice(
+        carts.reduce((acc: number, cart: GetCart) => {
+          if (selectedCart.includes(cart.id)) {
+            return acc + cart.product.price;
+          }
+          return acc;
+        }, 0)
+      );
+    }
   }, [selectedCart]);
 
-  // useEffect(() => {
-  //   getCarts();
-  // }, []);
+  useEffect(() => {
+    if (data?.length) {
+      setCarts(data);
+    }
+  }, [data]);
 
   return (
     <ContentWrapper className='bg-transparent'>
@@ -101,7 +94,7 @@ const Cart: FC<{ data: GetCart[] }> = ({ data }) => {
                   <Checkbox color="success" checked={selectedCart.length === carts.length} onChange={() => handleSelectAll()} />
                   <p className='font-semibold'>Select All <span className='font-normal'>({carts.length})</span></p>
                 </div>
-                {selectedCart.length > 0 && <Button variant='text' color='red' onClick={() => { }}>Remove</Button>}
+                {selectedCart.length > 0 && <Button variant='text' color='red' onClick={handleDeleteSelectedCart}>Remove</Button>}
               </div>
               {carts.map(({ id, product, quantity }, index: number) => (
                 <div key={id} className={`flex items-center justify-between gap-3 shadow-md p-4 ${index === carts.length - 1 && 'rounded-b-lg'}`}>
@@ -148,9 +141,22 @@ const Cart: FC<{ data: GetCart[] }> = ({ data }) => {
   )
 }
 
+
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const cookies = cookie.parse(context.req.headers.cookie || "");
-  const token = cookies["next-auth.session-token"];
+  const token = NODE_ENV === "development"
+    ? cookies["next-auth.session-token"]
+    : cookies["__Secure-next-auth.session-token"];
+
+  if (!token) {
+    return {
+      redirect: {
+        destination: '/sign-in',
+        permanent: false
+      }
+    }
+  }
+
   try {
     const response = await fetch(`${BASE_URL}/api/cart`, {
       method: "GET",
@@ -158,18 +164,18 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-    });
+    })
 
-    const { data } = await response.json();
+    const result = await response.json();
 
     return {
-      props: { data },
+      props: { data: result.data },
     };
   } catch (error) {
     console.error("Error fetching data:", error);
     return {
       props: {
-        data: {},
+        data: [],
       },
     };
   }
