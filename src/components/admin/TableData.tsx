@@ -19,7 +19,7 @@ import {
   IconButton,
   Tooltip,
 } from "@material-tailwind/react";
-import TableSkeleton from "../Skeleton/table.skeletton";
+import TableSkeleton from "../Skeleton/table.skeleton";
 import { TableDataProps } from "@/types/table.type";
 import { FormInput } from "@/components/admin/FormInput";
 import { supabase } from "@/libs/supabase";
