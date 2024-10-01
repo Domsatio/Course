@@ -31,7 +31,7 @@ type Params = {
 const ClientClubPage = () => {
   const [posts, setPosts] = useState<Omit<GetPost, "published" | "createdAt">[]>([]);
   const [categories, setCategories] = useState<Omit<GetCategory, "posts">[]>([]);
-  const [activeCategory, setActiveCategory] = useState<string | null>("");
+  const [activeCategory, setActiveCategory] = useState<string>("");
   const { isLoad, setIsLoad } = FetchDataHook();
   const { isLoad: isCategoryLoad, setIsLoad: setIsCategoryLoad } = FetchCategoryHook();
   const { activePage, totalPages, take, setActivePage, handleSetTotalPages } = PaginationHook({ initLimit: 6 });

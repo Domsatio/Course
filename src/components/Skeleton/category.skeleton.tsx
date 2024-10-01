@@ -8,10 +8,8 @@ function CategorySkeleton() {
       color="blue-gray"
       className="font-normal leading-none opacity-70"
     >
-      <Typography as="div" className="w-14 lg:w-[75px] h-8 rounded-full bg-gray-300">
-        {" "}
-        &nbsp;
-      </Typography>
+      {" "}
+      &nbsp;
     </Typography>
   );
 }
