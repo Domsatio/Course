@@ -17,17 +17,19 @@ import Image from "next/image";
 import Link from "next/link";
 import { GetProduct } from "@/types/product.type";
 
+type Carts = {
+  id: string
+  productId: string
+  userId: string
+  quantity: number
+  createdAt: string
+  updatedAt: string
+  product: GetProduct
+}
+
 type CheckoutProps = {
   address: UpdateAddress
-  carts: {
-    id: string
-    productId: string
-    userId: string
-    quantity: number
-    createdAt: string
-    updatedAt: string
-    product: GetProduct
-  }[]
+  carts: Carts[]
 }
 
 const Checkout: FC<CheckoutProps> = (data) => {
@@ -35,7 +37,7 @@ const Checkout: FC<CheckoutProps> = (data) => {
 
   const [isOpenAddress, setIsOpenAddress] = useState<boolean>(false);
   const [address, setAddress] = useState<UpdateAddress>(data.address);
-  const [carts, setCarts] = useState(data.carts);
+  const [carts, setCarts] = useState<Carts[]>(data.carts);
   const totalPrice = carts.reduce((acc: number, cart: GetCart) => {
     return acc + cart.product.price * cart.quantity;
   }, 0);

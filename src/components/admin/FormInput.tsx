@@ -408,7 +408,7 @@ export const FormInput = ({
   const Form = () => (
     <form
       onSubmit={formik.handleSubmit}
-      className="relative flex flex-col p-4"
+      className={cn("relative flex flex-col", { 'p-4': asModal })}
     >
       {errorFetch && (
         <ModalError onClick={() => fetchData()} />
