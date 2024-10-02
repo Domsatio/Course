@@ -189,7 +189,7 @@ export const FormInput = ({
         : await service.getItems({ id });
 
       // set data as required by the form input
-      if(!data) return;
+      if (!data) return;
       Object.keys(data).forEach((key) => {
         const input = inputList.filter((input) => input.name === key);
         const isOnInputList = input.length > 0;

@@ -25,11 +25,12 @@ import { TrashIcon, EyeIcon } from "@heroicons/react/24/outline";
 import CurrencyInput from "react-currency-input-field";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { CheckIcon, XMarkIcon } from "@heroicons/react/24/solid";
+import { CameraIcon, CheckIcon, CloudArrowUpIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import QuillEditor from "./QuillEdtor";
 import { cn } from "@/libs/cn";
 import WebcamCapture from "../Webcam";
 import { tr } from "date-fns/locale";
+import MultiSelect from "../MultiSelect";
 
 type FileViewerProps = {
   file: string;
@@ -87,25 +88,32 @@ const FileViewer: React.FC<FileViewerProps> = ({
   );
 };
 
-const ModalTakePicture = ({ isOpen, handleOpen ,onCapture }: WebcamCaptureProps) => {
+const ModalTakePicture = ({ isOpen, handleOpen, onCapture }: WebcamCaptureProps) => {
   return (
     <Fragment>
-    <Button className="hidden bg-transparent border-2 border-black text-black lg:block" onClick={() => handleOpen(true)}>Take Picture</Button>
-    <Dialog
-      size="sm"
-      open={isOpen}
-      handler={() => handleOpen(true)}
-    >
-      <DialogHeader className="flex justify-between border-b">
-        Take Picture 
-        <IconButton className="bg-transparent text-black shadow-none hover:shadow-none"  onClick={() => handleOpen(false)}>
-          <XMarkIcon className="h-5 w-5" aria-hidden="true" />
-        </IconButton>
-      </DialogHeader>
-      <DialogBody className="h-[500px]">
-        <WebcamCapture onCapture={onCapture} />
-      </DialogBody>
-    </Dialog>
+      <Button
+        variant="outlined"
+        color="gray"
+        className="hidden lg:flex gap-2 items-center justify-center"
+        onClick={() => handleOpen(true)}
+      >
+        <CameraIcon className="w-5 h-5" /> Camera
+      </Button>
+      <Dialog
+        size="sm"
+        open={isOpen}
+        handler={() => handleOpen(true)}
+      >
+        <DialogHeader className="flex justify-between border-b">
+          Take Picture
+          <IconButton className="bg-transparent text-black shadow-none hover:shadow-none" onClick={() => handleOpen(false)}>
+            <XMarkIcon className="h-5 w-5" aria-hidden="true" />
+          </IconButton>
+        </DialogHeader>
+        <DialogBody className="h-[500px]">
+          <WebcamCapture onCapture={onCapture} />
+        </DialogBody>
+      </Dialog>
     </Fragment>
   );
 }
@@ -165,24 +173,6 @@ export const InputListRenderer = ({
     }
   }, [debounceValue]);
 
-  const handleChangeMultipleCheckbox = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const { checked, value: selectedValue, name } = e.target;
-    let updatedValues = Array.isArray(value) ? [...value] : [];
-    if (checked) {
-      updatedValues.push(selectedValue);
-    } else {
-      updatedValues = updatedValues.filter((val) => val !== selectedValue);
-    }
-    onChange?.({
-      target: {
-        name,
-        value: updatedValues,
-      },
-    });
-  };
-
   // const handleImageChange = (e: any) => {
   //   const file = e.target.files[0];
   //   if (file) {
@@ -206,7 +196,7 @@ export const InputListRenderer = ({
       e.preventDefault();
     }
     setIsLoading(true);
-    const files: File = e instanceof Event && 'target' in e && e.target instanceof HTMLInputElement && e.target.files ? e.target.files[0] : e as File;
+    const files: File = 'target' in e && e.target.files ? e.target.files[0] : e as File;
     if (files) {
       try {
         const { data } = await axios.post(
@@ -388,68 +378,7 @@ export const InputListRenderer = ({
       )}
       {type === "multicheckbox" &&
         (!isLoading ? (
-          <div>
-            <div className="flex flex-wrap gap-3">
-              {data?.map((item: any, index: number) => {
-                const checked =
-                  Array.isArray(value) &&
-                  value.includes(option?.api ? item[option.id] : item.value);
-                if (checked) {
-                  return (
-                    <Chip
-                      key={index}
-                      color="blue"
-                      className="cursor-pointer"
-                      onClose={() => {
-                        const updatedValues = value.filter(
-                          (val) =>
-                            val !== (option?.api ? item[option.id] : item.value)
-                        );
-                        onChange?.({
-                          target: {
-                            name,
-                            value: updatedValues,
-                          },
-                        });
-                      }}
-                      value={
-                        option?.api
-                          ? param.map((key: string) => item[key]).join(" | ")
-                          : item.title
-                      }
-                    ></Chip>
-                  );
-                }
-                return null;
-              })}
-            </div>
-            <div className="flex flex-wrap gap-3">
-              {data?.map((item: any, index: number) => (
-                <div key={index} className="flex items-center gap-2">
-                  <Checkbox
-                    name={name}
-                    value={option?.api ? item[option.id] : item.value}
-                    onChange={handleChangeMultipleCheckbox}
-                    disabled={disabled}
-                    crossOrigin={undefined}
-                    color="blue"
-                    checked={
-                      Array.isArray(value) &&
-                      value.includes(option?.api ? item[option.id] : item.value)
-                    }
-                  />
-                  <Typography
-                    color="blue-gray"
-                    className="font-medium capitalize"
-                  >
-                    {option?.api
-                      ? param.map((key: string) => item[key]).join(" | ")
-                      : item.title}
-                  </Typography>
-                </div>
-              ))}
-            </div>
-          </div>
+          <MultiSelect options={data} label="category" name={name} selected={value} onChange={onChange} />
         ) : (
           <div className="w-fit">
             <Chip
@@ -476,18 +405,14 @@ export const InputListRenderer = ({
           )}
           {!value && !isLoading && (
             <div className="flex gap-2">
-              <input
-                name={name}
-                type="file"
-                onChange={(e) => handleImageUpload(e)}
-                className="block w-64 text-sm text-gray-500
-                  file:py-2 file:px-4 file:rounded-full file:border-0
-                  file:text-sm file:font-semibold
-                  file:bg-blue-50 file:text-blue-700
-                  hover:file:bg-blue-100
-                  file:cursor-pointer file:h-10 file:leading-tight"
-              />
-              <ModalTakePicture isOpen={takePicture} handleOpen={(e) => setTakePicture(e)} onCapture={(e) => handleImageUpload(e)}  />
+              <label htmlFor="image-upload" className="flex items-center justify-center w-fit px-6 h-11 border border-black rounded-lg cursor-pointer text-black hover:opacity-70 transition-all">
+                <div className="flex gap-2 items-center justify-center">
+                  <CloudArrowUpIcon className="h-5 w-5" />
+                  <p className="text-xs font-semibold uppercase">Upload Image</p>
+                </div>
+                <input id="image-upload" name={name} type="file" className="hidden" onChange={(e) => handleImageUpload(e)} />
+              </label>
+              <ModalTakePicture isOpen={takePicture} handleOpen={(e) => setTakePicture(e)} onCapture={(e) => handleImageUpload(e)} />
             </div>
           )}
           {isLoading && (
