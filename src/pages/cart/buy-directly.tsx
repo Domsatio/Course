@@ -4,7 +4,10 @@ import {
   InputListAddress,
   InputList,
 } from "@/constants/client/InputLists/checkout.InputList";
-import { addressServices } from "@/services/serviceGenerator";
+import {
+  addressServices,
+  temporaryCartServices,
+} from "@/services/serviceGenerator";
 import { Button, Typography } from "@material-tailwind/react";
 import { FC, useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
@@ -13,43 +16,72 @@ import { BASE_URL, NODE_ENV } from "@/libs/axios/instance";
 import { UpdateAddress } from "@/types/address.type";
 import { GetCart } from "@/types/cart.type";
 import { ConvertCurrency } from "@/helpers/appFunction";
-import Image from "next/image";
-import Link from "next/link";
 import { GetProduct } from "@/types/product.type";
-
-type Carts = {
-  id: string
-  productId: string
-  userId: string
-  quantity: number
-  createdAt: string
-  updatedAt: string
-  product: GetProduct
-}
+import { getItem } from "@/utils/localstorage";
+import CartItem from "@/components/client/CartItem";
 
 type CheckoutProps = {
-  address: UpdateAddress
-  carts: Carts[]
-}
+  address: UpdateAddress;
+  carts: {
+    id: string;
+    productId: string;
+    userId: string;
+    quantity: number;
+    createdAt: string;
+    updatedAt: string;
+    product: GetProduct;
+  }[];
+};
 
-const Checkout: FC<CheckoutProps> = (data) => {
+const BuyDirectly: FC<CheckoutProps> = (data) => {
+  const [loading, setLoading] = useState<boolean>(false);
   const [isOpenAddress, setIsOpenAddress] = useState<boolean>(false);
-  const [address, setAddress] = useState<UpdateAddress | null>(
-    data.address || null
+  const [address, setAddress] = useState<UpdateAddress>(
+    data.address || {
+      address: "",
+      city: "",
+      state: "",
+      country: "",
+      zip: "",
+      phone: "",
+    }
   );
-  const [carts, setCarts] = useState<GetCart[]>(data.carts || []);
+  const [cart, setCarts] = useState<GetCart>({
+    id: "",
+    productId: "",
+    userId: "",
+    quantity: 0,
+    product: {
+      id: "",
+      name: "",
+      price: 0,
+      thumbnail: "",
+      slug: "",
+      description: "",
+      discount: 0,
+      quantity: 0,
+    },
+  });
+  const [totalPrice, setTotalPrice] = useState<number>(0);
   const [shippingAddress, setShippingAddress] = useState<string>(
     `${data.address.address}, ${data.address.city}, ${data.address.state}, ${data.address.country}, ${data.address.zip}, ${data.address.phone}` ||
-    "No address available"
+      "No address available"
   );
 
-  const totalPrice = carts.reduce((acc: number, cart: GetCart) => {
-    return acc + cart.product.price * cart.quantity;
-  }, 0);
+  const getTemporaryCart = async () => {
+    if (typeof window !== "undefined") {
+      const idBD = getItem("idBD");
+      if (idBD) {
+        const {
+          data: { data },
+        } = await temporaryCartServices.getItems({ idProduct: idBD });
+        setCarts(data);
+      }
+    }
+  };
 
   useEffect(() => {
     setAddress(data.address || null);
-    setCarts(data.carts || []);
   }, [data]);
 
   useEffect(() => {
@@ -58,6 +90,15 @@ const Checkout: FC<CheckoutProps> = (data) => {
       : "No address available";
     setShippingAddress(shippingAddress);
   }, [address]);
+
+  useEffect(() => {
+    getTemporaryCart();
+  }, []);
+
+  useEffect(() => {
+    const countPrice = cart.quantity * cart.product?.price;
+    setTotalPrice(countPrice);
+  }, [cart]);
 
   return (
     <ContentWrapper>
@@ -102,38 +143,15 @@ const Checkout: FC<CheckoutProps> = (data) => {
           <div className="space-y-4">
             <h2 className="text-xl font-semibold">Items</h2>
             <div className="space-y-2">
-              {carts.length > 0 ? (
-                carts.map(({ id, product, quantity }) => (
-                  <div
-                    key={id}
-                    className="flex items-center justify-between gap-3 shadow-md rounded-lg p-4"
-                  >
-                    <div className="flex gap-3">
-                      <div className="w-20 h-20 relative">
-                        <Image
-                          src={product.thumbnail}
-                          alt={product.name}
-                          className="w-full h-full object-contain"
-                          height={60}
-                          width={60}
-                        />
-                      </div>
-                      <div className="self-start">
-                        <Link
-                          href={`/store/${product.slug}`}
-                          className="flex items-center gap-2"
-                        >
-                          <h2 className="font-semibold">{product.name}</h2>
-                        </Link>
-                      </div>
-                    </div>
-                    <div className="self-start">
-                      <p className="font-semibold">
-                        {quantity} X {ConvertCurrency(product.price)}
-                      </p>
-                    </div>
-                  </div>
-                ))
+              {cart.id !== "" ? (
+                <CartItem
+                  cart={cart}
+                  setLoading={setLoading}
+                  service={temporaryCartServices}
+                  handleSetQuantity={(id, quantity) =>
+                    setCarts((prev) => ({ ...prev, quantity }))
+                  }
+                />
               ) : (
                 <p>No items in the cart.</p>
               )}
@@ -152,7 +170,12 @@ const Checkout: FC<CheckoutProps> = (data) => {
             isUseCancelButton={false}
             customCard={(child) => <div>{child}</div>}
             customButtonSubmit={() => (
-              <Button color="green" className="mt-2" fullWidth>
+              <Button
+                color="green"
+                className="mt-2"
+                loading={loading}
+                fullWidth
+              >
                 Checkout
               </Button>
             )}
@@ -170,7 +193,7 @@ const Checkout: FC<CheckoutProps> = (data) => {
             <div className="flex justify-between items-center">
               <span>Total</span>
               <span className="font-semibold">
-                {carts.length > 0 ? ConvertCurrency(totalPrice) : "-"}
+                {ConvertCurrency(totalPrice)}
               </span>
             </div>
           </div>
@@ -182,17 +205,18 @@ const Checkout: FC<CheckoutProps> = (data) => {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const cookies = cookie.parse(context.req.headers.cookie || "");
-  const token = NODE_ENV === "development"
-    ? cookies["next-auth.session-token"]
-    : cookies["__Secure-next-auth.session-token"];
+  const token =
+    NODE_ENV === "development"
+      ? cookies["next-auth.session-token"]
+      : cookies["__Secure-next-auth.session-token"];
 
   if (!token) {
     return {
       redirect: {
-        destination: '/sign-in',
-        permanent: false
-      }
-    }
+        destination: "/sign-in",
+        permanent: false,
+      },
+    };
   }
 
   try {
@@ -204,19 +228,19 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     });
 
-    const res_carts = await fetch(`${BASE_URL}/api/cart?checked=true`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    // const res_carts = await fetch(`${BASE_URL}/api/cart/temporary?idProduct=${idBD}`, {
+    //   method: "GET",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     Authorization: `Bearer ${token}`,
+    //   },
+    // });
 
     const { data: address } = await res_address.json();
-    const { data: carts } = await res_carts.json();
+    // const { data: carts } = await res_carts.json();
 
     return {
-      props: { address: { ...address }, carts: [...carts] },
+      props: { address },
     };
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -228,4 +252,4 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 };
 
-export default Checkout;
+export default BuyDirectly;

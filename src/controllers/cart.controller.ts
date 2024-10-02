@@ -1,5 +1,5 @@
 import prisma from "@/libs/prisma/db";
-import { Cart, UpdateCart } from "@/types/cart.type";
+import { Cart } from "@/types/cart.type";
 
 export const getCarts = async (id: string) => {
   return prisma.$transaction(
@@ -16,6 +16,9 @@ export const getCarts = async (id: string) => {
         },
         include: {
           product: true,
+        },
+        orderBy: {
+          createdAt: "desc",
         },
       });
 
@@ -36,6 +39,18 @@ export const getCarts = async (id: string) => {
   );
 };
 
+export const getCartChecked = async (userId: string) => {
+  return prisma.cart.findMany({
+    where: {
+      userId: userId,
+      isChecked: true,
+    },
+    include: {
+      product: true,
+    },
+  });
+};
+
 export const createCart = async (data: Cart) => {
   const checkIsExist = await prisma.cart.findFirst({
     where: {
@@ -51,11 +66,26 @@ export const createCart = async (data: Cart) => {
   }
 };
 
-export const updateCart = async (id: string, data: UpdateCart) => {
+export const updateCart = async (data: Omit<Cart, "productId">) => {
   return prisma.cart.update({
-    where: { id: id },
+    where: {
+      id: data.id,
+      userId: data.userId,
+    },
+    data,
+  });
+};
+
+export const updateIsCheckedAll = async (
+  userId: string,
+  isChecked: boolean
+) => {
+  return prisma.cart.updateMany({
+    where: {
+      userId: userId,
+    },
     data: {
-      quantity: data.quantity,
+      isChecked: isChecked,
     },
   });
 };
@@ -63,10 +93,89 @@ export const updateCart = async (id: string, data: UpdateCart) => {
 export const deleteCart = async (id: string, idCart: string[]) => {
   return prisma.cart.deleteMany({
     where: {
-      userId: id,
       id: {
         in: idCart,
       },
+      userId: id,
+    },
+  });
+};
+
+export const createTemporaryCart = async (data: Cart) => {
+  delete data.isChecked;
+  const cartCheck = await prisma.temporaryCart.findFirst({
+    where: {
+      userId: data.userId,
+    },
+  });
+
+  if (!cartCheck) {
+    return prisma.temporaryCart.create({ data });
+  } else if (cartCheck && cartCheck.productId !== data.productId) {
+    return prisma.temporaryCart.update({
+      where: {
+        userId: data.userId,
+      },
+      data: {
+        productId: data.productId,
+        quantity: 1,
+      },
+    });
+  } else {
+    return prisma.temporaryCart.update({
+      where: {
+        userId: data.userId,
+      },
+      data,
+    });
+  }
+};
+
+export const getTemporaryCart = async (id: string, idProduct: string) => {
+  const cartCheck = await prisma.temporaryCart.findFirst({
+    where: {
+      userId: id,
+      productId: idProduct,
+    },
+    include: {
+      product: true,
+    },
+  });
+
+  if (!cartCheck) {
+    return prisma.temporaryCart.create({
+      data: {
+        userId: id,
+        productId: idProduct,
+        quantity: 1,
+      },
+      include: {
+        product: true,
+      },
+    });
+  } else {
+    return cartCheck;
+  }
+};
+
+export const deleteTemporaryCart = async (userId: string) => {
+  return prisma.temporaryCart.deleteMany({
+    where: {
+      userId: userId,
+    },
+  });
+};
+
+export const updateQuantityTemporaryCart = async (
+  data: Omit<Cart, "productId" | "isChecked">
+) => {
+  return prisma.temporaryCart.update({
+    where: {
+      id: data.id,
+      userId: data.userId,
+    },
+    data: {
+      quantity: data.quantity,
     },
   });
 };

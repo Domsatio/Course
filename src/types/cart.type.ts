@@ -4,15 +4,16 @@ export type Cart = {
   id: string;
   userId: string;
   productId: string;
-  quantity: number;
+  quantity?: number;
+  isChecked?: boolean;
 };
 
 export type CreateCart = Omit<Cart, "id" | "userId">;
 
 export type UpdateCart = {
-  userId: string;
-  productId: string;
-  quantity: number;
+  id: string;
+  quantity?: number;
+  isChecked?: boolean;
 };
 
 export type GetCart = {
@@ -20,5 +21,6 @@ export type GetCart = {
   userId: string;
   productId: string;
   quantity: number;
+  isChecked?: boolean;
   product: GetProduct;
 };
