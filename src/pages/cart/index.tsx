@@ -12,32 +12,7 @@ import { ConvertCurrency } from "@/helpers/appFunction";
 import Link from "next/link";
 import CartItem from "@/components/client/CartItem";
 import { useRouter } from "next/router";
-
-// const searchFactorial = (arrayA:number[], arrayB:number[]) => {
-//   const arrayResult = []
-//   let max  = Math.max(arrayA.length, arrayB.length)
-//   for (let i = max; i >= 0;  i--) {
-//     let filter = 0
-//     arrayA.forEach((a) => {
-//       if(i % a === 0) {
-//         filter = i
-//       }
-//     })
-
-//     arrayB.forEach((b) => {
-//       if(b % filter === 0) {
-//         arrayResult.push(filter)
-//       }
-//     })
-
-//   }
-//   return arrayResult.length
-// }
-
-// const arrayA = [2, 6]
-// const arrayB = [24, 36]
-
-// console.log(searchFactorial(arrayA, arrayB))
+import  useGlobalStore from "@/store/globalStore";
 
 const EmptyCart = () => {
   return (
@@ -62,6 +37,7 @@ const Cart: FC<{ data: GetCart[] }> = ({ data = [] }) => {
   );
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const { push } = useRouter();
+  const { checkCart } = useGlobalStore();
 
   const handleDeleteCart = async (id: string[]) => {
     setLoading(true);
@@ -76,6 +52,7 @@ const Cart: FC<{ data: GetCart[] }> = ({ data = [] }) => {
           prev.filter((prevId: string) => !id.includes(prevId))
         );
       }
+      checkCart();
       toast.success("Cart deleted successfully");
     } catch (error) {
       toast.error("Error deleting cart");
@@ -244,6 +221,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     NODE_ENV === "development"
       ? cookies["next-auth.session-token"]
       : cookies["__Secure-next-auth.session-token"];
+
+  console.log("Token:", token);
 
   if (!token) {
     return {

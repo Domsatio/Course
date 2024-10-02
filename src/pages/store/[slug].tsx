@@ -12,6 +12,7 @@ import ButtonShare from "@/components/client/ButtonShare";
 import toast from "react-hot-toast";
 import { setItem } from "@/utils/localstorage";
 import { useRouter } from "next/router";
+import  useGlobalStore from "@/store/globalStore";
 
 const FinalPrice = ({
   price,
@@ -46,6 +47,7 @@ const DetailStore: FC<Omit<GetProduct, "createdAt" | "updatedAt">> = (
 ) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { push } = useRouter();
+  const { checkCart } = useGlobalStore();
 
   const addToCart = async () => {
     try {
@@ -54,6 +56,7 @@ const DetailStore: FC<Omit<GetProduct, "createdAt" | "updatedAt">> = (
         quantity: 1,
         isChecked: false,
       });
+      checkCart()
       toast.success("Added to cart");
     } catch (error) {
       toast.error("Failed to add to cart");
