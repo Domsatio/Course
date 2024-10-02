@@ -29,7 +29,6 @@ import { CheckIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import QuillEditor from "./QuillEdtor";
 import { cn } from "@/libs/cn";
 import WebcamCapture from "../Webcam";
-import { tr } from "date-fns/locale";
 
 type FileViewerProps = {
   file: string;
@@ -206,7 +205,7 @@ export const InputListRenderer = ({
       e.preventDefault();
     }
     setIsLoading(true);
-    const files: File = e instanceof Event && 'target' in e && e.target instanceof HTMLInputElement && e.target.files ? e.target.files[0] : e as File;
+    const files: File = 'target' in e && e.target.files ? e.target.files[0] : e as File;
     if (files) {
       try {
         const { data } = await axios.post(
@@ -253,8 +252,8 @@ export const InputListRenderer = ({
   };
 
   return (
-    <div className={cn('relative basis-full flex flex-col gap-2 mb-3', { 'hidden': hide }, className)}>
-      {label && <label className={cn('form-label text-black', { "after:content-['*'] after:text-red-600 after:ml-1": isRequired })}>
+    <div className={cn('relative basis-full flex flex-col gap-2 mb-3', {'hidden': hide}, className)}>
+      {label && <label className={cn('form-label text-black', {"after:content-['*'] after:text-red-600 after:ml-1": isRequired})}>
         {label}
       </label>}
       {(type === "input" || type === "url") &&

@@ -1,158 +1,257 @@
-import { GetServerSideProps } from 'next/types';
-import cookie from 'cookie';
-import { BASE_URL } from '@/libs/axios/instance';
-import { GetCart } from '@/types/cart.type';
-import ContentWrapper from '@/layouts/client/contentWrapper';
-import { Button, Typography } from '@material-tailwind/react';
-import { TrashIcon } from '@heroicons/react/24/outline';
-import { FC, useEffect, useState } from 'react';
-import Checkbox from '@mui/material/Checkbox';
-import { cartServices } from '@/services/serviceGenerator';
-import toast from 'react-hot-toast';
-import { ConvertCurrency } from '@/helpers/appFunction';
-import Link from 'next/link';
-import Image from 'next/image';
+import { GetServerSideProps } from "next/types";
+import cookie from "cookie";
+import { BASE_URL, NODE_ENV } from "@/libs/axios/instance";
+import { GetCart } from "@/types/cart.type";
+import ContentWrapper from "@/layouts/client/contentWrapper";
+import { Button, Typography } from "@material-tailwind/react";
+import { FC, useEffect, useState } from "react";
+import Checkbox from "@mui/material/Checkbox";
+import { cartServices } from "@/services/serviceGenerator";
+import toast from "react-hot-toast";
+import { ConvertCurrency } from "@/helpers/appFunction";
+import Link from "next/link";
+import CartItem from "@/components/client/CartItem";
+import { useRouter } from "next/router";
+
+// const searchFactorial = (arrayA:number[], arrayB:number[]) => {
+//   const arrayResult = []
+//   let max  = Math.max(arrayA.length, arrayB.length)
+//   for (let i = max; i >= 0;  i--) {
+//     let filter = 0
+//     arrayA.forEach((a) => {
+//       if(i % a === 0) {
+//         filter = i
+//       }
+//     })
+
+//     arrayB.forEach((b) => {
+//       if(b % filter === 0) {
+//         arrayResult.push(filter)
+//       }
+//     })
+
+//   }
+//   return arrayResult.length
+// }
+
+// const arrayA = [2, 6]
+// const arrayB = [24, 36]
+
+// console.log(searchFactorial(arrayA, arrayB))
 
 const EmptyCart = () => {
   return (
-    <div className='flex flex-col gap-4 h-96 items-center justify-center p-4 shadow-md rounded-lg'>
+    <div className="flex flex-col gap-4 h-96 items-center justify-center p-4 shadow-md rounded-lg">
       <Typography variant="h5" color="black" className="text-center">
         Looks like your cart is empty
       </Typography>
-      <Link href='/store'>
-        <Button variant="outlined">
-          Shop Now
-        </Button>
+      <Link href="/store">
+        <Button variant="outlined">Shop Now</Button>
       </Link>
     </div>
-  )
-}
+  );
+};
 
 const Cart: FC<{ data: GetCart[] }> = ({ data = [] }) => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [carts, setCarts] = useState<GetCart[]>(data || []); 
-  const [selectedCart, setSelectedCart] = useState<string[]>([]);
+  const [carts, setCarts] = useState<GetCart[]>(data || []);
+  const [selectedCart, setSelectedCart] = useState<string[]>(
+    data
+      .filter((cart: GetCart) => cart.isChecked)
+      .map((cart: GetCart) => cart.id) || []
+  );
   const [totalPrice, setTotalPrice] = useState<number>(0);
+  const { push } = useRouter();
 
-  const handleDeleteSelectedCart = async () => {
+  const handleDeleteCart = async (id: string[]) => {
     setLoading(true);
     try {
-      await cartServices.deleteItem({ idCart: selectedCart });
-      setCarts(carts.filter((cart: GetCart) => !selectedCart.includes(cart.id)));
+      await cartServices.deleteItem({ idCart: `[${id}]` });
+      const rest_cart = carts.filter((cart: GetCart) => !id.includes(cart.id));
+      setCarts(rest_cart);
+      if (id === selectedCart) {
+        setSelectedCart([]);
+      } else {
+        setSelectedCart((prev) =>
+          prev.filter((prevId: string) => !id.includes(prevId))
+        );
+      }
+      toast.success("Cart deleted successfully");
     } catch (error) {
+      toast.error("Error deleting cart");
       console.error("Error deleting cart:", error);
     }
     setLoading(false);
   };
 
-  const handleChangeSelectedCart = (id: string) => {
-    if (selectedCart.includes(id)) {
-      setSelectedCart(selectedCart.filter((cart) => cart !== id));
-    } else {
-      setSelectedCart([...selectedCart, id]);
+  const handleChangeSelectedCart = async (id: string) => {
+    setLoading(true);
+    const isChecked = selectedCart.includes(id) ? false : true;
+    try {
+      if (isChecked) {
+        setSelectedCart([...selectedCart, id]);
+      } else {
+        setSelectedCart(selectedCart.filter((cartId: string) => cartId !== id));
+      }
+      await cartServices.updateItem({
+        id,
+        isChecked: isChecked,
+      });
+    } catch (error) {
+      if (isChecked) {
+        setSelectedCart(selectedCart.filter((cartId: string) => cartId !== id));
+      } else {
+        setSelectedCart([...selectedCart, id]);
+      }
     }
+    setLoading(false);
   };
 
-  const handleSelectAll = () => {
-    if (selectedCart.length === carts.length) {
-      setSelectedCart([]);
-    } else {
-      setSelectedCart(carts.map((cart: GetCart) => cart.id));
+  const handleSelectAll = async () => {
+    setLoading(true);
+    const isCheckedAll = selectedCart.length === carts.length ? false : true;
+    try {
+      if (isCheckedAll) {
+        setSelectedCart(carts.map((cart: GetCart) => cart.id));
+      } else {
+        setSelectedCart([]);
+      }
+      await cartServices.updateItem({
+        id: "all",
+        isChecked: isCheckedAll,
+      });
+    } catch (error) {
+      if (isCheckedAll) {
+        setSelectedCart([]);
+      } else {
+        setSelectedCart(carts.map((cart: GetCart) => cart.id));
+      }
     }
+    setLoading(false);
+  };
+
+  const handleSetQuantity = async (id: string, quantity: number) => {
+    setCarts((prev) =>
+      prev.map((cart: GetCart) => {
+        if (cart.id === id) {
+          return { ...cart, quantity };
+        }
+        return cart;
+      })
+    );
   };
 
   useEffect(() => {
-    if(carts.length){
+    if (carts.length) {
       setTotalPrice(
         carts.reduce((acc: number, cart: GetCart) => {
           if (selectedCart.includes(cart.id)) {
-            return acc + cart.product.price;
+            return acc + cart.product.price * cart.quantity;
           }
           return acc;
         }, 0)
       );
     }
-  }, [selectedCart]);
-
-  useEffect(() => {
-    if (data?.length) {
-      setCarts(data);
-    }
-  }, [data]);
+  }, [selectedCart, carts]);
 
   return (
-    <ContentWrapper className='bg-transparent'>
-      <Typography variant="h2" color="black" className='flex justify-center'>
+    <ContentWrapper className="bg-transparent">
+      <Typography variant="h2" color="black" className="flex justify-center">
         Cart
       </Typography>
-      <div className='flex flex-col justify-between gap-5 lg:flex-row'>
+      <div className="flex flex-col justify-between gap-5 lg:flex-row">
         <div className="w-full lg:w-4/6">
           {carts.length > 0 ? (
             <div className="space-y-2">
-              <div className='flex items-center justify-between p-4 shadow-md rounded-tl-lg rounded-tr-lg'>
-                <div className='flex items-center gap-2'>
-                  <Checkbox color="success" checked={selectedCart.length === carts.length} onChange={() => handleSelectAll()} />
-                  <p className='font-semibold'>Select All <span className='font-normal'>({carts.length})</span></p>
+              <div className="flex items-center justify-between p-4 shadow-md rounded-tl-lg rounded-tr-lg">
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    color="success"
+                    checked={selectedCart.length === carts.length}
+                    onChange={() => handleSelectAll()}
+                  />
+                  <p className="font-semibold">
+                    Select All{" "}
+                    <span className="font-normal">({carts.length})</span>
+                  </p>
                 </div>
-                {selectedCart.length > 0 && <Button variant='text' color='red' onClick={handleDeleteSelectedCart}>Remove</Button>}
+                {selectedCart.length > 0 && (
+                  <Button
+                    variant="text"
+                    color="red"
+                    onClick={() => handleDeleteCart(selectedCart)}
+                  >
+                    Remove
+                  </Button>
+                )}
               </div>
               {carts.map((cart, index: number) => (
-                <div key={cart.id} className={`flex items-center justify-between gap-3 shadow-md p-4 ${index === carts.length - 1 && 'rounded-b-lg'}`}>
-                  <div className="flex gap-3">
-                    <Checkbox color="success" className='self-center' checked={selectedCart.includes(cart.id)} onChange={() => handleChangeSelectedCart(cart.id)} />
-                    <div className="w-20 h-20 relative">
-                      <Image
-                        src={cart.product.thumbnail}
-                        alt={cart.product.name}
-                        className="w-full h-full object-contain"
-                        height={60}
-                        width={60}
-                      />
-                    </div>
-                    <div className="self-start">
-                      <Link href={`/store/${cart.product.slug}`} className="flex items-center gap-2">
-                        <h2 className='font-semibold'>{cart.product.name}</h2>
-                      </Link>
-                    </div>
-                  </div>
-                  <div className='self-start'>
-                    <p className="font-semibold">{cart.quantity} X {ConvertCurrency(cart.product.price)}</p>
-                  </div>
-                </div>
+                <CartItem
+                  key={cart.id}
+                  index={index}
+                  cart={cart}
+                  cartLength={carts.length}
+                  selectedCart={selectedCart}
+                  setSelectedCart={handleChangeSelectedCart}
+                  handleDeleteCart={handleDeleteCart}
+                  handleSetQuantity={handleSetQuantity}
+                  setLoading={setLoading}
+                />
               ))}
             </div>
-          ) : <EmptyCart />}
-        </div >
+          ) : (
+            <EmptyCart />
+          )}
+        </div>
 
         <div className="w-full lg:w-2/6">
-          <div className='rounded-lg flex flex-col shadow-md p-4 gap-2'>
-            <h2 className='text-lg font-semibold'>Summary</h2>
-            <div className='flex justify-between items-center'>
+          <div className="rounded-lg flex flex-col shadow-md p-4 gap-2">
+            <h2 className="text-lg font-semibold">Summary</h2>
+            <div className="flex justify-between items-center">
               <p>Total</p>
-              <p className='font-semibold'>{carts.length > 0 ? ConvertCurrency(totalPrice) : '-'}</p>
+              <p className="font-semibold">
+                {carts.length > 0 ? ConvertCurrency(totalPrice) : "-"}
+              </p>
             </div>
-            <Link href='/cart/checkout' className='w-full mt-2'>
-              <Button color='green' fullWidth>Checkout</Button>
-            </Link>
+            <Button
+              color="green"
+              loading={loading}
+              fullWidth
+              onClick={() => {
+                if (selectedCart.length === 0) {
+                  toast(
+                    'Please select item to checkout',
+                    {duration: 2700}
+                  );
+                  return;
+                } else {
+                  push("/cart/checkout");
+                }
+              }}
+            >
+              Checkout
+            </Button>
           </div>
         </div>
-      </div >
-    </ContentWrapper >
-  )
-}
-
+      </div>
+    </ContentWrapper>
+  );
+};
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const cookies = cookie.parse(context.req.headers.cookie || "");
-  const token = cookies["__Secure-next-auth.session-token"];
+  const token =
+    NODE_ENV === "development"
+      ? cookies["next-auth.session-token"]
+      : cookies["__Secure-next-auth.session-token"];
 
-  if(!token){
+  if (!token) {
     return {
       redirect: {
-        destination: '/sign-in',
-        permanent: false
-      }
-    }
+        destination: "/sign-in",
+        permanent: false,
+      },
+    };
   }
 
   try {
@@ -162,7 +261,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-    })
+    });
 
     const result = await response.json();
 

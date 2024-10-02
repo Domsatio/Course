@@ -38,6 +38,9 @@ export const addressServices = createService<UpdateAddress, UpdateAddress>(
   "address"
 );
 export const cartServices = createService<CreateCart, UpdateCart>("cart");
+export const temporaryCartServices = createService<CreateCart, UpdateCart>(
+  "cart/temporary"
+);
 export const dashboardServices = {
   getDashboard: (token: string) =>
     instance.get("/api/dashboard", tokenHeader(token)),

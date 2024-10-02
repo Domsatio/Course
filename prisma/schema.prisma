@@ -52,6 +52,8 @@ model User {
   orders         Order[]
   posts          Post[]
   sessions       Session[]
+  TemporaryCart TemporaryCart[]
+
 }
 
 model VerificationToken {
@@ -92,11 +94,28 @@ model Product {
   slug        String   @unique
   thumbnail   String
   cart        Cart[]
+  TemporaryCart TemporaryCart[]
+
 }
 
 model Cart {
   id        String   @id @default(uuid())
   userId    String
+  productId String
+  quantity  Int      @default(1)
+  isChecked Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([productId])
+}
+
+model TemporaryCart {
+  id        String   @id @default(uuid())
+  userId    String   @unique  
   productId String
   quantity  Int      @default(1)
   createdAt DateTime @default(now())
