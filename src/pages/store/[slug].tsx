@@ -1,5 +1,5 @@
 import { ConvertCurrency } from "@/helpers/appFunction";
-import { productServices } from "@/services/serviceGenerator";
+import { productServices, cartServices, temporaryCartServices } from "@/services/serviceGenerator";
 import { GetProduct } from "@/types/product.type";
 import { Button, Typography } from "@material-tailwind/react";
 import { GetServerSideProps } from "next";
@@ -9,10 +9,9 @@ import GenerateMetaData from "@/components/GenerateMetaData";
 import ModalShare from "@/components/ModalShare";
 import ContentWrapper from "@/layouts/client/contentWrapper";
 import ButtonShare from "@/components/client/ButtonShare";
-import { useRouter } from "next/router";
-import { cartServices } from "@/services/serviceGenerator";
 import toast from "react-hot-toast";
-import Link from "next/link";
+import { setItem } from "@/utils/localstorage";
+import { useRouter } from "next/router";
 
 const FinalPrice = ({
   price,
@@ -46,20 +45,35 @@ const DetailStore: FC<Omit<GetProduct, "createdAt" | "updatedAt">> = (
   data
 ) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const { push } = useRouter();
 
   const addToCart = async () => {
     try {
-      const { data: cart } = await cartServices.addItem({
+      await cartServices.addItem({
         productId: data.id,
         quantity: 1,
+        isChecked: false,
       });
       toast.success("Added to cart");
-      console.log("Cart:", cart);
     } catch (error) {
       toast.error("Failed to add to cart");
       console.error("Error adding to cart:", error);
     }
   };
+
+  const handleBuyDirectly = async () => {
+    try {
+      setItem('idBD', data.id)
+      await temporaryCartServices.addItem({
+        productId: data.id,
+        quantity: 1,
+        isChecked: false,
+      });
+      push('/cart/buy-directly')
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+    }
+  }
 
   return (
     <Fragment>
@@ -89,9 +103,9 @@ const DetailStore: FC<Omit<GetProduct, "createdAt" | "updatedAt">> = (
             </Typography>
           </div>
           <div className="grid grid-cols-5 gap-2">
-            <Link href='/cart/checkout' className="col-span-2">
-              <Button className="rounded-full w-full">Buy Now</Button>
-            </Link>
+            {/* <Link href='/cart/checkout' className="col-span-2" onClick={() => setItem('buyDirectly','')}> */}
+              <Button className="rounded-full w-full col-span-2" onClick={() => handleBuyDirectly()}>Buy Now</Button>
+            {/* </Link> */}
             <Button variant='outlined' className="rounded-full col-span-2" onClick={() => addToCart()}>
               Add to Cart
             </Button>

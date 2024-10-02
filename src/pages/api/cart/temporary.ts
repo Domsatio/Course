@@ -1,10 +1,8 @@
 import {
-  getCarts,
-  getCartChecked,
-  createCart,
-  deleteCart,
-  updateCart,
-  updateIsCheckedAll,
+  getTemporaryCart,
+  createTemporaryCart,
+  deleteTemporaryCart,
+  updateQuantityTemporaryCart,
 } from "@/controllers/cart.controller";
 import {
   createCartValidation,
@@ -29,24 +27,27 @@ export default async function handlerCart(
     req.body.id = uuidv4();
 
     const { validatedData, errors } = createCartValidation(req.body);
-
+    
     if (errors) {
-      console.error("ERR: cart - create = ", errors);
+      console.error("ERR: temporary cart - create = ", errors);
       return res
         .status(422)
         .send({ status: false, statusCode: 422, message: errors });
     }
 
     try {
-      await createCart({...validatedData, userId: token.id as string});
-      console.info("Create cart success");
+      await createTemporaryCart({
+        ...validatedData,
+        userId: token.id as string,
+      });
+      console.info("Create remporary cart success");
       return res.status(201).send({
         status: true,
         statusCode: 201,
-        message: "Create cart success",
+        message: "Create temporary cart success",
       });
     } catch (error) {
-      console.error("ERR: cart - create = ", error);
+      console.error("ERR: temporary cart - create = ", error);
       return res
         .status(500)
         .send({ status: false, statusCode: 500, message: error });
@@ -59,27 +60,26 @@ export default async function handlerCart(
 
     const { validatedData, errors } = updateCartValidation(req.body);
 
-    const { id, isChecked } = req.body;
-    
     if (errors) {
-      console.error("ERR: cart - update = ", errors);
+      console.error("ERR: temporary cart - update = ", errors);
       return res
-      .status(422)
-      .send({ status: false, statusCode: 422, message: errors });
+        .status(422)
+        .send({ status: false, statusCode: 422, message: errors });
     }
 
     try {
-      const update = id === 'all' ? await updateIsCheckedAll(token.id as string, isChecked as boolean) : 
-      await updateCart({...validatedData, userId: token.id as string});
-      console.log("update cart success");
+      await updateQuantityTemporaryCart({
+        ...validatedData,
+        userId: token.id as string,
+      });
 
       return res.status(201).send({
         status: true,
         statusCode: 201,
-        message: "Update cart success",
+        message: "Update temporary cart success",
       });
     } catch (error) {
-      console.error("ERR: cart update = ", error);
+      console.error("ERR: temporary cart update = ", error);
       return res
         .status(500)
         .send({ status: false, statusCode: 500, message: error });
@@ -90,11 +90,9 @@ export default async function handlerCart(
       return;
     }
 
-    const { idCart } = req.query;
-    const cartId = (idCart as string).replace(/[\[\]]/g, '').split(',')
     const id = token.id as string;
     try {
-      await deleteCart(id as string, cartId);
+      await deleteTemporaryCart(id as string);
       console.log("Delete cart success");
       return res.status(200).send({
         status: true,
@@ -109,34 +107,26 @@ export default async function handlerCart(
     }
   } else if (req.method === "GET") {
     try {
-
       if (!token) {
         return res.status(401).json({ message: "Unauthorized" });
       }
-      const {checked} = req.query;
-      if(checked === 'true'){
-        const data = await getCartChecked(token.id as string);
-        return res.status(200).send({
-          status: true,
-          statusCode: 200,
-          message: "Get cart checked success",
-          data,
-        });
-      }else{
-        const { totalData, data } = await getCarts(token.id as string);
-        console.info("Get categories success");
-  
-        return res.status(200).send({
-          status: true,
-          statusCode: 200,
-          message: "Get categories success",
-          totalData,
-          data,
-        });
-      }
 
+      const { idProduct } = req.query;
+
+      const data = await getTemporaryCart(
+        token.id as string,
+        idProduct as string
+      );
+      console.info("Get temporary cart success");
+
+      return res.status(200).send({
+        status: true,
+        statusCode: 200,
+        message: "Get temporary cart success",
+        data,
+      });
     } catch (error) {
-      console.error("ERR: categories - get = ", error);
+      console.error("ERR: temporary cart - get = ", error);
       return res
         .status(500)
         .send({ status: false, statusCode: 500, message: error });
