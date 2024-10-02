@@ -16,8 +16,6 @@ import { BASE_URL, NODE_ENV } from "@/libs/axios/instance";
 import { UpdateAddress } from "@/types/address.type";
 import { GetCart } from "@/types/cart.type";
 import { ConvertCurrency } from "@/helpers/appFunction";
-import Image from "next/image";
-import Link from "next/link";
 import { GetProduct } from "@/types/product.type";
 import { getItem } from "@/utils/localstorage";
 import CartItem from "@/components/client/CartItem";
@@ -145,39 +143,15 @@ const BuyDirectly: FC<CheckoutProps> = (data) => {
           <div className="space-y-4">
             <h2 className="text-xl font-semibold">Items</h2>
             <div className="space-y-2">
-              {cart.id !== '' ? (
+              {cart.id !== "" ? (
                 <CartItem
                   cart={cart}
                   setLoading={setLoading}
                   service={temporaryCartServices}
-                  handleSetQuantity={(id, quantity) => setCarts((prev) => ({ ...prev, quantity }))}
+                  handleSetQuantity={(id, quantity) =>
+                    setCarts((prev) => ({ ...prev, quantity }))
+                  }
                 />
-                // <div className="flex items-center justify-between gap-3 shadow-md rounded-lg p-4">
-                //   <div className="flex gap-3">
-                //     <div className="w-20 h-20 relative">
-                //       <Image
-                //         src={cart.product?.thumbnail || ""}
-                //         alt={cart.product?.name}
-                //         className="w-full h-full object-contain"
-                //         height={60}
-                //         width={60}
-                //       />
-                //     </div>
-                //     <div className="self-start">
-                //       <Link
-                //         href={`/store/${cart.product?.slug}`}
-                //         className="flex items-center gap-2"
-                //       >
-                //         <h2 className="font-semibold">{cart.product?.name}</h2>
-                //       </Link>
-                //     </div>
-                //   </div>
-                //   <div className="self-start">
-                //     <p className="font-semibold">
-                //       {cart.quantity} X {ConvertCurrency(cart.product?.price)}
-                //     </p>
-                //   </div>
-                // </div>
               ) : (
                 <p>No items in the cart.</p>
               )}
@@ -196,7 +170,12 @@ const BuyDirectly: FC<CheckoutProps> = (data) => {
             isUseCancelButton={false}
             customCard={(child) => <div>{child}</div>}
             customButtonSubmit={() => (
-              <Button color="green" className="mt-2" loading={loading} fullWidth>
+              <Button
+                color="green"
+                className="mt-2"
+                loading={loading}
+                fullWidth
+              >
                 Checkout
               </Button>
             )}

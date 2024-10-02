@@ -3,7 +3,6 @@ import {
   Menu,
   MenuHandler,
   MenuList,
-  MenuItem,
   Button,
   Typography,
   Badge,
@@ -14,12 +13,15 @@ import Link from "next/link";
 import { cartServices } from "@/services/serviceGenerator";
 import { GetCart } from "@/types/cart.type";
 import { ConvertCurrency } from "@/helpers/appFunction";
+import  useGlobalStore from "@/store/globalStore";
 
 export function NavCart() {
   const [openMenu, setOpenMenu] = useState(false);
   const [carts, setCarts] = useState<GetCart[]>([]);
   const [isGetCartError, setIsGetCartError] = useState(false);
   const [totalCart, setTotalCart] = useState(0);
+
+  const { cartTrigger } = useGlobalStore();
 
   const getCarts = async () => {
     try {
@@ -43,7 +45,7 @@ export function NavCart() {
 
   useEffect(() => {
     getCarts();
-  }, []);
+  }, [cartTrigger]);
 
 
   return (
