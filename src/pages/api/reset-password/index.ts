@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { verifyJWT } from "@/utils/jwt";
 import { updateUser } from "@/controllers/user.controller";
-import { hashing } from "@/utils/hasing";
+import { hashing } from "@/utils/hashing";
 
 export default async function handler(
   req: NextApiRequest,

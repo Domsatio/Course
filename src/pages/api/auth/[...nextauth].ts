@@ -3,7 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { existingUser } from "@/controllers/user.controller";
-import { checkPassword } from "@/utils/hasing";
+import { checkPassword } from "@/utils/hashing";
 import prisma from "@/libs/prisma/db";
 
 export const authOptions: NextAuthOptions = {

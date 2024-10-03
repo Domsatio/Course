@@ -13,7 +13,7 @@ import {
 } from "@/validations/user.validation";
 import { getToken } from "next-auth/jwt";
 import { v4 as uuidv4 } from "uuid";
-import { checkPassword, hashing } from "@/utils/hasing";
+import { checkPassword, hashing } from "@/utils/hashing";
 
 export default async function handlerUser(
   req: NextApiRequest,
