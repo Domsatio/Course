@@ -34,22 +34,20 @@ type CheckoutProps = {
 
 const Checkout: FC<CheckoutProps> = (data) => {
   const [isOpenAddress, setIsOpenAddress] = useState<boolean>(false);
-  const [address, setAddress] = useState<UpdateAddress | null>(
-    data.address || null
-  );
-  const [carts, setCarts] = useState<GetCart[]>(data.carts || []);
+  const [address, setAddress] = useState<UpdateAddress>(data.address);
+  const [carts, setCarts] = useState<GetCart[]>(data.carts);
   const [shippingAddress, setShippingAddress] = useState<string>(
-    `${data.address.address}, ${data.address.city}, ${data.address.state}, ${data.address.country}, ${data.address.zip}, ${data.address.phone}` ||
+    `${data.address?.address}, ${data.address?.city}, ${data.address?.state}, ${data.address?.country}, ${data.address?.zip}, ${data.address?.phone}` ||
     "No address available"
   );
 
   const totalPrice = carts.reduce((acc: number, cart: GetCart) => {
-    return acc + cart.product.price * cart.quantity;
+    return acc + cart.product.finalPrice * cart.quantity;
   }, 0);
 
   useEffect(() => {
-    setAddress(data.address || null);
-    setCarts(data.carts || []);
+    setAddress(data.address);
+    setCarts(data.carts);
   }, [data]);
 
   useEffect(() => {
@@ -75,7 +73,7 @@ const Checkout: FC<CheckoutProps> = (data) => {
                 className="text-green-400 text-sm font-semibold cursor-pointer"
                 onClick={() => setIsOpenAddress(true)}
               >
-                Change
+                {data.address ? "Update" : "Add"}
               </p>
               {/* FormInput for updating address */}
               <FormInput
@@ -129,7 +127,7 @@ const Checkout: FC<CheckoutProps> = (data) => {
                     </div>
                     <div className="self-start">
                       <p className="font-semibold">
-                        {quantity} X {ConvertCurrency(product.price)}
+                        {quantity} X {ConvertCurrency(product.finalPrice)}
                       </p>
                     </div>
                   </div>
@@ -216,7 +214,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const { data: carts } = await res_carts.json();
 
     return {
-      props: { address: { ...address }, carts: [...carts] },
+      props: { address, carts },
     };
   } catch (error) {
     console.error("Error fetching data:", error);

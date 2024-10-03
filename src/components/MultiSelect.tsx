@@ -163,7 +163,6 @@ const MultiSelect: FC<MultiSelectProps> = ({ options, label, name, selected, onC
               <>
                 <Button
                   variant='text'
-                  // size='sm'
                   ripple={false}
                   fullWidth
                   onClick={handleRemoveAll}
@@ -176,7 +175,6 @@ const MultiSelect: FC<MultiSelectProps> = ({ options, label, name, selected, onC
             )}
             <Button
               variant='text'
-              // size='sm'
               ripple={false}
               fullWidth
               onClick={handleClosePopover}

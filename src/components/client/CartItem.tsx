@@ -100,13 +100,21 @@ export default function CartItem({
       </div>
       <div className="self-start">
         <p className="font-semibold">
-          {quantity} X {ConvertCurrency(cart.product.price)}
+          {quantity} X {ConvertCurrency(cart.product.finalPrice)}
         </p>
       </div>
       <div className="absolute flex items-center gap-2 bottom-3 right-3">
-        <div className="flex items-center rounded-lg max-w-min border-2 border-black h-7">
+        {handleDeleteCart && (
           <IconButton
-            className="bg-transparent text-black shadow-none hover:shadow-none"
+            className="w-7 h-7 bg-transparent text-black shadow-none hover:shadow-none"
+            onClick={() => handleDeleteCart([cart.id])}
+          >
+            <TrashIcon className="h-4 w-4" />
+          </IconButton>
+        )}
+        <div className="ml-4 py-2 gap-5 h-7 flex items-center rounded-lg max-w-min border border-gray-300">
+          <IconButton
+            className="w-7 h-7 bg-transparent text-black shadow-none hover:shadow-none"
             disabled={quantity === 1}
             onClick={() => {
               setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
@@ -119,11 +127,11 @@ export default function CartItem({
               });
             }}
           >
-            <MinusIcon className="h-5 w-5" />
+            <MinusIcon className="h-4 w-4" />
           </IconButton>
-          <p className="px-2">{quantity}</p>
+          <span className="text-sm">{quantity}</span>
           <IconButton
-            className="bg-transparent text-black shadow-none hover:shadow-none"
+            className="w-7 h-7 bg-transparent text-black shadow-none hover:shadow-none"
             onClick={() => {
               setQuantity((prev) => prev + 1);
               setIncrement((prev) => {
@@ -135,17 +143,9 @@ export default function CartItem({
               });
             }}
           >
-            <PlusIcon className="h-5 w-5" />
+            <PlusIcon className="h-4 w-4" />
           </IconButton>
         </div>
-        {handleDeleteCart && (
-          <IconButton
-            className="bg-transparent text-black shadow-none hover:shadow-none"
-            onClick={() => handleDeleteCart([cart.id])}
-          >
-            <TrashIcon className="h-5 w-5" />
-          </IconButton>
-        )}
       </div>
     </div>
   );

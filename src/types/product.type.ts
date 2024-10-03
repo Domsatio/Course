@@ -31,5 +31,5 @@ export type GetProduct = {
   discount: number;
   thumbnail: string;
   quantity: number;
-  orders: Order[];
+  orders?: Order[];
 };

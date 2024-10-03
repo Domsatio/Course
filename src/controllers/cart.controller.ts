@@ -40,7 +40,7 @@ export const getCarts = async (id: string) => {
 };
 
 export const getCartChecked = async (userId: string) => {
-  return prisma.cart.findMany({
+  const res = await prisma.cart.findMany({
     where: {
       userId: userId,
       isChecked: true,
@@ -49,6 +49,19 @@ export const getCartChecked = async (userId: string) => {
       product: true,
     },
   });
+
+  const data = res.map((item) => ({
+    ...item,
+    product: {
+      ...item.product,
+      finalPrice: item.product.discount
+        ? item.product.price -
+          (item.product.price * item.product.discount) / 100
+        : item.product.price,
+    },
+  }));
+
+  return data;
 };
 
 export const createCart = async (data: Cart) => {
@@ -132,7 +145,7 @@ export const createTemporaryCart = async (data: Cart) => {
 };
 
 export const getTemporaryCart = async (id: string, idProduct: string) => {
-  const cartCheck = await prisma.temporaryCart.findFirst({
+  const res = await prisma.temporaryCart.findFirst({
     where: {
       userId: id,
       productId: idProduct,
@@ -142,7 +155,7 @@ export const getTemporaryCart = async (id: string, idProduct: string) => {
     },
   });
 
-  if (!cartCheck) {
+  if (!res) {
     return prisma.temporaryCart.create({
       data: {
         userId: id,
@@ -154,7 +167,17 @@ export const getTemporaryCart = async (id: string, idProduct: string) => {
       },
     });
   } else {
-    return cartCheck;
+    const data = {
+      ...res,
+      product: {
+        ...res.product,
+        finalPrice: res.product.discount
+          ? res.product.price - (res.product.price * res.product.discount) / 100
+          : res.product.price,
+      },
+    };
+
+    return data;
   }
 };
 

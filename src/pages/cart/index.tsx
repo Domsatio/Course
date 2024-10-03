@@ -123,7 +123,7 @@ const Cart: FC<{ data: GetCart[] }> = ({ data = [] }) => {
       setTotalPrice(
         carts.reduce((acc: number, cart: GetCart) => {
           if (selectedCart.includes(cart.id)) {
-            return acc + cart.product.price * cart.quantity;
+            return acc + cart.product.finalPrice * cart.quantity;
           }
           return acc;
         }, 0)
