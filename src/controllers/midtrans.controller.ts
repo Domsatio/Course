@@ -119,7 +119,7 @@ export const createTransactionBuyDirectly = async (userId: string) => {
 
   console.log(user.TemporaryCart);
 
-  const params = createTransactionParams(user, [...user.TemporaryCart]);
+  const params = createTransactionParams(user, Array.isArray(user.TemporaryCart) ? user.TemporaryCart : [user.TemporaryCart]);
 
   try {
     const token = await snap.createTransaction(params);
