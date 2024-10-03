@@ -30,7 +30,7 @@ export default function Index() {
     service: userServices,
     realtimeTable: "User",
     onSuccess: (data: DataProps) => setData(data),
-    // filter: FilterInputList,
+    filter: FilterInputList,
     isActionAdd: false,
   });
 
