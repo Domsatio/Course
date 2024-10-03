@@ -191,15 +191,16 @@ export default function TableData({
                 }}
               />
               {searchQuery && (
-                <Button
-                  className="flex bg-red-600 items-center gap-3 !absolute right-1 top-1 rounded"
+                <IconButton
+                  className="!absolute right-1 top-1 rounded"
+                  color="red"
                   size="sm"
                   onClick={() => {
                     setSearchQuery("");
                   }}
                 >
                   <XMarkIcon className="h-4 w-4" />
-                </Button>
+                </IconButton>
               )}
             </div>
             {isActionAdd && (
