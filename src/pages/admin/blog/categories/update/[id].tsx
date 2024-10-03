@@ -11,7 +11,7 @@ export default function Update() {
 
   return (
     <div>
-      <GenerateMetaData title="Update Category" desc="Update Category Page" />
+      <GenerateMetaData title="Update Category | Account" desc="Update Category Page" />
       <FormInput
         inputList={FormInputList}
         service={categoryServices}

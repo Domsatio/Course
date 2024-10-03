@@ -9,7 +9,7 @@ export default function Update() {
 
   return (
     <div>
-      <GenerateMetaData title="Update Product" desc="Update Product Page" />
+      <GenerateMetaData title="Update Product | Admin" desc="Update Product Page" />
       <FormInput
         inputList={FormInputList}
         service={productServices}

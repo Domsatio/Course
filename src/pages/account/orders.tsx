@@ -5,7 +5,7 @@ import GenerateMetaData from '@/components/GenerateMetaData'
 const ClientAccountOrdersPage = () => {
   return (
     <AccountLayout>
-      <GenerateMetaData title='List Orders' desc='Orders Page'/>
+      <GenerateMetaData title='Orders | Account' desc='Orders Page' />
       <Typography variant="h4" color="black" placeholder='Blog Page'>
         Orders
       </Typography>
