@@ -24,7 +24,9 @@
     "**/*.tsx",
     "**/*.js",
     "**/*.jsx",
-    "src/pages/api/uploadthing"
+    "src/pages/api/uploadthing",
+    "src/types/mitrans.d.ts",
+    "src/libs/mitrans.ts"
   ],
   "exclude": ["node_modules"]
 }

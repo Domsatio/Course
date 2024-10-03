@@ -17,8 +17,8 @@ type CartItemProps = {
   selectedCart?: string[];
   setSelectedCart?: (id: string) => void;
   handleDeleteCart?: (id: string[]) => void;
-  handleSetQuantity: (id: string, quantity: number) => void;
-  setLoading: (loading: boolean) => void;
+  handleSetQuantity?: (id: string, quantity: number) => void;
+  setLoading?: (loading: boolean) => void;
   service?: any;
 };
 
@@ -36,9 +36,14 @@ export default function CartItem({
   const [quantity, setQuantity] = useState<number>(cart.quantity || 0);
   const [increment, setIncrement] = useState<number>(0);
   const [debouncedIncremental] = useDebounce(increment, 500);
+  const isDiscounted = (cart.product.discount ?? 0) > 0;
+  const discount = isDiscounted
+    ? cart.product.price * ((cart.product.discount ?? 0) / 100)
+    : 0;
+  const price = cart.product.price - discount;
 
   const setQuantityCart = async () => {
-    setLoading(true);
+    setLoading?.(true);
     try {
       const addQuantitiy = await service.updateItem({
         id: cart.id,
@@ -48,11 +53,11 @@ export default function CartItem({
         throw new Error("Failed to update cart");
       }
       setQuantity(debouncedIncremental);
-      handleSetQuantity(cart.id, debouncedIncremental);
+      handleSetQuantity?.(cart.id, debouncedIncremental);
     } catch (error) {
       console.error("Error updating cart:", error);
     }
-    setLoading(false);
+    setLoading?.(false);
   };
 
   useEffect(() => {
@@ -100,44 +105,46 @@ export default function CartItem({
       </div>
       <div className="self-start">
         <p className="font-semibold">
-          {quantity} X {ConvertCurrency(cart.product.price)}
+          {quantity} X {ConvertCurrency(price)}
         </p>
       </div>
       <div className="absolute flex items-center gap-2 bottom-3 right-3">
-        <div className="flex items-center rounded-lg max-w-min border-2 border-black h-7">
-          <IconButton
-            className="bg-transparent text-black shadow-none hover:shadow-none"
-            disabled={quantity === 1}
-            onClick={() => {
-              setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
-              setIncrement((prev) => {
-                if (prev === 0) {
-                  return prev + cart.quantity - 1;
-                } else {
-                  return prev > 1 ? prev - 1 : 1;
-                }
-              });
-            }}
-          >
-            <MinusIcon className="h-5 w-5" />
-          </IconButton>
-          <p className="px-2">{quantity}</p>
-          <IconButton
-            className="bg-transparent text-black shadow-none hover:shadow-none"
-            onClick={() => {
-              setQuantity((prev) => prev + 1);
-              setIncrement((prev) => {
-                if (prev !== 0) {
-                  return prev + 1;
-                } else {
-                  return prev + cart.quantity + 1;
-                }
-              });
-            }}
-          >
-            <PlusIcon className="h-5 w-5" />
-          </IconButton>
-        </div>
+        {handleSetQuantity && (
+          <div className="flex items-center rounded-lg max-w-min border-2 border-black h-7">
+            <IconButton
+              className="bg-transparent text-black shadow-none hover:shadow-none"
+              disabled={quantity === 1}
+              onClick={() => {
+                setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
+                setIncrement((prev) => {
+                  if (prev === 0) {
+                    return prev + cart.quantity - 1;
+                  } else {
+                    return prev > 1 ? prev - 1 : 1;
+                  }
+                });
+              }}
+            >
+              <MinusIcon className="h-5 w-5" />
+            </IconButton>
+            <p className="px-2">{quantity}</p>
+            <IconButton
+              className="bg-transparent text-black shadow-none hover:shadow-none"
+              onClick={() => {
+                setQuantity((prev) => prev + 1);
+                setIncrement((prev) => {
+                  if (prev !== 0) {
+                    return prev + 1;
+                  } else {
+                    return prev + cart.quantity + 1;
+                  }
+                });
+              }}
+            >
+              <PlusIcon className="h-5 w-5" />
+            </IconButton>
+          </div>
+        )}
         {handleDeleteCart && (
           <IconButton
             className="bg-transparent text-black shadow-none hover:shadow-none"
