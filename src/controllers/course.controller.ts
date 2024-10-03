@@ -3,7 +3,7 @@ import { Course, UpdateCourse } from "@/types/course.type";
 import axios from "axios";
 import { convertStringToBoolean } from "@/helpers/appFunction";
 
-const apiKey = process.env.NEXT_PUBLIC_GOOGLE_API_KEY;
+const apiKey = process.env.GOOGLE_API_KEY;
 const getThumbnail = async (video: any[]) => {
   let ArrayVideo = [];
   if (Array.isArray(video) && video.length > 0) {
