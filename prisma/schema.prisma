@@ -125,6 +125,20 @@ model TemporaryCart {
   @@index([productId])
 }
 
+// model Order {
+//   id        String       @id @default(uuid())
+//   userId    String
+//   createdAt DateTime     @default(now())
+//   updatedAt DateTime     @updatedAt
+//   orderId   String       @unique
+//   token     String       @unique
+//   status    OrderStatus? @default(PENDING)
+//   products  Json[]
+//   user      User         @relation(fields: [userId], references: [id])
+
+//   @@index([userId])
+// }
+
 model Order {
   id        String       @id @default(uuid())
   userId    String
