@@ -1,9 +1,6 @@
 import ContentWrapper from "@/layouts/client/contentWrapper";
 import { FormInput } from "@/components/admin/FormInput";
-import {
-  InputListAddress,
-  InputList,
-} from "@/constants/client/InputLists/checkout.InputList";
+import { InputListAddress } from "@/constants/client/InputLists/checkout.InputList";
 import { addressServices } from "@/services/serviceGenerator";
 import { Button, Typography } from "@material-tailwind/react";
 import { FC, useEffect, useState } from "react";
@@ -13,9 +10,9 @@ import { BASE_URL, NODE_ENV } from "@/libs/axios/instance";
 import { UpdateAddress } from "@/types/address.type";
 import { GetCart } from "@/types/cart.type";
 import { ConvertCurrency } from "@/helpers/appFunction";
-import Image from "next/image";
-import Link from "next/link";
 import { GetProduct } from "@/types/product.type";
+import toast from "react-hot-toast";
+import CartItem from "@/components/client/CartItem";
 
 type Carts = {
   id: string
@@ -32,7 +29,14 @@ type CheckoutProps = {
   carts: Carts[]
 }
 
+declare global {
+  interface Window {
+    snap: any;
+  }
+}
+
 const Checkout: FC<CheckoutProps> = (data) => {
+  const [loading, setLoading] = useState<boolean>(false);
   const [isOpenAddress, setIsOpenAddress] = useState<boolean>(false);
   const [address, setAddress] = useState<UpdateAddress>(data.address);
   const [carts, setCarts] = useState<GetCart[]>(data.carts);
@@ -56,6 +60,40 @@ const Checkout: FC<CheckoutProps> = (data) => {
       : "No address available";
     setShippingAddress(shippingAddress);
   }, [address]);
+
+  const handleCheckout = async () => {
+    setLoading(true);
+    const res = await fetch(`/api/checkout`, {
+      method: "POST",
+    });
+    const { success, data } = await res.json();
+    console.log("success", success);
+    console.log("data", data.token);
+
+    if (success) {
+      console.log("success", data);
+      window.snap.pay(data.token, {
+        onSuccess: function (result: any) {
+          console.log("success", result);
+          toast.success("Checkout successfull!");
+        },
+        onPending: function (result: any) {
+          console.log("pending", result);
+          toast.success("Checkout pending!");
+        },
+        onError: function (result: any) {
+          console.log("error", result);
+          toast.error("Failed to checkout!");
+        },
+        onClose: function () {
+          console.log("customer closed the popup without finishing the payment");
+        },
+      });
+    } else {
+      toast.error("Failed to checkout!");
+    }
+    setLoading(false);
+  };
 
   return (
     <ContentWrapper>
@@ -101,36 +139,8 @@ const Checkout: FC<CheckoutProps> = (data) => {
             <h2 className="text-xl font-semibold">Items</h2>
             <div className="space-y-2">
               {carts.length > 0 ? (
-                carts.map(({ id, product, quantity }) => (
-                  <div
-                    key={id}
-                    className="flex items-center justify-between gap-3 shadow-md rounded-lg p-4"
-                  >
-                    <div className="flex gap-3">
-                      <div className="w-20 h-20 relative">
-                        <Image
-                          src={product.thumbnail}
-                          alt={product.name}
-                          className="w-full h-full object-contain"
-                          height={60}
-                          width={60}
-                        />
-                      </div>
-                      <div className="self-start">
-                        <Link
-                          href={`/store/${product.slug}`}
-                          className="flex items-center gap-2"
-                        >
-                          <h2 className="font-semibold">{product.name}</h2>
-                        </Link>
-                      </div>
-                    </div>
-                    <div className="self-start">
-                      <p className="font-semibold">
-                        {quantity} X {ConvertCurrency(product.finalPrice)}
-                      </p>
-                    </div>
-                  </div>
+                carts.map((cart: GetCart, index: number) => (
+                  <CartItem key={index} cart={cart} />
                 ))
               ) : (
                 <p>No items in the cart.</p>
@@ -139,7 +149,7 @@ const Checkout: FC<CheckoutProps> = (data) => {
           </div>
 
           {/* Submit form */}
-          <FormInput
+          {/* <FormInput
             inputList={InputList}
             method="POST"
             service={addressServices}
@@ -158,7 +168,7 @@ const Checkout: FC<CheckoutProps> = (data) => {
             onSuccess={(e) => {
               console.log(`Success`);
             }}
-          />
+          /> */}
         </div>
 
         {/* Order Summary */}
@@ -171,6 +181,14 @@ const Checkout: FC<CheckoutProps> = (data) => {
                 {carts.length > 0 ? ConvertCurrency(totalPrice) : "-"}
               </span>
             </div>
+            <Button
+              color="green"
+              className="mt-2"
+              fullWidth
+              onClick={() => handleCheckout()}
+            >
+              Checkout
+            </Button>
           </div>
         </div>
       </div>
@@ -187,10 +205,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   if (!token) {
     return {
       redirect: {
-        destination: '/sign-in',
-        permanent: false
-      }
-    }
+        destination: "/sign-in",
+        permanent: false,
+      },
+    };
   }
 
   try {

@@ -17,8 +17,8 @@ type CartItemProps = {
   selectedCart?: string[];
   setSelectedCart?: (id: string) => void;
   handleDeleteCart?: (id: string[]) => void;
-  handleSetQuantity: (id: string, quantity: number) => void;
-  setLoading: (loading: boolean) => void;
+  handleSetQuantity?: (id: string, quantity: number) => void;
+  setLoading?: (loading: boolean) => void;
   service?: any;
 };
 
@@ -38,7 +38,7 @@ export default function CartItem({
   const [debouncedIncremental] = useDebounce(increment, 500);
 
   const setQuantityCart = async () => {
-    setLoading(true);
+    setLoading?.(true);
     try {
       const addQuantitiy = await service.updateItem({
         id: cart.id,
@@ -48,11 +48,11 @@ export default function CartItem({
         throw new Error("Failed to update cart");
       }
       setQuantity(debouncedIncremental);
-      handleSetQuantity(cart.id, debouncedIncremental);
+      handleSetQuantity?.(cart.id, debouncedIncremental);
     } catch (error) {
       console.error("Error updating cart:", error);
     }
-    setLoading(false);
+    setLoading?.(false);
   };
 
   useEffect(() => {

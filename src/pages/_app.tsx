@@ -6,6 +6,7 @@ import LayoutClient from "@/layouts/client";
 import LayoutAdmin from "@/layouts/admin";
 import { AppProps } from "next/app";
 import { Toaster } from 'react-hot-toast';
+import { useEffect } from "react";
 
 export default function App({
   Component,
@@ -15,6 +16,20 @@ export default function App({
   const isAdminRoute = pathname.includes("/admin");
 
   const Layout = isAdminRoute ? LayoutAdmin : LayoutClient;
+
+  useEffect(() => {
+    const midtransScriptUrl = "https://app.sandbox.midtrans.com/snap/snap.js";
+    const scriptTag = document.createElement("script");
+    const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY;
+    scriptTag.src = midtransScriptUrl;
+    scriptTag.setAttribute("data-client-key", clientKey!);
+    scriptTag.async = true;
+    document.body.appendChild(scriptTag);
+
+    return () => {
+      document.body.removeChild(scriptTag);
+    };
+  }, []);
 
   return (
     <SessionProvider session={session}>

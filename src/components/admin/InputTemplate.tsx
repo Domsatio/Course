@@ -309,6 +309,7 @@ export const InputListRenderer = ({
                     ? selectData[option.id]?.toString()
                     : selectData.value.toString()
                 }
+                className="capitalize"
               >
                 {option?.api
                   ? param.map((item) => selectData[item]).join(" | ")
@@ -507,7 +508,7 @@ export const InputListRenderer = ({
         <Button
           color="red"
           size="sm"
-          className="p-2 max-w-min"
+          className="max-w-min"
           onClick={() => {
             onChange?.({
               target: {
