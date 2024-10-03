@@ -59,27 +59,11 @@ export const FormInputListRenderer = ({ id }: { id: string }) => {
 export const FilterInputList: InputListProps[] = [
   {
     className: "",
-    name: "published",
-    label: "Published",
+    name: "subscribe",
+    label: "Subscribe",
     type: "checkbox",
-    validator: Yup.boolean().required("Published is required"),
+    validator: Yup.boolean().optional(),
     value: "",
     useReset: true,
-  },
-  {
-    className: "",
-    name: "category",
-    label: "Category",
-    type: "select",
-    validator: Yup.string().required("Category is required"),
-    value: "",
-    option: {
-      id: "name",
-      params: "name",
-      query: "skip=0&take=all&published=published",
-      type: "select",
-      api: "/api/category",
-    },
-    watch: "published",
   }
 ];

@@ -86,6 +86,7 @@ export const FilterInputList: InputListProps[] = [
     type: "select",
     validator: Yup.string(),
     value: [],
+    useReset: true,
     option: {
       id: "name",
       params: "name",
