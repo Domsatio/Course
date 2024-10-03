@@ -2,9 +2,9 @@ import ContentWrapper from "@/layouts/client/contentWrapper";
 import { FormInput } from "@/components/admin/FormInput";
 import {
   InputListAddress,
-  InputList
+  InputList,
 } from "@/constants/client/InputLists/checkout.InputList";
-import { addressServices } from "@/services/serviceGenerator";
+import { addressServices, cartServices } from "@/services/serviceGenerator";
 import { Button, Typography } from "@material-tailwind/react";
 import { FC, useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
@@ -16,7 +16,7 @@ import { ConvertCurrency } from "@/helpers/appFunction";
 import { GetProduct } from "@/types/product.type";
 import toast from "react-hot-toast";
 import CartItem from "@/components/client/CartItem";
-import { set } from "date-fns";
+import { useRouter } from "next/router";
 
 type CheckoutProps = {
   address: UpdateAddress;
@@ -48,6 +48,7 @@ const Checkout: FC<CheckoutProps> = (data) => {
     `${data.address.address}, ${data.address.city}, ${data.address.state}, ${data.address.country}, ${data.address.zip}, ${data.address.phone}` ||
       "No address available"
   );
+  const { push } = useRouter();
 
   const totalPrice = carts.reduce((acc: number, cart: GetCart) => {
     const isDiscounted = (cart.product.discount ?? 0) > 0;
@@ -69,35 +70,43 @@ const Checkout: FC<CheckoutProps> = (data) => {
     setShippingAddress(shippingAddress);
   }, [address]);
 
+  const setCheckedCart = async () => {
+    cartServices.updateItem({
+      id: "all",
+      isChecked: false,
+    });
+    push("/store");
+  };
+
   const handleCheckout = async () => {
     setLoading(true);
-    const res = await fetch(`/api/checkout`, {
-      method: "POST",
-    });
-    const { success, data } = await res.json();
-    console.log("success", success);
-    console.log("data", data.token);
-
-    if (success) {
-      console.log("success", data);
-      window.snap.pay(data.token, {
-        onSuccess: function (result: any) {
-          console.log("success", result);
-          toast.success("Checkout successfull!");
-        },
-        onPending: function (result: any) {
-          console.log("pending", result);
-          toast.success("Checkout pending!");
-        },
-        onError: function (result: any) {
-          console.log("error", result);
-          toast.error("Failed to checkout!");
-        },
-        onClose: function () {
-          console.log("customer closed the popup without finishing the payment");
-        },
+    try {
+      const res = await fetch(`/api/checkout`, {
+        method: "POST",
       });
-    } else {
+      const { success, data } = await res.json();
+      if (success) {
+        console.log("success", data);
+        window.snap.pay(data.token.token, {
+          onSuccess: function (result: any) {
+            toast.success("Checkout successfull!");
+            setCheckedCart();
+          },
+          onPending: function (result: any) {
+            toast.success("Checkout pending!");
+            setCheckedCart();
+          },
+          onError: function (result: any) {
+            toast.error("Failed to checkout!");
+          },
+          onClose: function () {
+            console.log(
+              "customer closed the popup without finishing the payment"
+            );
+          },
+        });
+      }
+    } catch (error) {
       toast.error("Failed to checkout!");
     }
     setLoading(false);

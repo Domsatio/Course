@@ -15,12 +15,23 @@ export default async function handler(
       return;
     }
 
-    const { orderData, transactionToken} = await createTransaction(token.id as string);
+    const transactionResult = await createTransaction(token.id as string);
+
+    if (!transactionResult) {
+      res.status(500).json({ 
+        success: false, 
+        statusCode: 500,
+        message: "Transaction creation failed"
+      });
+      return;
+    }
+
+    const { orderData, transactionToken } = transactionResult;
 
     res.status(200).send({
       success: true,
       statusCode: 200,
-      message: "Order create successfully!",
+      message: "Order created successfully!",
       data: {
         token: transactionToken,
         orderData: orderData,

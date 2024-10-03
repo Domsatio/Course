@@ -1,7 +1,6 @@
 import { snap } from "@/libs/mitrans";
 import prisma from "@/libs/prisma/db";
-import { ca } from "date-fns/locale";
-import { use } from "react";
+import { generateRandomString, formatMidtransExpiryDate } from "@/helpers/appFunction";
 
 export const createTransaction = async (userId: string) => {
   const user = await prisma.user.findUnique({
@@ -21,8 +20,8 @@ export const createTransaction = async (userId: string) => {
     },
   });
 
-  if (!user) {
-    throw new Error("User not found.");
+  if (!user || !user.cart || user.cart.length === 0) {
+    return false;
   }
 
   const grossAmount =
@@ -40,7 +39,7 @@ export const createTransaction = async (userId: string) => {
       return {
         id: cart.product.id,
         name: cart.product.name,
-        price: cart.product.price,
+        price: cart.product.discount ? cart.product.price - (cart.product.price * cart.product.discount) / 100 : cart.product.price,
         quantity: cart.quantity,
         category: "",
         brand: "Domsat",
@@ -51,12 +50,12 @@ export const createTransaction = async (userId: string) => {
 
   const parameter = {
     transaction_details: {
-      order_id: `ORDER-${Date.now()}_${user.id}`,
+      order_id: `${user.id}_${generateRandomString(10)}`,
       gross_amount: grossAmount,
     },
     customer_details: {
       first_name: user.name,
-      last_name: user.name,
+      last_name: "",
       email: user.email,
       phone: user.address?.phone,
       billing_address: {
@@ -81,15 +80,22 @@ export const createTransaction = async (userId: string) => {
       },
     },
     item_details,
+    expiry: {
+      start_time: formatMidtransExpiryDate(new Date()),
+      unit: "day",
+      duration: 1,
+    },
+    page_expiry: {
+      duration: 1,
+      unit: "day",
+    }
   };
   // return parameter;
   try {
-    console.log(process.env.MIDTRANS_SERVER_KEY, 'server keyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy');
-    console.log(process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY, 'client keyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy');
     const token = await snap.createTransaction(parameter);
     return { orderData: parameter, transactionToken: token };
   } catch (error) {
     console.error("Midtrans error:", error);
-    throw new Error("Failed to create transaction.");
+    return false;
   }
 };
