@@ -113,9 +113,11 @@ export const createTransactionBuyDirectly = async (userId: string) => {
     },
   });
 
-  if (!user || !user.TemporaryCart || user.TemporaryCart.length === 0) {
+  if (!user || !user.TemporaryCart) {
     return false;
   }
+
+  console.log(user.TemporaryCart);
 
   const params = createTransactionParams(user, user.TemporaryCart);
 
