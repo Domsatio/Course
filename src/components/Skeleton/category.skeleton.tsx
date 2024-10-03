@@ -4,14 +4,11 @@ import { Typography } from "@material-tailwind/react";
 function CategorySkeleton() {
   return (
     <Typography
+      as='div'
       variant="small"
-      color="blue-gray"
-      className="font-normal leading-none opacity-70"
+      className="h-8 w-14 lg:w-[75px] rounded-full bg-gray-300"
     >
-      <Typography as="div" className="w-14 lg:w-[75px] h-8 rounded-full bg-gray-300">
-        {" "}
-        &nbsp;
-      </Typography>
+      &nbsp;
     </Typography>
   );
 }

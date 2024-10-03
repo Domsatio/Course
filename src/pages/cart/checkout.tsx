@@ -1,9 +1,6 @@
 import ContentWrapper from "@/layouts/client/contentWrapper";
 import { FormInput } from "@/components/admin/FormInput";
-import {
-  InputListAddress,
-  InputList
-} from "@/constants/client/InputLists/checkout.InputList";
+import { InputListAddress } from "@/constants/client/InputLists/checkout.InputList";
 import { addressServices } from "@/services/serviceGenerator";
 import { Button, Typography } from "@material-tailwind/react";
 import { FC, useEffect, useState } from "react";
@@ -16,20 +13,21 @@ import { ConvertCurrency } from "@/helpers/appFunction";
 import { GetProduct } from "@/types/product.type";
 import toast from "react-hot-toast";
 import CartItem from "@/components/client/CartItem";
-import { set } from "date-fns";
+
+type Carts = {
+  id: string
+  productId: string
+  userId: string
+  quantity: number
+  createdAt: string
+  updatedAt: string
+  product: GetProduct
+}
 
 type CheckoutProps = {
-  address: UpdateAddress;
-  carts: {
-    id: string;
-    productId: string;
-    userId: string;
-    quantity: number;
-    createdAt: string;
-    updatedAt: string;
-    product: GetProduct;
-  }[];
-};
+  address: UpdateAddress
+  carts: Carts[]
+}
 
 declare global {
   interface Window {
@@ -40,26 +38,20 @@ declare global {
 const Checkout: FC<CheckoutProps> = (data) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [isOpenAddress, setIsOpenAddress] = useState<boolean>(false);
-  const [address, setAddress] = useState<UpdateAddress | null>(
-    data.address || null
-  );
-  const [carts, setCarts] = useState<GetCart[]>(data.carts || []);
+  const [address, setAddress] = useState<UpdateAddress>(data.address);
+  const [carts, setCarts] = useState<GetCart[]>(data.carts);
   const [shippingAddress, setShippingAddress] = useState<string>(
-    `${data.address.address}, ${data.address.city}, ${data.address.state}, ${data.address.country}, ${data.address.zip}, ${data.address.phone}` ||
-      "No address available"
+    `${data.address?.address}, ${data.address?.city}, ${data.address?.state}, ${data.address?.country}, ${data.address?.zip}, ${data.address?.phone}` ||
+    "No address available"
   );
 
   const totalPrice = carts.reduce((acc: number, cart: GetCart) => {
-    const isDiscounted = (cart.product.discount ?? 0) > 0;
-    const discount = isDiscounted
-      ? cart.product.price * ((cart.product.discount ?? 0) / 100)
-      : 0;
-    return acc + (cart.product.price - discount) * cart.quantity;
+    return acc + cart.product.finalPrice * cart.quantity;
   }, 0);
 
   useEffect(() => {
-    setAddress(data.address || null);
-    setCarts(data.carts || []);
+    setAddress(data.address);
+    setCarts(data.carts);
   }, [data]);
 
   useEffect(() => {
@@ -119,7 +111,7 @@ const Checkout: FC<CheckoutProps> = (data) => {
                 className="text-green-400 text-sm font-semibold cursor-pointer"
                 onClick={() => setIsOpenAddress(true)}
               >
-                Change
+                {data.address ? "Update" : "Add"}
               </p>
               {/* FormInput for updating address */}
               <FormInput
@@ -206,10 +198,9 @@ const Checkout: FC<CheckoutProps> = (data) => {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const cookies = cookie.parse(context.req.headers.cookie || "");
-  const token =
-    NODE_ENV === "development"
-      ? cookies["next-auth.session-token"]
-      : cookies["__Secure-next-auth.session-token"];
+  const token = NODE_ENV === "development"
+    ? cookies["next-auth.session-token"]
+    : cookies["__Secure-next-auth.session-token"];
 
   if (!token) {
     return {
@@ -241,7 +232,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const { data: carts } = await res_carts.json();
 
     return {
-      props: { address: { ...address }, carts: [...carts] },
+      props: { address, carts },
     };
   } catch (error) {
     console.error("Error fetching data:", error);

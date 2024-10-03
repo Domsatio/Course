@@ -27,8 +27,9 @@ export type GetProduct = {
   slug: string;
   description: string;
   price: number;
+  finalPrice: number;
   discount: number;
   thumbnail: string;
   quantity: number;
-  orders: Order[];
+  orders?: Order[];
 };

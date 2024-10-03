@@ -36,11 +36,6 @@ export default function CartItem({
   const [quantity, setQuantity] = useState<number>(cart.quantity || 0);
   const [increment, setIncrement] = useState<number>(0);
   const [debouncedIncremental] = useDebounce(increment, 500);
-  const isDiscounted = (cart.product.discount ?? 0) > 0;
-  const discount = isDiscounted
-    ? cart.product.price * ((cart.product.discount ?? 0) / 100)
-    : 0;
-  const price = cart.product.price - discount;
 
   const setQuantityCart = async () => {
     setLoading?.(true);
@@ -105,54 +100,52 @@ export default function CartItem({
       </div>
       <div className="self-start">
         <p className="font-semibold">
-          {quantity} X {ConvertCurrency(price)}
+          {quantity} X {ConvertCurrency(cart.product.finalPrice)}
         </p>
       </div>
       <div className="absolute flex items-center gap-2 bottom-3 right-3">
-        {handleSetQuantity && (
-          <div className="flex items-center rounded-lg max-w-min border-2 border-black h-7">
-            <IconButton
-              className="bg-transparent text-black shadow-none hover:shadow-none"
-              disabled={quantity === 1}
-              onClick={() => {
-                setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
-                setIncrement((prev) => {
-                  if (prev === 0) {
-                    return prev + cart.quantity - 1;
-                  } else {
-                    return prev > 1 ? prev - 1 : 1;
-                  }
-                });
-              }}
-            >
-              <MinusIcon className="h-5 w-5" />
-            </IconButton>
-            <p className="px-2">{quantity}</p>
-            <IconButton
-              className="bg-transparent text-black shadow-none hover:shadow-none"
-              onClick={() => {
-                setQuantity((prev) => prev + 1);
-                setIncrement((prev) => {
-                  if (prev !== 0) {
-                    return prev + 1;
-                  } else {
-                    return prev + cart.quantity + 1;
-                  }
-                });
-              }}
-            >
-              <PlusIcon className="h-5 w-5" />
-            </IconButton>
-          </div>
-        )}
         {handleDeleteCart && (
           <IconButton
-            className="bg-transparent text-black shadow-none hover:shadow-none"
+            className="w-7 h-7 bg-transparent text-black shadow-none hover:shadow-none"
             onClick={() => handleDeleteCart([cart.id])}
           >
-            <TrashIcon className="h-5 w-5" />
+            <TrashIcon className="h-4 w-4" />
           </IconButton>
         )}
+        <div className="ml-4 py-2 gap-5 h-7 flex items-center rounded-lg max-w-min border border-gray-300">
+          <IconButton
+            className="w-7 h-7 bg-transparent text-black shadow-none hover:shadow-none"
+            disabled={quantity === 1}
+            onClick={() => {
+              setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
+              setIncrement((prev) => {
+                if (prev === 0) {
+                  return prev + cart.quantity - 1;
+                } else {
+                  return prev > 1 ? prev - 1 : 1;
+                }
+              });
+            }}
+          >
+            <MinusIcon className="h-4 w-4" />
+          </IconButton>
+          <span className="text-sm">{quantity}</span>
+          <IconButton
+            className="w-7 h-7 bg-transparent text-black shadow-none hover:shadow-none"
+            onClick={() => {
+              setQuantity((prev) => prev + 1);
+              setIncrement((prev) => {
+                if (prev !== 0) {
+                  return prev + 1;
+                } else {
+                  return prev + cart.quantity + 1;
+                }
+              });
+            }}
+          >
+            <PlusIcon className="h-4 w-4" />
+          </IconButton>
+        </div>
       </div>
     </div>
   );

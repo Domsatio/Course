@@ -1,7 +1,5 @@
-import { snap } from "@/libs/mitrans";
+import { snap } from "@/libs/midtrans";
 import prisma from "@/libs/prisma/db";
-import { ca } from "date-fns/locale";
-import { use } from "react";
 
 export const createTransaction = async (userId: string) => {
   const user = await prisma.user.findUnique({
@@ -26,14 +24,13 @@ export const createTransaction = async (userId: string) => {
   }
 
   const grossAmount =
-    user.cart?.reduce(
-      (acc, curr) => {
-        const isDiscounted = (curr.product.discount ?? 0) > 0;
-        const discount = isDiscounted ? curr.product.price * ((curr.product.discount ?? 0) / 100) : 0;
-        return acc + (curr.product.price - discount) * curr.quantity;
-      },
-      0
-    ) || 0;
+    user.cart?.reduce((acc, curr) => {
+      const isDiscounted = (curr.product.discount ?? 0) > 0;
+      const discount = isDiscounted
+        ? curr.product.price * ((curr.product.discount ?? 0) / 100)
+        : 0;
+      return acc + (curr.product.price - discount) * curr.quantity;
+    }, 0) || 0;
 
   const item_details =
     user.cart?.map((cart) => {
@@ -84,8 +81,14 @@ export const createTransaction = async (userId: string) => {
   };
   // return parameter;
   try {
-    console.log(process.env.MIDTRANS_SERVER_KEY, 'server keyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy');
-    console.log(process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY, 'client keyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy');
+    console.log(
+      process.env.MIDTRANS_SERVER_KEY,
+      "server keyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy"
+    );
+    console.log(
+      process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY,
+      "client keyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy"
+    );
     const token = await snap.createTransaction(parameter);
     return { orderData: parameter, transactionToken: token };
   } catch (error) {

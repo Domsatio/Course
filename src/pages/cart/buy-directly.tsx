@@ -36,17 +36,8 @@ type CheckoutProps = {
 const BuyDirectly: FC<CheckoutProps> = (data) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [isOpenAddress, setIsOpenAddress] = useState<boolean>(false);
-  const [address, setAddress] = useState<UpdateAddress>(
-    data.address || {
-      address: "",
-      city: "",
-      state: "",
-      country: "",
-      zip: "",
-      phone: "",
-    }
-  );
-  const [cart, setCarts] = useState<GetCart>({
+  const [address, setAddress] = useState<UpdateAddress>(data.address);
+  const [cart, setCart] = useState<GetCart>({
     id: "",
     productId: "",
     userId: "",
@@ -55,6 +46,7 @@ const BuyDirectly: FC<CheckoutProps> = (data) => {
       id: "",
       name: "",
       price: 0,
+      finalPrice: 0,
       thumbnail: "",
       slug: "",
       description: "",
@@ -64,8 +56,8 @@ const BuyDirectly: FC<CheckoutProps> = (data) => {
   });
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const [shippingAddress, setShippingAddress] = useState<string>(
-    `${data.address.address}, ${data.address.city}, ${data.address.state}, ${data.address.country}, ${data.address.zip}, ${data.address.phone}` ||
-      "No address available"
+    `${data.address?.address}, ${data.address?.city}, ${data.address?.state}, ${data.address?.country}, ${data.address?.zip}, ${data.address?.phone}` ||
+    "No address available"
   );
 
   const getTemporaryCart = async () => {
@@ -75,7 +67,7 @@ const BuyDirectly: FC<CheckoutProps> = (data) => {
         const {
           data: { data },
         } = await temporaryCartServices.getItems({ idProduct: idBD });
-        setCarts(data);
+        setCart(data);
       }
     }
   };
@@ -96,7 +88,7 @@ const BuyDirectly: FC<CheckoutProps> = (data) => {
   }, []);
 
   useEffect(() => {
-    const countPrice = cart.quantity * cart.product?.price;
+    const countPrice = cart.quantity * cart.product.finalPrice;
     setTotalPrice(countPrice);
   }, [cart]);
 
@@ -116,7 +108,7 @@ const BuyDirectly: FC<CheckoutProps> = (data) => {
                 className="text-green-400 text-sm font-semibold cursor-pointer"
                 onClick={() => setIsOpenAddress(true)}
               >
-                Change
+                {data.address ? "Update" : "Add"}
               </p>
               {/* FormInput for updating address */}
               <FormInput
@@ -149,7 +141,7 @@ const BuyDirectly: FC<CheckoutProps> = (data) => {
                   setLoading={setLoading}
                   service={temporaryCartServices}
                   handleSetQuantity={(id, quantity) =>
-                    setCarts((prev) => ({ ...prev, quantity }))
+                    setCart((prev) => ({ ...prev, quantity }))
                   }
                 />
               ) : (

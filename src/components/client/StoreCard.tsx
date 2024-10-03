@@ -10,29 +10,7 @@ import { FC } from "react";
 import { ConvertCurrency } from "@/helpers/appFunction";
 import Link from "next/link";
 
-const FinalPrice = ({ price, discount }: { price: number, discount: number }) => {
-  const discountedPrice = discount !== undefined ? price - (price * discount) / 100 : price;
-
-  return (
-    <div className="flex gap-3">
-      <Typography color="blue-gray" className="text-xl font-bold text-black">
-        {ConvertCurrency(discountedPrice)}
-      </Typography>
-      {discount > 0 && (
-        <Typography color="gray" className="line-through text-base self-start">
-          {ConvertCurrency(price)}
-        </Typography>
-      )}
-      {discount > 0 && (
-        <Typography className="text-sm py-1 px-2 bg-black text-white rounded-lg self-start">
-          -{discount}% Off
-        </Typography>
-      )}
-    </div>
-  );
-}
-
-const StoreCard: FC<Omit<GetProduct, 'createdAt' | 'updatedAt' | 'quantity' | 'description'>> = ({ name, slug, price, discount, thumbnail }) => {
+const StoreCard: FC<Omit<GetProduct, 'createdAt' | 'updatedAt' | 'quantity' | 'description'>> = ({ name, slug, price, finalPrice, discount, thumbnail }) => {
   return (
     <Link href={`/store/${slug}`} className="h-full w-full">
       <Card placeholder='' className="w-full max-w-[357px] h-full">
@@ -50,7 +28,21 @@ const StoreCard: FC<Omit<GetProduct, 'createdAt' | 'updatedAt' | 'quantity' | 'd
           <Typography color="black" className="font-medium">
             {name}
           </Typography>
-          <FinalPrice price={price} discount={discount} />
+          <div className="flex gap-3">
+            <Typography color="blue-gray" className="text-xl font-bold text-black">
+              {ConvertCurrency(finalPrice)}
+            </Typography>
+            {discount > 0 && (
+              <Typography color="gray" className="line-through text-base self-start">
+                {ConvertCurrency(price)}
+              </Typography>
+            )}
+            {discount > 0 && (
+              <Typography className="text-sm py-1 px-2 bg-black text-white rounded-lg self-start">
+                -{discount}% Off
+              </Typography>
+            )}
+          </div>
         </CardBody>
       </Card>
     </Link>

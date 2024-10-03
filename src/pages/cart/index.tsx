@@ -12,7 +12,7 @@ import { ConvertCurrency } from "@/helpers/appFunction";
 import Link from "next/link";
 import CartItem from "@/components/client/CartItem";
 import { useRouter } from "next/router";
-import  useGlobalStore from "@/store/globalStore";
+import useGlobalStore from "@/store/globalStore";
 
 const EmptyCart = () => {
   return (
@@ -123,11 +123,7 @@ const Cart: FC<{ data: GetCart[] }> = ({ data = [] }) => {
       setTotalPrice(
         carts.reduce((acc: number, cart: GetCart) => {
           if (selectedCart.includes(cart.id)) {
-            const isDiscounted = (cart.product.discount ?? 0) > 0;
-            const discount = isDiscounted
-              ? cart.product.price * ((cart.product.discount ?? 0) / 100)
-              : 0;
-            return acc + (cart.product.price - discount) * cart.quantity;
+            return acc + cart.product.finalPrice * cart.quantity;
           }
           return acc;
         }, 0)
@@ -202,7 +198,7 @@ const Cart: FC<{ data: GetCart[] }> = ({ data = [] }) => {
                 if (selectedCart.length === 0) {
                   toast(
                     'Please select item to checkout',
-                    {duration: 2700}
+                    { duration: 2700 }
                   );
                   return;
                 } else {

@@ -10,7 +10,7 @@ export const getCarts = async (id: string) => {
         },
       });
 
-      const data = await tx.cart.findMany({
+      const res = await tx.cart.findMany({
         where: {
           userId: id,
         },
@@ -22,22 +22,46 @@ export const getCarts = async (id: string) => {
         },
       });
 
+      const data = res.map((item) => ({
+        ...item,
+        product: {
+          ...item.product,
+          finalPrice: item.product.discount
+            ? item.product.price -
+              (item.product.price * item.product.discount) / 100
+            : item.product.price,
+        },
+      }));
+
       return { totalData, data };
     },
     { maxWait: 5000, timeout: 20000 }
   );
 };
 
-export const getCartChecked = async (userId:string) => {
-  return prisma.cart.findMany({
+export const getCartChecked = async (userId: string) => {
+  const res = await prisma.cart.findMany({
     where: {
       userId: userId,
-      isChecked: true
+      isChecked: true,
     },
     include: {
       product: true,
     },
   });
+
+  const data = res.map((item) => ({
+    ...item,
+    product: {
+      ...item.product,
+      finalPrice: item.product.discount
+        ? item.product.price -
+          (item.product.price * item.product.discount) / 100
+        : item.product.price,
+    },
+  }));
+
+  return data;
 };
 
 export const createCart = async (data: Cart) => {
@@ -55,24 +79,27 @@ export const createCart = async (data: Cart) => {
   }
 };
 
-export const updateCart = async (data: Omit<Cart, "productId"> ) => {
+export const updateCart = async (data: Omit<Cart, "productId">) => {
   return prisma.cart.update({
-    where: { 
+    where: {
       id: data.id,
       userId: data.userId,
-     },
-    data
+    },
+    data,
   });
 };
 
-export const updateIsCheckedAll = async (userId:string, isChecked:boolean) => {
+export const updateIsCheckedAll = async (
+  userId: string,
+  isChecked: boolean
+) => {
   return prisma.cart.updateMany({
-    where: { 
+    where: {
       userId: userId,
-     },
+    },
     data: {
       isChecked: isChecked,
-    }
+    },
   });
 };
 
@@ -95,9 +122,9 @@ export const createTemporaryCart = async (data: Cart) => {
     },
   });
 
-  if(!cartCheck){
+  if (!cartCheck) {
     return prisma.temporaryCart.create({ data });
-  }else if (cartCheck && cartCheck.productId !== data.productId) {
+  } else if (cartCheck && cartCheck.productId !== data.productId) {
     return prisma.temporaryCart.update({
       where: {
         userId: data.userId,
@@ -112,14 +139,13 @@ export const createTemporaryCart = async (data: Cart) => {
       where: {
         userId: data.userId,
       },
-      data
+      data,
     });
   }
-
 };
 
-export const getTemporaryCart = async (id: string, idProduct:string) => {
-  const cartCheck = await prisma.temporaryCart.findFirst({
+export const getTemporaryCart = async (id: string, idProduct: string) => {
+  const res = await prisma.temporaryCart.findFirst({
     where: {
       userId: id,
       productId: idProduct,
@@ -129,8 +155,8 @@ export const getTemporaryCart = async (id: string, idProduct:string) => {
     },
   });
 
-  if (!cartCheck) {
-    return prisma.temporaryCart.create({  
+  if (!res) {
+    return prisma.temporaryCart.create({
       data: {
         userId: id,
         productId: idProduct,
@@ -141,7 +167,17 @@ export const getTemporaryCart = async (id: string, idProduct:string) => {
       },
     });
   } else {
-    return cartCheck
+    const data = {
+      ...res,
+      product: {
+        ...res.product,
+        finalPrice: res.product.discount
+          ? res.product.price - (res.product.price * res.product.discount) / 100
+          : res.product.price,
+      },
+    };
+
+    return data;
   }
 };
 
@@ -153,7 +189,9 @@ export const deleteTemporaryCart = async (userId: string) => {
   });
 };
 
-export const updateQuantityTemporaryCart = async (data: Omit<Cart, "productId" | 'isChecked'>) => {
+export const updateQuantityTemporaryCart = async (
+  data: Omit<Cart, "productId" | "isChecked">
+) => {
   return prisma.temporaryCart.update({
     where: {
       id: data.id,

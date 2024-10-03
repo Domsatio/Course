@@ -12,39 +12,9 @@ import ButtonShare from "@/components/client/ButtonShare";
 import toast from "react-hot-toast";
 import { setItem } from "@/utils/localstorage";
 import { useRouter } from "next/router";
-import  useGlobalStore from "@/store/globalStore";
+import useGlobalStore from "@/store/globalStore";
 
-const FinalPrice = ({
-  price,
-  discount,
-}: {
-  price: number;
-  discount: number;
-}) => {
-  const discountedPrice = discount !== undefined ? price - (price * discount) / 100 : price;
-
-  return (
-    <div className="flex gap-3">
-      <Typography color="blue-gray" className="text-4xl font-bold text-black">
-        {ConvertCurrency(discountedPrice)}
-      </Typography>
-      {discount > 0 && (
-        <Typography color="gray" className="line-through text-base self-start">
-          {ConvertCurrency(price)}
-        </Typography>
-      )}
-      {discount > 0 && (
-        <Typography className="text-sm py-1 px-2 bg-black text-white rounded-lg self-start">
-          -{discount}% Off
-        </Typography>
-      )}
-    </div>
-  );
-};
-
-const DetailStore: FC<Omit<GetProduct, "createdAt" | "updatedAt">> = (
-  data
-) => {
+const DetailStore: FC<Omit<GetProduct, "createdAt" | "updatedAt">> = ({ id, name, description, price, finalPrice, discount, thumbnail }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { push } = useRouter();
   const { checkCart } = useGlobalStore();
@@ -52,7 +22,7 @@ const DetailStore: FC<Omit<GetProduct, "createdAt" | "updatedAt">> = (
   const addToCart = async () => {
     try {
       await cartServices.addItem({
-        productId: data.id,
+        productId: id,
         quantity: 1,
         isChecked: false,
       });
@@ -66,9 +36,9 @@ const DetailStore: FC<Omit<GetProduct, "createdAt" | "updatedAt">> = (
 
   const handleBuyDirectly = async () => {
     try {
-      setItem('idBD', data.id)
+      setItem('idBD', id)
       await temporaryCartServices.addItem({
-        productId: data.id,
+        productId: id,
         quantity: 1,
         isChecked: false,
       });
@@ -80,12 +50,12 @@ const DetailStore: FC<Omit<GetProduct, "createdAt" | "updatedAt">> = (
 
   return (
     <Fragment>
-      <GenerateMetaData title={data.name} desc={`Detail ${data.name}`} thumbnail={data.thumbnail} />
+      <GenerateMetaData title={name} desc={`Detail ${name}`} thumbnail={thumbnail} />
       <ContentWrapper className="grid grid-cols-1 lg:grid-cols-2">
         <div className="max-h-96 lg:max-h-[500px]">
           <Image
-            src={data.thumbnail}
-            alt={data.name}
+            src={thumbnail}
+            alt={name}
             width={400}
             height={400}
             priority
@@ -94,20 +64,34 @@ const DetailStore: FC<Omit<GetProduct, "createdAt" | "updatedAt">> = (
         </div>
         <div className="flex flex-col gap-7">
           <Typography variant="h3" color="black">
-            {data.name}
+            {name}
           </Typography>
-          <FinalPrice price={data.price} discount={data.discount} />
+          <div className="flex gap-3">
+            <Typography color="blue-gray" className="text-4xl font-bold text-black">
+              {ConvertCurrency(finalPrice)}
+            </Typography>
+            {discount > 0 && (
+              <Typography color="gray" className="line-through text-base self-start">
+                {ConvertCurrency(price)}
+              </Typography>
+            )}
+            {discount > 0 && (
+              <Typography className="text-sm py-1 px-2 bg-black text-white rounded-lg self-start">
+                -{discount}% Off
+              </Typography>
+            )}
+          </div>
           <div className="space-y-2">
             <Typography variant="h5" color="black">
               Description
             </Typography>
             <Typography variant="paragraph" color="blue-gray">
-              {data.description}
+              {description}
             </Typography>
           </div>
           <div className="grid grid-cols-5 gap-2">
             {/* <Link href='/cart/checkout' className="col-span-2" onClick={() => setItem('buyDirectly','')}> */}
-              <Button className="rounded-full w-full col-span-2" onClick={() => handleBuyDirectly()}>Buy Now</Button>
+            <Button className="rounded-full w-full col-span-2" onClick={() => handleBuyDirectly()}>Buy Now</Button>
             {/* </Link> */}
             <Button variant='outlined' className="rounded-full col-span-2" onClick={() => addToCart()}>
               Add to Cart

@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { createCheckoutValidation } from "@/validations/checkout.validation";
-import { createTransaction } from "@/controllers/mitrans.controller";
+import { createTransaction } from "@/controllers/midtrans.controller";
 import { getToken } from "next-auth/jwt";
 
 export default async function handler(
@@ -15,7 +15,9 @@ export default async function handler(
       return;
     }
 
-    const { orderData, transactionToken} = await createTransaction(token.id as string);
+    const { orderData, transactionToken } = await createTransaction(
+      token.id as string
+    );
 
     res.status(200).send({
       success: true,
@@ -24,7 +26,7 @@ export default async function handler(
       data: {
         token: transactionToken,
         orderData: orderData,
-      }
+      },
     });
   } else {
     res.status(405).send({
