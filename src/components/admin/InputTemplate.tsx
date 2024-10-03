@@ -8,7 +8,6 @@ import {
   Input,
   Select,
   Option,
-  Checkbox,
   Typography,
   Tooltip,
   Dialog,
@@ -29,7 +28,6 @@ import { CameraIcon, CheckIcon, CloudArrowUpIcon, XMarkIcon } from "@heroicons/r
 import QuillEditor from "./QuillEdtor";
 import { cn } from "@/libs/cn";
 import WebcamCapture from "../Webcam";
-import { tr } from "date-fns/locale";
 import MultiSelect from "../MultiSelect";
 
 type FileViewerProps = {
@@ -94,7 +92,7 @@ const ModalTakePicture = ({ isOpen, handleOpen, onCapture }: WebcamCaptureProps)
       <Button
         variant="outlined"
         color="gray"
-        className="hidden lg:flex gap-2 items-center justify-center"
+        className="hidden lg:flex gap-2 items-center justify-center border-gray-600"
         onClick={() => handleOpen(true)}
       >
         <CameraIcon className="w-5 h-5" /> Camera
@@ -405,7 +403,7 @@ export const InputListRenderer = ({
           )}
           {!value && !isLoading && (
             <div className="flex gap-2">
-              <label htmlFor="image-upload" className="flex items-center justify-center w-fit px-6 h-11 border border-black rounded-lg cursor-pointer text-black hover:opacity-70 transition-all">
+              <label htmlFor="image-upload" className="flex items-center justify-center w-fit px-6 h-11 border border-gray-600 rounded-lg cursor-pointer text-black hover:opacity-70 transition-all">
                 <div className="flex gap-2 items-center justify-center">
                   <CloudArrowUpIcon className="h-5 w-5" />
                   <p className="text-xs font-semibold uppercase">Upload Image</p>
