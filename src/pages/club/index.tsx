@@ -31,7 +31,7 @@ type Params = {
 const ClientClubPage = () => {
   const [posts, setPosts] = useState<Omit<GetPost, "published" | "createdAt">[]>([]);
   const [categories, setCategories] = useState<Omit<GetCategory, "posts">[]>([]);
-  const [activeCategory, setActiveCategory] = useState<string | null>("");
+  const [activeCategory, setActiveCategory] = useState<string>("");
   const { isLoad, setIsLoad } = FetchDataHook();
   const { isLoad: isCategoryLoad, setIsLoad: setIsCategoryLoad } = FetchCategoryHook();
   const { activePage, totalPages, take, setActivePage, handleSetTotalPages } = PaginationHook({ initLimit: 6 });
@@ -154,7 +154,7 @@ const ClientClubPage = () => {
         {isLoad ? (
           Array.from({ length: 6 }, (_, i) => <CardSkeleton key={i} />)
         ) : posts.length > 0 ? (
-          posts.map((data: Omit<GetPost, "published" | "createdAt">, index) => (
+          posts.map((data, index) => (
             <CardItem
               key={index}
               props={{ ...data, href: `/club/${data.slug}` }}

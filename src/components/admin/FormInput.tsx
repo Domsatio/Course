@@ -189,7 +189,7 @@ export const FormInput = ({
         : await service.getItems({ id });
 
       // set data as required by the form input
-      if(!data) return;
+      if (!data) return;
       Object.keys(data).forEach((key) => {
         const input = inputList.filter((input) => input.name === key);
         const isOnInputList = input.length > 0;
@@ -408,12 +408,12 @@ export const FormInput = ({
   const Form = () => (
     <form
       onSubmit={formik.handleSubmit}
-      className="relative flex flex-col p-4"
+      className={cn("relative flex flex-col", { 'p-4': asModal })}
     >
       {errorFetch && (
         <ModalError onClick={() => fetchData()} />
       )}
-      <div className={cn("flex flex-row flex-wrap justify-between", { 'max-h-[550px] overflow-y-scroll px-3': asModal })}>
+      <div className={cn("flex flex-row flex-wrap justify-between", { 'max-h-full overflow-y-auto px-3': asModal })}>
         {generateInputForm()}
       </div>
       <div className={cn("w-full flex justify-end items-center gap-2", { 'mt-5': asModal })}>

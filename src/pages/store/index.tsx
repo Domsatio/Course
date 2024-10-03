@@ -29,7 +29,7 @@ const ClientStorePage = () => {
   const { debounceValue, searchQuery, setSearchQuery } = SearchHook({
     delay: 1000,
   });
-  const router = useRouter();
+  const { replace, pathname } = useRouter();
 
   const getProductsData = async () => {
     setIsLoad(true);
@@ -49,8 +49,8 @@ const ClientStorePage = () => {
   };
 
   const handleSetSearchQuery = async (value: string) => {
-    await router.replace({
-      pathname: router.pathname,
+    await replace({
+      pathname: pathname,
       query: { search: value },
     });
     setSearchQuery(value);

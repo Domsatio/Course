@@ -18,17 +18,19 @@ import toast from "react-hot-toast";
 import CartItem from "@/components/client/CartItem";
 import { useRouter } from "next/router";
 
+type Carts = {
+  id: string;
+  productId: string;
+  userId: string;
+  quantity: number;
+  createdAt: string;
+  updatedAt: string;
+  product: GetProduct;
+};
+
 type CheckoutProps = {
   address: UpdateAddress;
-  carts: {
-    id: string;
-    productId: string;
-    userId: string;
-    quantity: number;
-    createdAt: string;
-    updatedAt: string;
-    product: GetProduct;
-  }[];
+  carts: Carts[];
 };
 
 declare global {
@@ -40,27 +42,21 @@ declare global {
 const Checkout: FC<CheckoutProps> = (data) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [isOpenAddress, setIsOpenAddress] = useState<boolean>(false);
-  const [address, setAddress] = useState<UpdateAddress | null>(
-    data.address || null
-  );
-  const [carts, setCarts] = useState<GetCart[]>(data.carts || []);
+  const [address, setAddress] = useState<UpdateAddress>(data.address);
+  const [carts, setCarts] = useState<GetCart[]>(data.carts);
   const [shippingAddress, setShippingAddress] = useState<string>(
-    `${data.address.address}, ${data.address.city}, ${data.address.state}, ${data.address.country}, ${data.address.zip}, ${data.address.phone}` ||
+    `${data.address?.address}, ${data.address?.city}, ${data.address?.state}, ${data.address?.country}, ${data.address?.zip}, ${data.address?.phone}` ||
       "No address available"
   );
   const { push } = useRouter();
 
   const totalPrice = carts.reduce((acc: number, cart: GetCart) => {
-    const isDiscounted = (cart.product.discount ?? 0) > 0;
-    const discount = isDiscounted
-      ? cart.product.price * ((cart.product.discount ?? 0) / 100)
-      : 0;
-    return acc + (cart.product.price - discount) * cart.quantity;
+    return acc + cart.product.finalPrice * cart.quantity;
   }, 0);
 
   useEffect(() => {
-    setAddress(data.address || null);
-    setCarts(data.carts || []);
+    setAddress(data.address);
+    setCarts(data.carts);
   }, [data]);
 
   useEffect(() => {
@@ -80,36 +76,36 @@ const Checkout: FC<CheckoutProps> = (data) => {
 
   const handleCheckout = async () => {
     setLoading(true);
-    try {
-      const res = await fetch(`/api/checkout`, {
-        method: "POST",
+    const res = await fetch(`/api/checkout?BD=false`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const { success, data } = await res.json();
+    console.log("success", data);
+    if (success) {
+      window.snap.pay(data.token.token, {
+        onSuccess: function (result: any) {
+          toast.success("Checkout successfull!");
+          setCheckedCart();
+        },
+        onPending: function (result: any) {
+          toast.success("Checkout pending!");
+          setCheckedCart();
+        },
+        onError: function (result: any) {
+          toast.error("Failed to checkout!");
+          setLoading(false);
+        },
+        onClose: function () {
+          setLoading(false);
+        },
       });
-      const { success, data } = await res.json();
-      if (success) {
-        console.log("success", data);
-        window.snap.pay(data.token.token, {
-          onSuccess: function (result: any) {
-            toast.success("Checkout successfull!");
-            setCheckedCart();
-          },
-          onPending: function (result: any) {
-            toast.success("Checkout pending!");
-            setCheckedCart();
-          },
-          onError: function (result: any) {
-            toast.error("Failed to checkout!");
-          },
-          onClose: function () {
-            console.log(
-              "customer closed the popup without finishing the payment"
-            );
-          },
-        });
-      }
-    } catch (error) {
+    } else {
       toast.error("Failed to checkout!");
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
@@ -128,7 +124,7 @@ const Checkout: FC<CheckoutProps> = (data) => {
                 className="text-green-400 text-sm font-semibold cursor-pointer"
                 onClick={() => setIsOpenAddress(true)}
               >
-                Change
+                {data.address ? "Update" : "Add"}
               </p>
               {/* FormInput for updating address */}
               <FormInput
@@ -164,28 +160,6 @@ const Checkout: FC<CheckoutProps> = (data) => {
               )}
             </div>
           </div>
-
-          {/* Submit form */}
-          {/* <FormInput
-            inputList={InputList}
-            method="POST"
-            service={addressServices}
-            toastMessage={{
-              success: "Checkout successfull!",
-              error: "Failed to checkout!",
-            }}
-            isUseCancelButton={false}
-            customCard={(child) => <div>{child}</div>}
-            customButtonSubmit={() => (
-              <Button color="green" className="mt-2" fullWidth>
-                Checkout
-              </Button>
-            )}
-            redirect={false}
-            onSuccess={(e) => {
-              console.log(`Success`);
-            }}
-          /> */}
         </div>
 
         {/* Order Summary */}
@@ -202,6 +176,7 @@ const Checkout: FC<CheckoutProps> = (data) => {
               color="green"
               className="mt-2"
               fullWidth
+              loading={loading}
               onClick={() => handleCheckout()}
             >
               Checkout
@@ -250,7 +225,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const { data: carts } = await res_carts.json();
 
     return {
-      props: { address: { ...address }, carts: [...carts] },
+      props: { address, carts },
     };
   } catch (error) {
     console.error("Error fetching data:", error);

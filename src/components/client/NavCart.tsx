@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Menu,
   MenuHandler,
@@ -68,17 +68,16 @@ export function NavCart() {
         </div>
         <hr className="border-gray-200" />
         <div className="px-3 pb-3 space-y-3">
-          {carts.length > 0 ? carts.map((cart, index: number) => (
+          {carts.length > 0 ? carts.map(({ id, product, quantity }) => (
             <div
-              key={index}
+              key={id}
               className="w-full flex justify-between"
             >
               <div className="flex gap-3">
-
                 <div className="h-14 w-14">
                   <Image
-                    src={cart.product.thumbnail}
-                    alt={cart.product.name + " thumbnail"}
+                    src={product.thumbnail}
+                    alt={product.name + " thumbnail"}
                     className="transform transition-transform duration-500 h-full w-full object-contain rounded-lg"
                     height={50}
                     width={50}
@@ -86,18 +85,15 @@ export function NavCart() {
                   />
                 </div>
                 <div className="flex flex-col self-start">
-                  <Link href={`/store/${cart.product.slug}`} className="flex gap-x-2">
+                  <Link href={`/store/${product.slug}`} className="flex gap-x-2">
                     <Typography variant="small" color="black" className="line-clamp-1 font-semibold">
-                      {cart.product.name}
+                      {product.name}
                     </Typography>
                   </Link>
-                  {/* <p className="text-sm text-gray-600 font-normal line-clamp-1">
-                    {cart.product.description}
-                    </p> */}
                 </div>
               </div>
               <Typography variant="small" color="black" className="font-semibold">
-                {cart.quantity} x {ConvertCurrency(cart.product.price)}
+                {quantity} x {ConvertCurrency(product.finalPrice)}
               </Typography>
             </div>
           )) : (

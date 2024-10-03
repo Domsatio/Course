@@ -1,4 +1,4 @@
-import { Product } from "./product.type";
+import { GetProduct } from "./product.type";
 
 export type Cart = {
   id: string;
@@ -22,5 +22,5 @@ export type GetCart = {
   productId: string;
   quantity: number;
   isChecked?: boolean;
-  product: Product;
+  product: GetProduct;
 };

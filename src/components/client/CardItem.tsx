@@ -43,14 +43,14 @@ const CardItem = ({ props, category }: typeCard) => {
         <CardBody className="space-y-2 px-0 py-3">
           {category}
           <Typography
-            variant="h5"
+            variant="lead"
             color="black"
-            className="group-hover:text-black/70 line-clamp-2"
+            className="group-hover:text-black/70 line-clamp-2 font-semibold"
           >
             {props.title}
           </Typography>
           <article
-            className="prose font-normal line-clamp-3 text-black group-hover:text-black/70 text-sm leading-6"
+            className="prose font-light line-clamp-3 text-black group-hover:text-black/70 text-sm leading-6"
             dangerouslySetInnerHTML={{
               __html: props.body || props.description || "",
             }}

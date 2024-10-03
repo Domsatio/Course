@@ -37,13 +37,13 @@ model Session {
 }
 
 model User {
-  id             String    @id @default(uuid())
-  email          String    @unique
+  id             String         @id @default(uuid())
+  email          String         @unique
   password       String?
   emailVerified  DateTime?
   name           String
-  role           UserRole  @default(USER)
-  isSubscribed   Boolean   @default(false)
+  role           UserRole       @default(USER)
+  isSubscribed   Boolean        @default(false)
   subscribeEnd   DateTime?
   subscribeStart DateTime?
   accounts       Account[]
@@ -52,8 +52,7 @@ model User {
   orders         Order[]
   posts          Post[]
   sessions       Session[]
-  TemporaryCart TemporaryCart[]
-
+  TemporaryCart  TemporaryCart?
 }
 
 model VerificationToken {
@@ -83,19 +82,18 @@ model Address {
 }
 
 model Product {
-  id          String   @id @default(uuid())
-  name        String
-  description String
-  price       Float
-  discount    Float?   @default(0)
-  quantity    Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  slug        String   @unique
-  thumbnail   String
-  cart        Cart[]
+  id            String          @id @default(uuid())
+  name          String
+  description   String
+  price         Float
+  discount      Float?          @default(0)
+  quantity      Int             @default(0)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  slug          String          @unique
+  thumbnail     String
+  cart          Cart[]
   TemporaryCart TemporaryCart[]
-
 }
 
 model Cart {
@@ -103,9 +101,9 @@ model Cart {
   userId    String
   productId String
   quantity  Int      @default(1)
-  isChecked Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  isChecked Boolean  @default(false)
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -115,7 +113,7 @@ model Cart {
 
 model TemporaryCart {
   id        String   @id @default(uuid())
-  userId    String   @unique  
+  userId    String   @unique
   productId String
   quantity  Int      @default(1)
   createdAt DateTime @default(now())
@@ -132,7 +130,8 @@ model Order {
   userId    String
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
-  quantity  Int          @default(1)
+  orderId   String       @unique
+  token     String       @unique
   status    OrderStatus? @default(PENDING)
   products  Json[]
   user      User         @relation(fields: [userId], references: [id])

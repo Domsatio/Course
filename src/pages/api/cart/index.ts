@@ -38,7 +38,7 @@ export default async function handlerCart(
     }
 
     try {
-      await createCart({...validatedData, userId: token.id as string});
+      await createCart({ ...validatedData, userId: token.id as string });
       console.info("Create cart success");
       return res.status(201).send({
         status: true,
@@ -109,7 +109,6 @@ export default async function handlerCart(
     }
   } else if (req.method === "GET") {
     try {
-
       if (!token) {
         return res.status(401).json({ message: "Unauthorized" });
       }

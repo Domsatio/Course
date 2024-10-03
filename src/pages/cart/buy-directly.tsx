@@ -19,6 +19,7 @@ import { ConvertCurrency } from "@/helpers/appFunction";
 import { GetProduct } from "@/types/product.type";
 import { getItem } from "@/utils/localstorage";
 import CartItem from "@/components/client/CartItem";
+import toast from "react-hot-toast";
 
 type CheckoutProps = {
   address: UpdateAddress;
@@ -36,17 +37,8 @@ type CheckoutProps = {
 const BuyDirectly: FC<CheckoutProps> = (data) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [isOpenAddress, setIsOpenAddress] = useState<boolean>(false);
-  const [address, setAddress] = useState<UpdateAddress>(
-    data.address || {
-      address: "",
-      city: "",
-      state: "",
-      country: "",
-      zip: "",
-      phone: "",
-    }
-  );
-  const [cart, setCarts] = useState<GetCart>({
+  const [address, setAddress] = useState<UpdateAddress>(data.address);
+  const [cart, setCart] = useState<GetCart>({
     id: "",
     productId: "",
     userId: "",
@@ -55,6 +47,7 @@ const BuyDirectly: FC<CheckoutProps> = (data) => {
       id: "",
       name: "",
       price: 0,
+      finalPrice: 0,
       thumbnail: "",
       slug: "",
       description: "",
@@ -64,7 +57,7 @@ const BuyDirectly: FC<CheckoutProps> = (data) => {
   });
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const [shippingAddress, setShippingAddress] = useState<string>(
-    `${data.address.address}, ${data.address.city}, ${data.address.state}, ${data.address.country}, ${data.address.zip}, ${data.address.phone}` ||
+    `${data.address?.address}, ${data.address?.city}, ${data.address?.state}, ${data.address?.country}, ${data.address?.zip}, ${data.address?.phone}` ||
       "No address available"
   );
 
@@ -75,8 +68,40 @@ const BuyDirectly: FC<CheckoutProps> = (data) => {
         const {
           data: { data },
         } = await temporaryCartServices.getItems({ idProduct: idBD });
-        setCarts(data);
+        setCart(data);
       }
+    }
+  };
+
+  const handleCheckout = async () => {
+    setLoading(true);
+    const res = await fetch(`/api/checkout?BD=true`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const { success, data } = await res.json();
+    if (success) {
+      console.log("success", data);
+      window.snap.pay(data.token.token, {
+        onSuccess: function (result: any) {
+          toast.success("Checkout successfull!");
+        },
+        onPending: function (result: any) {
+          toast.success("Checkout pending!");
+        },
+        onError: function (result: any) {
+          toast.error("Failed to checkout!");
+          setLoading(false);
+        },
+        onClose: function () {
+          setLoading(false);
+        },
+      });
+    } else {
+      toast.error("Failed to checkout!");
+      setLoading(false);
     }
   };
 
@@ -96,7 +121,7 @@ const BuyDirectly: FC<CheckoutProps> = (data) => {
   }, []);
 
   useEffect(() => {
-    const countPrice = cart.quantity * cart.product?.price;
+    const countPrice = cart.quantity * cart.product.finalPrice;
     setTotalPrice(countPrice);
   }, [cart]);
 
@@ -116,7 +141,7 @@ const BuyDirectly: FC<CheckoutProps> = (data) => {
                 className="text-green-400 text-sm font-semibold cursor-pointer"
                 onClick={() => setIsOpenAddress(true)}
               >
-                Change
+                {data.address ? "Update" : "Add"}
               </p>
               {/* FormInput for updating address */}
               <FormInput
@@ -149,7 +174,7 @@ const BuyDirectly: FC<CheckoutProps> = (data) => {
                   setLoading={setLoading}
                   service={temporaryCartServices}
                   handleSetQuantity={(id, quantity) =>
-                    setCarts((prev) => ({ ...prev, quantity }))
+                    setCart((prev) => ({ ...prev, quantity }))
                   }
                 />
               ) : (
@@ -157,33 +182,6 @@ const BuyDirectly: FC<CheckoutProps> = (data) => {
               )}
             </div>
           </div>
-
-          {/* Submit form */}
-          <FormInput
-            inputList={InputList}
-            method="POST"
-            service={addressServices}
-            toastMessage={{
-              success: "Checkout successfull!",
-              error: "Failed to checkout!",
-            }}
-            isUseCancelButton={false}
-            customCard={(child) => <div>{child}</div>}
-            customButtonSubmit={() => (
-              <Button
-                color="green"
-                className="mt-2"
-                loading={loading}
-                fullWidth
-              >
-                Checkout
-              </Button>
-            )}
-            redirect={false}
-            onSuccess={(e) => {
-              console.log(`Success`);
-            }}
-          />
         </div>
 
         {/* Order Summary */}
@@ -196,6 +194,15 @@ const BuyDirectly: FC<CheckoutProps> = (data) => {
                 {ConvertCurrency(totalPrice)}
               </span>
             </div>
+            <Button
+              color="green"
+              className="mt-2"
+              fullWidth
+              loading={loading}
+              onClick={() => handleCheckout()}
+            >
+              Checkout
+            </Button>
           </div>
         </div>
       </div>
