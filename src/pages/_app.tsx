@@ -22,6 +22,7 @@ export default function App({
     const scriptTag = document.createElement("script");
     const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY;
     scriptTag.src = midtransScriptUrl;
+    scriptTag.type = "text/javascript";
     scriptTag.setAttribute("data-client-key", clientKey!);
     scriptTag.async = true;
     document.body.appendChild(scriptTag);

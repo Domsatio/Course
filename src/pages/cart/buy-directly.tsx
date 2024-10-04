@@ -19,6 +19,7 @@ import { ConvertCurrency } from "@/helpers/appFunction";
 import { GetProduct } from "@/types/product.type";
 import { getItem } from "@/utils/localstorage";
 import CartItem from "@/components/client/CartItem";
+import toast from "react-hot-toast";
 
 type CheckoutProps = {
   address: UpdateAddress;
@@ -69,6 +70,38 @@ const BuyDirectly: FC<CheckoutProps> = (data) => {
         } = await temporaryCartServices.getItems({ idProduct: idBD });
         setCart(data);
       }
+    }
+  };
+
+  const handleCheckout = async () => {
+    setLoading(true);
+    const res = await fetch(`/api/checkout?BD=true`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const { success, data } = await res.json();
+    if (success) {
+      console.log("success", data);
+      window.snap.pay(data.token.token, {
+        onSuccess: function (result: any) {
+          toast.success("Checkout successfull!");
+        },
+        onPending: function (result: any) {
+          toast.success("Checkout pending!");
+        },
+        onError: function (result: any) {
+          toast.error("Failed to checkout!");
+          setLoading(false);
+        },
+        onClose: function () {
+          setLoading(false);
+        },
+      });
+    } else {
+      toast.error("Failed to checkout!");
+      setLoading(false);
     }
   };
 
@@ -149,33 +182,6 @@ const BuyDirectly: FC<CheckoutProps> = (data) => {
               )}
             </div>
           </div>
-
-          {/* Submit form */}
-          <FormInput
-            inputList={InputList}
-            method="POST"
-            service={addressServices}
-            toastMessage={{
-              success: "Checkout successfull!",
-              error: "Failed to checkout!",
-            }}
-            isUseCancelButton={false}
-            customCard={(child) => <div>{child}</div>}
-            customButtonSubmit={() => (
-              <Button
-                color="green"
-                className="mt-2"
-                loading={loading}
-                fullWidth
-              >
-                Checkout
-              </Button>
-            )}
-            redirect={false}
-            onSuccess={(e) => {
-              console.log(`Success`);
-            }}
-          />
         </div>
 
         {/* Order Summary */}
@@ -188,6 +194,15 @@ const BuyDirectly: FC<CheckoutProps> = (data) => {
                 {ConvertCurrency(totalPrice)}
               </span>
             </div>
+            <Button
+              color="green"
+              className="mt-2"
+              fullWidth
+              loading={loading}
+              onClick={() => handleCheckout()}
+            >
+              Checkout
+            </Button>
           </div>
         </div>
       </div>

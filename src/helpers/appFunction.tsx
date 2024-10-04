@@ -180,6 +180,35 @@ const convertStringToBoolean = (value: string): boolean | string => {
   return ""; // Return null for invalid inputs
 };
 
+function generateRandomString(length:number) {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  const charactersLength = characters.length;
+  
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  
+  return result;
+}
+
+function formatMidtransExpiryDate(date: Date) {
+  const pad = (num: number) => String(num).padStart(2, '0');
+  const year = date.getFullYear();
+  const month = pad(date.getMonth() + 1);
+  const day = pad(date.getDate());
+  const hours = pad(date.getHours());
+  const minutes = pad(date.getMinutes());
+  const seconds = pad(date.getSeconds());
+
+  const timezoneOffset = -date.getTimezoneOffset();
+  const sign = timezoneOffset >= 0 ? "+" : "-";
+  const offsetHours = pad(Math.floor(Math.abs(timezoneOffset) / 60));
+  const offsetMinutes = pad(Math.abs(timezoneOffset) % 60);
+
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds} ${sign}${offsetHours}:${offsetMinutes}`;
+}
+
 export {
   NullProof,
   ConvertCurrency,
@@ -188,4 +217,6 @@ export {
   numberlistPagination,
   getQueryParams,
   convertStringToBoolean,
+  generateRandomString,
+  formatMidtransExpiryDate,
 };

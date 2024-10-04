@@ -1,7 +1,10 @@
 import ContentWrapper from "@/layouts/client/contentWrapper";
 import { FormInput } from "@/components/admin/FormInput";
-import { InputListAddress } from "@/constants/client/InputLists/checkout.InputList";
-import { addressServices } from "@/services/serviceGenerator";
+import {
+  InputListAddress,
+  InputList,
+} from "@/constants/client/InputLists/checkout.InputList";
+import { addressServices, cartServices } from "@/services/serviceGenerator";
 import { Button, Typography } from "@material-tailwind/react";
 import { FC, useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
@@ -13,21 +16,22 @@ import { ConvertCurrency } from "@/helpers/appFunction";
 import { GetProduct } from "@/types/product.type";
 import toast from "react-hot-toast";
 import CartItem from "@/components/client/CartItem";
+import { useRouter } from "next/router";
 
 type Carts = {
-  id: string
-  productId: string
-  userId: string
-  quantity: number
-  createdAt: string
-  updatedAt: string
-  product: GetProduct
-}
+  id: string;
+  productId: string;
+  userId: string;
+  quantity: number;
+  createdAt: string;
+  updatedAt: string;
+  product: GetProduct;
+};
 
 type CheckoutProps = {
-  address: UpdateAddress
-  carts: Carts[]
-}
+  address: UpdateAddress;
+  carts: Carts[];
+};
 
 declare global {
   interface Window {
@@ -44,6 +48,7 @@ const Checkout: FC<CheckoutProps> = (data) => {
     `${data.address?.address}, ${data.address?.city}, ${data.address?.state}, ${data.address?.country}, ${data.address?.zip}, ${data.address?.phone}` ||
     "No address available"
   );
+  const { push } = useRouter();
 
   const totalPrice = carts.reduce((acc: number, cart: GetCart) => {
     return acc + cart.product.finalPrice * cart.quantity;
@@ -61,38 +66,46 @@ const Checkout: FC<CheckoutProps> = (data) => {
     setShippingAddress(shippingAddress);
   }, [address]);
 
+  const setCheckedCart = async () => {
+    cartServices.updateItem({
+      id: "all",
+      isChecked: false,
+    });
+    push("/store");
+  };
+
   const handleCheckout = async () => {
     setLoading(true);
-    const res = await fetch(`/api/checkout`, {
+    const res = await fetch(`/api/checkout?BD=false`, {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
     const { success, data } = await res.json();
-    console.log("success", success);
-    console.log("data", data.token);
-
+    console.log("success", data);
     if (success) {
-      console.log("success", data);
-      window.snap.pay(data.token, {
+      window.snap.pay(data.token.token, {
         onSuccess: function (result: any) {
-          console.log("success", result);
           toast.success("Checkout successfull!");
+          setCheckedCart();
         },
         onPending: function (result: any) {
-          console.log("pending", result);
           toast.success("Checkout pending!");
+          setCheckedCart();
         },
         onError: function (result: any) {
-          console.log("error", result);
           toast.error("Failed to checkout!");
+          setLoading(false);
         },
         onClose: function () {
-          console.log("customer closed the popup without finishing the payment");
+          setLoading(false);
         },
       });
     } else {
       toast.error("Failed to checkout!");
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
@@ -147,28 +160,6 @@ const Checkout: FC<CheckoutProps> = (data) => {
               )}
             </div>
           </div>
-
-          {/* Submit form */}
-          {/* <FormInput
-            inputList={InputList}
-            method="POST"
-            service={addressServices}
-            toastMessage={{
-              success: "Checkout successfull!",
-              error: "Failed to checkout!",
-            }}
-            isUseCancelButton={false}
-            customCard={(child) => <div>{child}</div>}
-            customButtonSubmit={() => (
-              <Button color="green" className="mt-2" fullWidth>
-                Checkout
-              </Button>
-            )}
-            redirect={false}
-            onSuccess={(e) => {
-              console.log(`Success`);
-            }}
-          /> */}
         </div>
 
         {/* Order Summary */}
@@ -185,6 +176,7 @@ const Checkout: FC<CheckoutProps> = (data) => {
               color="green"
               className="mt-2"
               fullWidth
+              loading={loading}
               onClick={() => handleCheckout()}
             >
               Checkout
