@@ -9,9 +9,13 @@ export enum OrderStatus {
 export type Order = {
   id: string;
   userId: string;
-  productId: string;
-  quantity: number;
-  status?: OrderStatus;
+  products: any;
+  grossAmount: string;
+  settlementTime?: string;
+  token: any;
+  transactionStatus: string;
+  transactionTime?: string;
+  customerDetails: any;
 };
 
 export type UpdateOrder = {

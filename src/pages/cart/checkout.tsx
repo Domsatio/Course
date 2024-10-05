@@ -1,10 +1,11 @@
 import ContentWrapper from "@/layouts/client/contentWrapper";
 import { FormInput } from "@/components/admin/FormInput";
+import { InputListAddress } from "@/constants/client/InputLists/checkout.InputList";
 import {
-  InputListAddress,
-  InputList,
-} from "@/constants/client/InputLists/checkout.InputList";
-import { addressServices, cartServices } from "@/services/serviceGenerator";
+  addressServices,
+  cartServices,
+  orderServices,
+} from "@/services/serviceGenerator";
 import { Button, Typography } from "@material-tailwind/react";
 import { FC, useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
@@ -74,6 +75,15 @@ const Checkout: FC<CheckoutProps> = (data) => {
     push("/store");
   };
 
+  const handleCencelOrder = async (id: string) => {
+    try {
+      await orderServices.deleteItem({ id });
+      toast.success("Order has been canceled");
+    } catch (error) {
+      console.error("Error deleting order:", error);
+    }
+  };
+
   const handleCheckout = async () => {
     setLoading(true);
     const res = await fetch(`/api/checkout?BD=false`, {
@@ -83,7 +93,6 @@ const Checkout: FC<CheckoutProps> = (data) => {
       },
     });
     const { success, data } = await res.json();
-    console.log("success", data);
     if (success) {
       window.snap.pay(data.token.token, {
         onSuccess: function (result: any) {
@@ -97,9 +106,11 @@ const Checkout: FC<CheckoutProps> = (data) => {
         onError: function (result: any) {
           toast.error("Failed to checkout!");
           setLoading(false);
+          handleCencelOrder(data.orderData.transaction_details.order_id ?? "");
         },
         onClose: function () {
           setLoading(false);
+          handleCencelOrder(data.orderData.transaction_details.order_id ?? "");
         },
       });
     } else {

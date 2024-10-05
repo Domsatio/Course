@@ -1,4 +1,4 @@
-import { snap } from "@/libs/midtrans";
+import { snap, coreApi } from "@/libs/midtrans";
 import prisma from "@/libs/prisma/db";
 import { generateRandomString, formatMidtransExpiryDate } from "@/helpers/appFunction";
 
@@ -33,7 +33,7 @@ const createCustomerDetails = (user: any) => ({
   phone: user.address?.phone,
   billing_address: {
     first_name: user.name,
-    last_name: user.name,
+    last_name: "",
     email: user.email,
     phone: user.address?.phone,
     address: user.address?.address,
@@ -43,7 +43,7 @@ const createCustomerDetails = (user: any) => ({
   },
   shipping_address: {
     first_name: user.name,
-    last_name: user.name,
+    last_name: "",
     email: user.email,
     phone: user.address?.phone,
     address: user.address?.address,
@@ -97,6 +97,17 @@ export const createTransaction = async (userId: string) => {
 
   try {
     const token = await snap.createTransaction(params);
+    await prisma.order.create({
+      data: {
+        id: params.transaction_details.order_id,
+        userId: user.id,
+        products: params.item_details,
+        grossAmount: params.transaction_details.gross_amount.toString(),
+        token: token,
+        transactionStatus: "pending",
+        customerDetails: params.customer_details,
+      },
+    });
     return { orderData: params, transactionToken: token };
   } catch (error) {
     console.error("Midtrans error:", error);
@@ -117,12 +128,21 @@ export const createTransactionBuyDirectly = async (userId: string) => {
     return false;
   }
 
-  console.log(user.TemporaryCart);
-
   const params = createTransactionParams(user, Array.isArray(user.TemporaryCart) ? user.TemporaryCart : [user.TemporaryCart]);
 
   try {
     const token = await snap.createTransaction(params);
+    await prisma.order.create({
+      data: {
+        id: params.transaction_details.order_id,
+        userId: user.id,
+        products: params.item_details,
+        grossAmount: params.transaction_details.gross_amount.toString(),
+        token: token,
+        transactionStatus: "pending",
+        customerDetails: params.customer_details,
+      },
+    });
     return { orderData: params, transactionToken: token };
   } catch (error) {
     console.error("Midtrans error:", error);

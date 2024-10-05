@@ -11,9 +11,6 @@ export const getOrders = async (skip: number = 0, take: number = 5) => {
       include: {
         user: true,
       },
-      orderBy: {
-        createdAt: "desc",
-      },
     });
 
     return { totalData, data };
@@ -33,10 +30,24 @@ export const createOrder = async (data: Order) => {
   return prisma.order.create({ data });
 };
 
-export const updateOrder = async (id: string, data: UpdateOrder) => {
+export const updateOrder = async ({
+  id,
+  transactionStatus,
+  transactionTime,
+  settlementTime,
+}: {
+  id: string;
+  transactionStatus: string;
+  transactionTime: string;
+  settlementTime?: string;
+}) => {
   return prisma.order.update({
     where: { id },
-    data,
+    data: {
+      transactionStatus,
+      settlementTime,
+      transactionTime,
+    },
   });
 };
 

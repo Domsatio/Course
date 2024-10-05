@@ -2,11 +2,11 @@ import ContentWrapper from "@/layouts/client/contentWrapper";
 import { FormInput } from "@/components/admin/FormInput";
 import {
   InputListAddress,
-  InputList,
 } from "@/constants/client/InputLists/checkout.InputList";
 import {
   addressServices,
   temporaryCartServices,
+  orderServices,
 } from "@/services/serviceGenerator";
 import { Button, Typography } from "@material-tailwind/react";
 import { FC, useEffect, useState } from "react";
@@ -61,6 +61,10 @@ const BuyDirectly: FC<CheckoutProps> = (data) => {
       "No address available"
   );
 
+  const handleSetQuantity = async (id: string, quantity: number) => {
+    setCart((prev) => ({ ...prev, quantity }));
+  };
+
   const getTemporaryCart = async () => {
     if (typeof window !== "undefined") {
       const idBD = getItem("idBD");
@@ -70,6 +74,15 @@ const BuyDirectly: FC<CheckoutProps> = (data) => {
         } = await temporaryCartServices.getItems({ idProduct: idBD });
         setCart(data);
       }
+    }
+  };
+
+  const handleCencelOrder = async (id: string) => {
+    try {
+      await orderServices.deleteItem({ id });
+      toast.success("Order has been canceled");
+    } catch (error) {
+      console.error("Error deleting order:", error);
     }
   };
 
@@ -83,7 +96,6 @@ const BuyDirectly: FC<CheckoutProps> = (data) => {
     });
     const { success, data } = await res.json();
     if (success) {
-      console.log("success", data);
       window.snap.pay(data.token.token, {
         onSuccess: function (result: any) {
           toast.success("Checkout successfull!");
@@ -94,9 +106,11 @@ const BuyDirectly: FC<CheckoutProps> = (data) => {
         onError: function (result: any) {
           toast.error("Failed to checkout!");
           setLoading(false);
+          handleCencelOrder(data.orderData.transaction_details.order_id ?? "");
         },
         onClose: function () {
           setLoading(false);
+          handleCencelOrder(data.orderData.transaction_details.order_id ?? "");
         },
       });
     } else {
@@ -171,11 +185,9 @@ const BuyDirectly: FC<CheckoutProps> = (data) => {
               {cart.id !== "" ? (
                 <CartItem
                   cart={cart}
-                  setLoading={setLoading}
                   service={temporaryCartServices}
-                  handleSetQuantity={(id, quantity) =>
-                    setCart((prev) => ({ ...prev, quantity }))
-                  }
+                  handleSetQuantity={handleSetQuantity}
+                  setLoading={setLoading}
                 />
               ) : (
                 <p>No items in the cart.</p>

@@ -19,6 +19,7 @@ import CategorySkeleton from "@/components/Skeleton/category.skeleton";
 import ContentWrapper from "@/layouts/client/contentWrapper";
 import { cn } from "@/libs/cn";
 import GenerateMetaData from "@/components/GenerateMetaData";
+import toast from "react-hot-toast";
 
 type Params = {
   skip: number;
@@ -53,6 +54,8 @@ const ClientClubPage = () => {
       .then(({ data: { totalData, data } }) => {
         setPosts(data);
         handleSetTotalPages(totalData);
+      }).catch((error) => {
+        toast.error("Failed to fetch data post");
       });
     setIsLoad(false);
   };
@@ -81,6 +84,8 @@ const ClientClubPage = () => {
     categoryServices.getItems(categoryParams).then(({ data: { data } }) => {
       setCategories(data);
       setIsCategoryLoad(false);
+    }).catch((error) => {
+      toast.error("Failed to fetch data category");
     });
   }, []);
 

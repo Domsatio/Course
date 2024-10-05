@@ -1,52 +1,5 @@
-import { Schema, string } from "yup";
+import { string } from "yup";
 import { InputListProps } from "@/types/form.type";
-
-export const InputList: InputListProps[] = [
-  {
-    className: "mt-5 font-semibold text-xl",
-    label: "Payment Information",
-    name: "label",
-    type: "label",
-    validator: string(),
-  },
-  {
-    className: "basis-full lg:basis-1/2",
-    label: "Card Number",
-    name: "cardNumber",
-    type: "input",
-    placeholder: "Your Card Number",
-    isRequired: true,
-    validator: string().required("Card Number is required"),
-  },
-  {
-    className: "basis-full lg:basis-1/2",
-    label: "Card Holder",
-    name: "cardHolder",
-    type: "input",
-    placeholder: "Your Card Holder",
-    isRequired: true,
-    validator: string().required("Card Holder is required"),
-  },
-  {
-    className: "basis-full lg:basis-1/2",
-    label: "Expiration Date",
-    name: "expirationDate",
-    type: "input",
-    placeholder: "Your Expiration Date",
-    isRequired: true,
-    validator: string().required("Expiration Date is required"),
-  },
-  {
-    className: "basis-full lg:basis-1/2",
-    label: "CVV",
-    name: "cvv",
-    type: "input",
-    placeholder: "Your CVV",
-    isRequired: true,
-    validator: string().required("CVV is required"),
-  },
-];
-
 
 export const InputListAddress: InputListProps[] = [
   {
