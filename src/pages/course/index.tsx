@@ -14,6 +14,8 @@ import { useRouter } from "next/router";
 import ContentWrapper from "@/layouts/client/contentWrapper";
 import { cn } from "@/libs/cn";
 import GenerateMetaData from "@/components/GenerateMetaData";
+import toast from "react-hot-toast";
+
 
 type Params = {
   skip: number;
@@ -52,7 +54,10 @@ const ClientCoursePage = () => {
       .then(({ data: { totalData, data } }) => {
         setCourses(data);
         handleSetTotalPages(totalData);
+      }).catch((error) => {
+        toast.error("Failed to fetch data course");
       });
+    
     setIsLoad(false);
   };
 

@@ -7,6 +7,12 @@ export default withAuth(async function middleware(req: NextRequestWithAuth) {
     nextauth: { token },
   } = req;
 
+  // const res = NextResponse.next();
+  // res.headers.set('Access-Control-Allow-Origin', '*'); // Allow all origins (change to specific domain in production)
+  // res.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  // res.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
+
   if (pathname.startsWith("/admin")) {
     if (!token || token?.role !== "ADMIN") {
       return NextResponse.redirect(new URL("/sign-in", req.url));

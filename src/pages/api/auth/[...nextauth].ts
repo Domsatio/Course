@@ -8,6 +8,7 @@ import prisma from "@/libs/prisma/db";
 
 export const authOptions: NextAuthOptions = {
   debug: process.env.NODE_ENV === "development",
+  // debug: true,
   adapter: PrismaAdapter(prisma),
   providers: [
     GoogleProvider({
@@ -50,6 +51,7 @@ export const authOptions: NextAuthOptions = {
   ],
   pages: {
     signIn: "/sign-in",
+    error: "/error-signIn",
   },
   session: {
     strategy: "jwt",

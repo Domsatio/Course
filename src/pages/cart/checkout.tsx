@@ -1,10 +1,11 @@
 import ContentWrapper from "@/layouts/client/contentWrapper";
 import { FormInput } from "@/components/admin/FormInput";
+import { InputListAddress } from "@/constants/client/InputLists/checkout.InputList";
 import {
-  InputListAddress,
-  InputList,
-} from "@/constants/client/InputLists/checkout.InputList";
-import { addressServices, cartServices, orderServices } from "@/services/serviceGenerator";
+  addressServices,
+  cartServices,
+  orderServices,
+} from "@/services/serviceGenerator";
 import { Button, Typography } from "@material-tailwind/react";
 import { FC, useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
@@ -92,7 +93,6 @@ const Checkout: FC<CheckoutProps> = (data) => {
       },
     });
     const { success, data } = await res.json();
-    console.log("success", data);
     if (success) {
       window.snap.pay(data.token.token, {
         onSuccess: function (result: any) {

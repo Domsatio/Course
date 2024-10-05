@@ -1,4 +1,4 @@
-import { snap } from "@/libs/midtrans";
+import { snap, coreApi } from "@/libs/midtrans";
 import prisma from "@/libs/prisma/db";
 import {
   generateRandomString,
@@ -36,7 +36,7 @@ const createCustomerDetails = (user: any) => ({
   phone: user.address?.phone,
   billing_address: {
     first_name: user.name,
-    last_name: user.name,
+    last_name: "",
     email: user.email,
     phone: user.address?.phone,
     address: user.address?.address,
@@ -46,7 +46,7 @@ const createCustomerDetails = (user: any) => ({
   },
   shipping_address: {
     first_name: user.name,
-    last_name: user.name,
+    last_name: "",
     email: user.email,
     phone: user.address?.phone,
     address: user.address?.address,
@@ -130,8 +130,6 @@ export const createTransactionBuyDirectly = async (userId: string) => {
   if (!user || !user.TemporaryCart) {
     return false;
   }
-
-  console.log(user.TemporaryCart);
 
   const params = createTransactionParams(
     user,

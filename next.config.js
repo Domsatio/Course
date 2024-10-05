@@ -31,6 +31,18 @@ const nextConfig = {
       },
     ],
   },
+  // async rewrites() {
+  //   return [
+  //     {
+  //       source: '/api/:path*',
+  //       destination: 'https://ce49-103-114-52-10.ngrok-free.app/:path*',
+  //     },
+  //     {
+  //       source: '/api/:path*',
+  //       destination: 'https://localhost:3000/:path*',
+  //     }
+  //   ]
+  // },
 };
 
 module.exports = nextConfig;

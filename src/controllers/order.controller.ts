@@ -30,10 +30,24 @@ export const createOrder = async (data: any) => {
   return prisma.order.create({ data });
 };
 
-export const updateOrder = async (id: string, data: any) => {
+export const updateOrder = async ({
+  id,
+  transactionStatus,
+  transactionTime,
+  settlementTime,
+}: {
+  id: string;
+  transactionStatus: string;
+  transactionTime: string;
+  settlementTime?: string;
+}) => {
   return prisma.order.update({
     where: { id },
-    data,
+    data: {
+      transactionStatus,
+      settlementTime,
+      transactionTime,
+    },
   });
 };
 

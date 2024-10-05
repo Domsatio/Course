@@ -19,6 +19,10 @@ export default async function handlerUser(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  res.setHeader('Access-Control-Allow-Origin', '*'); // Allow all origins (use your domain in production)
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  
   const token = await getToken({ req });
 
   if (req.method === "POST") {
