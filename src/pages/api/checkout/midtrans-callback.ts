@@ -7,15 +7,20 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  res.setHeader('Access-Control-Allow-Origin', '*'); // Allow all origins (use your domain in production)
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
   if (req.method === "POST") {
+    
     console.log(req.body, "req.bodyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy");
-    await updateOrder({
+    const update_order:any = await updateOrder({
       id: req.body.order_id,
       transactionStatus: req.body.transaction_status,
       transactionTime: req.body.transaction_time,
       settlementTime: req.body.settlement_time,
     });
-
+    
     res.status(200).send({
       success: true,
       statusCode: 200,
