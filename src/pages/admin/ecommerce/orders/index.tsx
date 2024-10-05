@@ -10,6 +10,12 @@ import { orderServices } from "@/services/serviceGenerator";
 import { dateFormater } from "@/utils/date";
 import { NullProof } from "@/helpers/appFunction";
 
+type DataProps = {
+  data: GetOrder[];
+  page: number;
+  size: number;
+}
+
 const TABLE_HEAD = [
   "Date",
   "Product",
@@ -21,12 +27,17 @@ const TABLE_HEAD = [
 ];
 
 export default function Index() {
-  const [data, setData] = useState<GetOrder[]>([]);
+  const [data, setData] = useState<DataProps>({
+    data: [],
+    page: 0,
+    size: 0,
+  });
   const { Table, TableAction } = TableData({
     title: "Orders",
     description: "List of orders",
     tableHeader: TABLE_HEAD,
-    onSuccess: (data: GetOrder[]) => setData(data),
+    realtimeTable: "Order",
+    onSuccess: (data: DataProps) => setData(data),
     service: orderServices,
   });
 
@@ -50,7 +61,7 @@ export default function Index() {
       params: "data",
       isMap: true,
     }).map((order: GetOrder, index: number) => {
-      const isLast = index === data.length - 1;
+      const isLast = index === data.data.length - 1;
       const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
       return (
         <tr key={order.id}>

@@ -126,9 +126,11 @@ const ClientAccountOrdersPage = () => {
             Reset
           </Button>
         </div>
-        {OrderItems.map((order, index: number) =>
-          <OrderItem key={index} date={order.date} invoice={order.invoice} products={order.products} status={order.status} />
-        )}
+        <div className='space-y-5'>
+          {OrderItems.map((order, index: number) =>
+            <OrderItem key={index} date={order.date} invoice={order.invoice} products={order.products} status={order.status} />
+          )}
+        </div>
       </div>
     </AccountLayout>
   )

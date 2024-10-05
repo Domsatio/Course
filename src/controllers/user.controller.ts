@@ -1,3 +1,4 @@
+import { convertStringToBoolean } from "@/helpers/appFunction";
 import prisma from "@/libs/prisma/db";
 import { UpdateUser, User } from "@/types/user.type";
 
@@ -40,7 +41,8 @@ export const getOneUser = async (id: string) => {
 export const getAllUsers = async (
   skip: number = 0,
   take: number = 5,
-  search: string = ""
+  search: string = "",
+  isSubscribed: boolean | string | undefined = undefined
 ) => {
   let whereCondition: any = {
     OR: [
@@ -48,9 +50,17 @@ export const getAllUsers = async (
       { email: { contains: search, mode: "insensitive" } },
     ],
   };
+
+  if (isSubscribed) {
+    whereCondition.isSubscribed = convertStringToBoolean(
+      isSubscribed as string
+    );
+  }
   return prisma.$transaction(
     async (tx) => {
-      const totalData = await tx.user.count();
+      const totalData = await tx.user.count({
+        where: whereCondition,
+      });
 
       const data = await tx.user.findMany({
         where: whereCondition,

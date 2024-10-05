@@ -226,7 +226,7 @@ export default function TableData({
                     isOpen: modalFilter,
                     handler: setModalFilter,
                   }}
-                  onSubmit={(data) => getDataTable()}
+                  onSubmit={getDataTable}
                   onSuccess={(data) => onSuccess?.(data)}
                   isFilter={true}
                   toastMessage={{
@@ -239,7 +239,7 @@ export default function TableData({
           </div>
         </div>
       </CardHeader>
-      <CardBody className="overflow-scroll px-0 max-h-[500px]">
+      <CardBody className="overflow-auto px-0 max-h-[500px]">
         <table className="w-full min-w-max text-left">
           <thead className="sticky -top-[24.5px] h-8 z-30 bg-blue-gray-50">
             <tr>

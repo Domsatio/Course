@@ -4,7 +4,7 @@ import {
   InputListAddress,
   InputList,
 } from "@/constants/client/InputLists/checkout.InputList";
-import { addressServices, cartServices } from "@/services/serviceGenerator";
+import { addressServices, cartServices, orderServices } from "@/services/serviceGenerator";
 import { Button, Typography } from "@material-tailwind/react";
 import { FC, useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
@@ -74,6 +74,15 @@ const Checkout: FC<CheckoutProps> = (data) => {
     push("/store");
   };
 
+  const handleCancelOrder = async (id: string) => {
+    try {
+      await orderServices.deleteItem({ id });
+      toast.success("Order has been canceled");
+    } catch (error) {
+      console.error("Error deleting order:", error);
+    }
+  };
+
   const handleCheckout = async () => {
     setLoading(true);
     const res = await fetch(`/api/checkout?BD=false`, {
@@ -87,19 +96,23 @@ const Checkout: FC<CheckoutProps> = (data) => {
     if (success) {
       window.snap.pay(data.token.token, {
         onSuccess: function (result: any) {
-          toast.success("Checkout successfull!");
+          toast.success("Checkout successfully!");
           setCheckedCart();
+          setLoading(false);
         },
         onPending: function (result: any) {
           toast.success("Checkout pending!");
           setCheckedCart();
+          setLoading(false);
         },
         onError: function (result: any) {
           toast.error("Failed to checkout!");
           setLoading(false);
+          handleCancelOrder(data.orderData.transaction_details.order_id ?? "");
         },
         onClose: function () {
           setLoading(false);
+          handleCancelOrder(data.orderData.transaction_details.order_id ?? "");
         },
       });
     } else {
@@ -113,7 +126,7 @@ const Checkout: FC<CheckoutProps> = (data) => {
       <Typography variant="h2" color="black" className="flex justify-center">
         Checkout
       </Typography>
-      <div className="flex flex-col-reverse lg:flex-row justify-between gap-5">
+      <div className="flex flex-col lg:flex-row justify-between gap-5">
         {/* Billing Details */}
         <div className="w-full lg:w-4/6 flex flex-col gap-7">
           <div className="space-y-4">

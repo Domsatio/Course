@@ -19,7 +19,7 @@ const DetailClubPage: FC<Omit<GetPost, 'id' | 'published' | 'slug'>> = ({ title,
     <ContentWrapper className="relative">
       <GenerateMetaData title={title} desc={`Detail ${title}`} thumbnail={thumbnail} />
       <div className="absolute top-5 right-5">
-        <ButtonShare className="px-3 border-none bg-transparent shadow-none hover:shadow-none hover:scale-110" setIsOpen={() => setIsOpen(true)} />
+        <ButtonShare setIsOpen={() => setIsOpen(true)} />
       </div>
       <ModalShare isOpen={isOpen} handler={setIsOpen} title="Share this post" />
       <div className="flex flex-col items-center gap-5">

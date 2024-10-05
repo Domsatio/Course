@@ -100,6 +100,17 @@ export const createTransaction = async (userId: string) => {
 
   try {
     const token = await snap.createTransaction(params);
+    await prisma.order.create({
+      data: {
+        id: params.transaction_details.order_id,
+        userId: user.id,
+        products: params.item_details,
+        grossAmount: params.transaction_details.gross_amount.toString(),
+        token: token,
+        transactionStatus: "pending",
+        customerDetails: params.customer_details,
+      },
+    });
     return { orderData: params, transactionToken: token };
   } catch (error) {
     console.error("Midtrans error:", error);
@@ -131,6 +142,17 @@ export const createTransactionBuyDirectly = async (userId: string) => {
 
   try {
     const token = await snap.createTransaction(params);
+    await prisma.order.create({
+      data: {
+        id: params.transaction_details.order_id,
+        userId: user.id,
+        products: params.item_details,
+        grossAmount: params.transaction_details.gross_amount.toString(),
+        token: token,
+        transactionStatus: "pending",
+        customerDetails: params.customer_details,
+      },
+    });
     return { orderData: params, transactionToken: token };
   } catch (error) {
     console.error("Midtrans error:", error);

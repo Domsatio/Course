@@ -11,9 +11,6 @@ export const getOrders = async (skip: number = 0, take: number = 5) => {
       include: {
         user: true,
       },
-      orderBy: {
-        createdAt: "desc",
-      },
     });
 
     return { totalData, data };
@@ -29,11 +26,11 @@ export const getOrder = async (id: string) => {
   });
 };
 
-export const createOrder = async (data: Order) => {
+export const createOrder = async (data: any) => {
   return prisma.order.create({ data });
 };
 
-export const updateOrder = async (id: string, data: UpdateOrder) => {
+export const updateOrder = async (id: string, data: any) => {
   return prisma.order.update({
     where: { id },
     data,

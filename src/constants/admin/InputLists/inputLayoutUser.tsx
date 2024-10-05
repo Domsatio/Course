@@ -59,7 +59,7 @@ export const FormInputListRenderer = ({ id }: { id: string }) => {
 export const FilterInputList: InputListProps[] = [
   {
     className: "",
-    name: "subscribe",
+    name: "isSubscribed",
     label: "Subscribe",
     type: "checkbox",
     validator: Yup.boolean().optional(),

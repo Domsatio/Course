@@ -128,12 +128,13 @@ model TemporaryCart {
 model Order {
   id                  String       @id
   userId              String
+  customerDetails     Json
   token               Json
   products            Json[]
   grossAmount         String
   transactionStatus   String
-  transactionTime     String
-  settlementTime      String
+  transactionTime     String?
+  settlementTime      String?
   user                User         @relation(fields: [userId], references: [id])
 
   @@index([userId])
