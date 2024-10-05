@@ -125,29 +125,17 @@ model TemporaryCart {
   @@index([productId])
 }
 
-// model Order {
-//   id        String       @id @default(uuid())
-//   userId    String
-//   createdAt DateTime     @default(now())
-//   updatedAt DateTime     @updatedAt
-//   orderId   String       @unique
-//   token     String       @unique
-//   status    OrderStatus? @default(PENDING)
-//   products  Json[]
-//   user      User         @relation(fields: [userId], references: [id])
-
-//   @@index([userId])
-// }
-
 model Order {
-  id        String       @id @default(uuid())
-  userId    String
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-  quantity  Int          @default(1)
-  status    OrderStatus? @default(PENDING)
-  products  Json[]
-  user      User         @relation(fields: [userId], references: [id])
+  id                String  @id @default(uuid())
+  userId            String
+  products          Json[]
+  grossAmount       String
+  settlementTime    String?
+  token             Json
+  transactionStatus String
+  transactionTime   String?
+  customerDetails   Json
+  user              User    @relation(fields: [userId], references: [id])
 
   @@index([userId])
 }
@@ -202,12 +190,4 @@ model Course {
 enum UserRole {
   USER
   ADMIN
-}
-
-enum OrderStatus {
-  PENDING
-  PROCESSING
-  SHIPPING
-  DELIVERED
-  CANCELLED
 }

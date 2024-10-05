@@ -21,6 +21,9 @@ export default async function handlerPost(
   res: NextApiResponse
 ) {
   const token = await getToken({ req });
+  res.setHeader('Access-Control-Allow-Origin', '*'); // Allow all origins (use your domain in production)
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
   if (req.method === "POST") {
     if (!token || token.role !== "ADMIN") {
