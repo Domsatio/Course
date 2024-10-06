@@ -191,15 +191,16 @@ export default function TableData({
                 }}
               />
               {searchQuery && (
-                <Button
-                  className="flex bg-red-600 items-center gap-3 !absolute right-1 top-1 rounded"
+                <IconButton
+                  className="!absolute right-1 top-1 rounded"
+                  color="red"
                   size="sm"
                   onClick={() => {
                     setSearchQuery("");
                   }}
                 >
                   <XMarkIcon className="h-4 w-4" />
-                </Button>
+                </IconButton>
               )}
             </div>
             {isActionAdd && (
@@ -225,7 +226,7 @@ export default function TableData({
                     isOpen: modalFilter,
                     handler: setModalFilter,
                   }}
-                  onSubmit={(data) => getDataTable()}
+                  onSubmit={getDataTable}
                   onSuccess={(data) => onSuccess?.(data)}
                   isFilter={true}
                   toastMessage={{
@@ -238,7 +239,7 @@ export default function TableData({
           </div>
         </div>
       </CardHeader>
-      <CardBody className="overflow-scroll px-0 max-h-[500px]">
+      <CardBody className="overflow-auto px-0 max-h-[500px]">
         <table className="w-full min-w-max text-left">
           <thead className="sticky -top-[24.5px] h-8 z-30 bg-blue-gray-50">
             <tr>

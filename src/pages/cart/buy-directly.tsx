@@ -1,8 +1,6 @@
 import ContentWrapper from "@/layouts/client/contentWrapper";
 import { FormInput } from "@/components/admin/FormInput";
-import {
-  InputListAddress,
-} from "@/constants/client/InputLists/checkout.InputList";
+import { InputListAddress } from "@/constants/client/InputLists/checkout.InputList";
 import {
   addressServices,
   temporaryCartServices,
@@ -58,7 +56,7 @@ const BuyDirectly: FC<CheckoutProps> = (data) => {
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const [shippingAddress, setShippingAddress] = useState<string>(
     `${data.address?.address}, ${data.address?.city}, ${data.address?.state}, ${data.address?.country}, ${data.address?.zip}, ${data.address?.phone}` ||
-      "No address available"
+    "No address available"
   );
 
   const handleSetQuantity = async (id: string, quantity: number) => {
@@ -77,7 +75,7 @@ const BuyDirectly: FC<CheckoutProps> = (data) => {
     }
   };
 
-  const handleCencelOrder = async (id: string) => {
+  const handleCancelOrder = async (id: string) => {
     try {
       await orderServices.deleteItem({ id });
       toast.success("Order has been canceled");
@@ -99,18 +97,20 @@ const BuyDirectly: FC<CheckoutProps> = (data) => {
       window.snap.pay(data.token.token, {
         onSuccess: function (result: any) {
           toast.success("Checkout successfull!");
+          setLoading(false);
         },
         onPending: function (result: any) {
           toast.success("Checkout pending!");
+          setLoading(false);
         },
         onError: function (result: any) {
           toast.error("Failed to checkout!");
           setLoading(false);
-          handleCencelOrder(data.orderData.transaction_details.order_id ?? "");
+          handleCancelOrder(data.orderData.transaction_details.order_id ?? "");
         },
         onClose: function () {
           setLoading(false);
-          handleCencelOrder(data.orderData.transaction_details.order_id ?? "");
+          handleCancelOrder(data.orderData.transaction_details.order_id ?? "");
         },
       });
     } else {
@@ -144,7 +144,7 @@ const BuyDirectly: FC<CheckoutProps> = (data) => {
       <Typography variant="h2" color="black" className="flex justify-center">
         Checkout
       </Typography>
-      <div className="flex flex-col-reverse lg:flex-row justify-between gap-5">
+      <div className="flex flex-col lg:flex-row justify-between gap-5">
         {/* Billing Details */}
         <div className="w-full lg:w-4/6 flex flex-col gap-7">
           <div className="space-y-4">

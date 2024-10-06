@@ -25,7 +25,7 @@ const DetailPostAdmin: FC<GetPost> = (data) => {
             />
           </div>
         </LabelDetailPage>
-        <GenerateMetaData title="Post Detail" desc={NullProof({ input: data, params: "title" }) || "Post Detail"} />
+        <GenerateMetaData title="Post Detail | Admin" desc={NullProof({ input: data, params: "title" }) || "Post Detail"} />
         <LabelDetailPage label="Title">
           {NullProof({ input: data, params: "title" })}
         </LabelDetailPage>

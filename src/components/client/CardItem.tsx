@@ -6,6 +6,7 @@ import {
 } from "@material-tailwind/react";
 import Image from "next/image";
 import Link from "next/link";
+import { FC } from "react";
 
 type typeProps = {
   title: string;
@@ -21,7 +22,7 @@ type typeCard = {
 };
 
 // const PostCard: FC<Omit<GetPost, "id" | "published" | "createdAt"> > = ({ title, slug, body, categories}) => {
-const CardItem = ({ props, category }: typeCard) => {
+const CardItem: FC<typeCard> = ({ props, category }) => {
   return (
     <Link href={props.href} className="group cursor-pointer">
       <Card className="max-w-[357px] overflow-hidden shadow-none">

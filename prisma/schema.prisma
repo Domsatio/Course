@@ -129,7 +129,8 @@ model Order {
   id                String  @id @default(uuid())
   userId            String
   products          Json[]
-  grossAmount       String
+  grossAmount       Float
+  totalDiscount     Float?  @default(0)
   settlementTime    String?
   token             Json
   transactionStatus String

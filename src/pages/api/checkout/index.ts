@@ -19,7 +19,7 @@ export default async function handler(
     }
 
     const { BD } = req.query;
-    let transactionResult: any | false
+    let transactionResult: any | false;
 
     if (BD === "true") {
       transactionResult = await createTransactionBuyDirectly(

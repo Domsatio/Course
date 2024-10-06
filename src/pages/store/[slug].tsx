@@ -50,7 +50,7 @@ const DetailStore: FC<Omit<GetProduct, "createdAt" | "updatedAt">> = ({ id, name
 
   return (
     <Fragment>
-      <GenerateMetaData title={name} desc={`Detail ${name}`} thumbnail={thumbnail} />
+      <GenerateMetaData title={`${name} | Store`} desc={`Detail ${name}`} thumbnail={thumbnail} />
       <ContentWrapper className="grid grid-cols-1 lg:grid-cols-2">
         <div className="max-h-96 lg:max-h-[500px]">
           <Image

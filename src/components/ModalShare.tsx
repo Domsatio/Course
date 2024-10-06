@@ -17,7 +17,7 @@ import {
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { usePathname } from "next/navigation";
 import { CheckIcon, DocumentDuplicateIcon } from "@heroicons/react/24/solid";
-import { useCopyToClipboard, useMediaQuery } from "usehooks-ts";
+import { useMediaQuery } from "usehooks-ts";
 
 type ModalShareProps = {
   isOpen: boolean;
@@ -30,7 +30,6 @@ export default function ModalShare({
   handler,
   title = "Share",
 }: ModalShareProps) {
-  const [value, copy] = useCopyToClipboard();
   const [copied, setCopied] = useState(false);
   const [currentUrl, setCurrentUrl] = useState<string>("");
   const pathname = usePathname();
@@ -49,26 +48,26 @@ export default function ModalShare({
       />
       <h1 className="text-lg font-bold text-black">{title}</h1>
       <div className="flex gap-3">
-        <FacebookShareButton url={pathname}>
+        <FacebookShareButton url={currentUrl}>
           <FacebookIcon size={40} round />
         </FacebookShareButton>
-        <TwitterShareButton url={pathname} title={"twitter"}>
+        <TwitterShareButton url={currentUrl} title={"twitter"}>
           <XIcon size={40} round />
         </TwitterShareButton>
-        <LinkedinShareButton url={pathname} title={"linkedin"}>
+        <LinkedinShareButton url={currentUrl} title={"linkedin"}>
           <LinkedinIcon size={40} round />
         </LinkedinShareButton>
-        <WhatsappShareButton url={pathname} title={"whatsapp"} separator=":: ">
+        <WhatsappShareButton url={currentUrl} title={"whatsapp"}>
           <WhatsappIcon size={40} round />
         </WhatsappShareButton>
-        <TelegramShareButton url={pathname} title={"telegram"}>
+        <TelegramShareButton url={currentUrl} title={"telegram"}>
           <TelegramIcon size={40} round />
         </TelegramShareButton>
       </div>
       <div
         onMouseLeave={() => setCopied(false)}
         onClick={() => {
-          copy(currentUrl);
+          navigator.clipboard.writeText(currentUrl);
           setCopied(true);
         }}
         className="flex text-black rounded-lg border border-gray-400 items-center gap-x-3 px-4 py-2.5 lowercase cursor-pointer"
