@@ -84,7 +84,7 @@ const DatePickerComponent: FC = () => {
       )}
       className="border border-blue-gray-200 rounded-lg px-3 py-2.5 w-full text-sm font-normal text-blue-gray-700 focus:outline-none focus:border-gray-900"
       selected={startDate}
-      onChange={(date: Date) => setStartDate(date)}
+      onChange={(date: Date | null) => setStartDate(date || new Date())}
     />
   );
 };
