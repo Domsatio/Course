@@ -1,41 +1,65 @@
-export enum OrderStatus {
-  PENDING = "PENDING",
-  PROCESSING = "PROCESSING",
-  SHIPPING = "SHIPPING",
-  DELIVERED = "DELIVERED",
-  CANCELLED = "CANCELLED",
-}
-
 export type Order = {
   id: string;
   userId: string;
-  products: any;
-  grossAmount: string;
-  settlementTime?: string;
-  token: any;
+  token: Token;
+  products: Product[];
+  grossAmount: number;
+  totalDiscount: number;
   transactionStatus: string;
-  transactionTime?: string;
-  customerDetails: any;
+  transactionTime: Date;
+  settlementTime: Date;
+  customerDetails: CustomerDetails;
+  user: User;
 };
 
-export type UpdateOrder = {
-  quantity?: number;
-  status?: OrderStatus;
+export type CustomerDetails = {
+  email: string;
+  phone: string;
+  last_name: string;
+  first_name: string;
+  billing_address: Address;
+  shipping_address: Address;
 };
 
-export type GetOrder = {
+export type Address = {
+  city: string;
+  email: string;
+  phone: string;
+  address: string;
+  state: string;
+  last_name: string;
+  first_name: string;
+  postal_code: string;
+  country_code: string;
+};
+
+export type Product = {
   id: string;
+  url: string;
+  name: string;
+  thumbnail: string;
+  brand: string;
+  discount: number;
+  price: number;
+  finalPrice: number;
+  category: string;
   quantity: number;
-  status: OrderStatus;
-  createdAt: string;
-  user: {
-    id: string;
-    email: string;
-  };
-  product: {
-    id: string;
-    image: string;
-    name: string;
-    price: number;
-  };
+  merchant_name: string;
+};
+
+export type Token = {
+  token: string;
+  redirect_url: string;
+};
+
+export type User = {
+  id: string;
+  email: string;
+  password: null;
+  emailVerified: null;
+  name: string;
+  role: string;
+  isSubscribed: boolean;
+  subscribeEnd: null;
+  subscribeStart: null;
 };

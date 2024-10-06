@@ -4,6 +4,7 @@ import {
   deleteOrder,
   getOrder,
   getOrders,
+  getOrderByUserId,
 } from "@/controllers/order.controller";
 // import {
 //   createOrderValidation,
@@ -82,8 +83,8 @@ export default async function handlerOrder(
   //       .status(500)
   //       .send({ status: false, statusCode: 500, message: error });
   //   }
-  // } 
-  // else 
+  // }
+  // else
   if (req.method === "DELETE") {
     if (!token) {
       res.status(403).json({ message: "Forbidden" });
@@ -127,16 +128,31 @@ export default async function handlerOrder(
       }
     } else {
       try {
-        const { skip, take } = req.query;
-        const { totalData, data } = await getOrders(Number(skip), Number(take));
-        console.info("Get orders success");
-        return res.status(200).send({
-          status: true,
-          statusCode: 200,
-          message: "Get orders success",
-          totalData,
-          data,
-        });
+        if (req.query.userId) {
+          const { userId } = req.query;
+          const data = await getOrderByUserId(userId as string);
+          console.info("Get orders success");
+          return res.status(200).send({
+            status: true,
+            statusCode: 200,
+            message: "Get orders success",
+            data,
+          });
+        } else {
+          const { skip, take } = req.query;
+          const { totalData, data } = await getOrders(
+            Number(skip),
+            Number(take)
+          );
+          console.info("Get orders success");
+          return res.status(200).send({
+            status: true,
+            statusCode: 200,
+            message: "Get orders success",
+            totalData,
+            data,
+          });
+        }
       } catch (error) {
         console.error("ERR: orders - get = ", error);
         return res

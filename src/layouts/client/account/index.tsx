@@ -9,7 +9,7 @@ const AccountLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between pt-24">
-      <section className="flex container flex-col justify-center gap-7 py-10 lg:px-60 xl:px-72">
+      <section className="flex container flex-col justify-center gap-7 py-10 lg:px-40 xl:px-60 2xl:px-72">
         <Typography variant="h4" color="black" placeholder='Blog Page'>
           Account Page
         </Typography>

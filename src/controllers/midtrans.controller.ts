@@ -9,6 +9,7 @@ const mapItemDetails = (cartItems: any[]) => {
   return cartItems.map((cart) => ({
     id: cart.product.id,
     name: cart.product.name,
+    thumbnail: cart.product.thumbnail,
     price: cart.product.discount
       ? cart.product.price - (cart.product.price * cart.product.discount) / 100
       : cart.product.price,
@@ -23,9 +24,18 @@ const mapItemDetails = (cartItems: any[]) => {
 const calculateGrossAmount = (cartItems: any[]) => {
   return cartItems.reduce((acc, curr) => {
     const discount = curr.product.discount
-      ? curr.product.price * (curr.product.discount / 100)
+      ? (curr.product.price * curr.product.discount) / 100
       : 0;
     return acc + (curr.product.price - discount) * curr.quantity;
+  }, 0);
+};
+
+const calculatetotalDiscount = (cartItems: any[]) => {
+  return cartItems.reduce((acc, curr) => {
+    const discount = curr.product.discount
+      ? (curr.product.price * curr.product.discount) / 100
+      : 0;
+    return acc + discount * curr.quantity;
   }, 0);
 };
 
@@ -40,6 +50,7 @@ const createCustomerDetails = (user: any) => ({
     email: user.email,
     phone: user.address?.phone,
     address: user.address?.address,
+    state: user.address?.state,
     city: user.address?.city,
     postal_code: user.address?.zip,
     country_code: "IDN",
@@ -50,6 +61,7 @@ const createCustomerDetails = (user: any) => ({
     email: user.email,
     phone: user.address?.phone,
     address: user.address?.address,
+    state: user.address?.state,
     city: user.address?.city,
     postal_code: user.address?.zip,
     country_code: "IDN",
@@ -58,12 +70,14 @@ const createCustomerDetails = (user: any) => ({
 
 const createTransactionParams = (user: any, cartItems: any[]) => {
   const grossAmount = calculateGrossAmount(cartItems);
+  const totalDiscount = calculatetotalDiscount(cartItems);
   const itemDetails = mapItemDetails(cartItems);
 
   return {
     transaction_details: {
       order_id: `${user.id}_${generateRandomString(10)}`,
       gross_amount: grossAmount,
+      total_discount: totalDiscount,
     },
     customer_details: createCustomerDetails(user),
     item_details: itemDetails,
@@ -105,7 +119,8 @@ export const createTransaction = async (userId: string) => {
         id: params.transaction_details.order_id,
         userId: user.id,
         products: params.item_details,
-        grossAmount: params.transaction_details.gross_amount.toString(),
+        grossAmount: params.transaction_details.gross_amount,
+        totalDiscount: params.transaction_details.total_discount,
         token: token,
         transactionStatus: "pending",
         customerDetails: params.customer_details,
@@ -145,7 +160,8 @@ export const createTransactionBuyDirectly = async (userId: string) => {
         id: params.transaction_details.order_id,
         userId: user.id,
         products: params.item_details,
-        grossAmount: params.transaction_details.gross_amount.toString(),
+        grossAmount: params.transaction_details.gross_amount,
+        totalDiscount: params.transaction_details.total_discount,
         token: token,
         transactionStatus: "pending",
         customerDetails: params.customer_details,

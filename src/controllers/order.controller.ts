@@ -1,5 +1,5 @@
 import prisma from "@/libs/prisma/db";
-import { Order, UpdateOrder } from "@/types/order.type";
+// import { Order, UpdateOrder } from "@/types/order.type";
 
 export const getOrders = async (skip: number = 0, take: number = 5) => {
   return prisma.$transaction(async (tx) => {
@@ -10,6 +10,9 @@ export const getOrders = async (skip: number = 0, take: number = 5) => {
       take,
       include: {
         user: true,
+      },
+      orderBy: {
+        transactionTime: "desc",
       },
     });
 
@@ -22,6 +25,18 @@ export const getOrder = async (id: string) => {
     where: { id },
     include: {
       user: true,
+    },
+  });
+};
+
+export const getOrderByUserId = async (userId: string) => {
+  return prisma.order.findMany({
+    where: { userId },
+    include: {
+      user: true,
+    },
+    orderBy: {
+      transactionTime: "desc",
     },
   });
 };
@@ -41,6 +56,12 @@ export const updateOrder = async ({
   transactionTime: string;
   settlementTime?: string;
 }) => {
+  const checkTransactionStatus = await prisma.order.findUnique({
+    where: { id },
+  });
+
+  if (checkTransactionStatus?.transactionStatus === "settlement") return;
+
   return prisma.order.update({
     where: { id },
     data: {

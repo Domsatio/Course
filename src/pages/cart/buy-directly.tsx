@@ -1,8 +1,6 @@
 import ContentWrapper from "@/layouts/client/contentWrapper";
 import { FormInput } from "@/components/admin/FormInput";
-import {
-  InputListAddress,
-} from "@/constants/client/InputLists/checkout.InputList";
+import { InputListAddress } from "@/constants/client/InputLists/checkout.InputList";
 import {
   addressServices,
   temporaryCartServices,
