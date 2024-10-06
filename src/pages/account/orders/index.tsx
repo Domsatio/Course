@@ -28,7 +28,6 @@ const ClientAccountOrdersPage = () => {
   const { data: session } = useSession()
   const userId = session?.user?.id;
   const [orders, setOrders] = useState<Order[] | []>([])
-  console.log(orders);
 
   const fetchData = async () => {
     try {

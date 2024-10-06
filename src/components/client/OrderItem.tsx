@@ -53,7 +53,7 @@ const OrderItem: FC<Order> = (props) => {
       <CardBody className='p-0 space-y-2'>
         <div className='p-2 flex justify-between items-center border-b border-gray-300'>
           <div className='ml-1 flex gap-2'>
-            <Typography color='black' variant='small'>{dateFormater(String(transactionTime), 'detail')}</Typography>
+            <Typography color='black' variant='small'>{dateFormater(String(transactionTime), 'long')}</Typography>
           </div>
           {OrderStatus(transactionStatus)}
         </div>
