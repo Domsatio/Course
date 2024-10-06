@@ -28,7 +28,7 @@ const Index: FC<DataProps> = (data) => {
 
   return (
     <div className="pt-6">
-      <GenerateMetaData title="Admin | Dashboard" />
+      <GenerateMetaData title="Dashboard | Admin" desc="Admin Dashboard Page" />
       <div className="grid grid-cols-1 gap-x-3 sm:grid-cols-2 md:grid-cols-3 gap-y-10">
         <DashboardCard title="Blog">
           <DataWrapper titleValue='Posts' param='totalPosts' data={data} href="/admin/blog/post" />

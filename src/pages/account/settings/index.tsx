@@ -106,7 +106,7 @@ const ClientAccountDetailsPage: FC = () => {
 
   return (
     <AccountLayout>
-      <GenerateMetaData title='Account Settings' desc='Account settings page' />
+      <GenerateMetaData title='Account Settings | Account' desc='Account Settings page' />
       <form className='space-y-7' onSubmit={formik.handleSubmit}>
         <Alert
           open={displayAlert.open}

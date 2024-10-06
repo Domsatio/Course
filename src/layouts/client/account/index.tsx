@@ -1,4 +1,4 @@
-import { accountRoutes } from '@/constants/client/accountRoutes'
+import { accountRoutes } from '@/constants/client/AccountRoutes'
 import { Card, CardBody, CardHeader, Typography } from '@material-tailwind/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -9,7 +9,7 @@ const AccountLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between pt-24">
-      <section className="flex container flex-col justify-center flex-wrap gap-7 py-10 lg:px-60 xl:px-72">
+      <section className="flex container flex-col justify-center gap-7 py-10 lg:px-40 xl:px-60 2xl:px-72">
         <Typography variant="h4" color="black" placeholder='Blog Page'>
           Account Page
         </Typography>

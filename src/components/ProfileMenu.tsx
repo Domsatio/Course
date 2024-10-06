@@ -38,17 +38,17 @@ export const ProfileMenu = () => {
           <MenuItem
             key={label}
             onClick={closeMenu}
-            className={`flex items-center gap-2 rounded ${label === "Sign Out" && "hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"}`}
+            className={`flex items-center p-0 rounded ${label === "Sign Out" && "hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"}`}
           >
-            {icon}
             {label !== "Sign Out" && href ? (
-              <Link href={href}>
+              <Link href={href} className="w-full">
                 <Typography
                   as="span"
                   variant="small"
-                  className="font-normal"
+                  className="font-normal flex items-center gap-2 p-2"
                   color="inherit"
                 >
+                  {icon}
                   {label}
                 </Typography>
               </Link>
@@ -56,10 +56,11 @@ export const ProfileMenu = () => {
               <Typography
                 as="span"
                 variant="small"
-                className="font-normal"
+                className="font-normal w-full flex items-center gap-2 p-2"
                 color='red'
                 onClick={() => signOut()}
               >
+                {icon}
                 {label}
               </Typography>
             )}

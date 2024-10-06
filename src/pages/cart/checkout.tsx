@@ -47,7 +47,7 @@ const Checkout: FC<CheckoutProps> = (data) => {
   const [carts, setCarts] = useState<GetCart[]>(data.carts);
   const [shippingAddress, setShippingAddress] = useState<string>(
     `${data.address?.address}, ${data.address?.city}, ${data.address?.state}, ${data.address?.country}, ${data.address?.zip}, ${data.address?.phone}` ||
-      "No address available"
+    "No address available"
   );
   const { push } = useRouter();
 
@@ -75,7 +75,7 @@ const Checkout: FC<CheckoutProps> = (data) => {
     push("/store");
   };
 
-  const handleCencelOrder = async (id: string) => {
+  const handleCancelOrder = async (id: string) => {
     try {
       await orderServices.deleteItem({ id });
       toast.success("Order has been canceled");
@@ -96,21 +96,23 @@ const Checkout: FC<CheckoutProps> = (data) => {
     if (success) {
       window.snap.pay(data.token.token, {
         onSuccess: function (result: any) {
-          toast.success("Checkout successfull!");
+          toast.success("Checkout successfully!");
           setCheckedCart();
+          setLoading(false);
         },
         onPending: function (result: any) {
           toast.success("Checkout pending!");
           setCheckedCart();
+          setLoading(false);
         },
         onError: function (result: any) {
           toast.error("Failed to checkout!");
           setLoading(false);
-          handleCencelOrder(data.orderData.transaction_details.order_id ?? "");
+          handleCancelOrder(data.orderData.transaction_details.order_id ?? "");
         },
         onClose: function () {
           setLoading(false);
-          handleCencelOrder(data.orderData.transaction_details.order_id ?? "");
+          handleCancelOrder(data.orderData.transaction_details.order_id ?? "");
         },
       });
     } else {
@@ -124,7 +126,7 @@ const Checkout: FC<CheckoutProps> = (data) => {
       <Typography variant="h2" color="black" className="flex justify-center">
         Checkout
       </Typography>
-      <div className="flex flex-col-reverse lg:flex-row justify-between gap-5">
+      <div className="flex flex-col lg:flex-row justify-between gap-5">
         {/* Billing Details */}
         <div className="w-full lg:w-4/6 flex flex-col gap-7">
           <div className="space-y-4">
@@ -201,10 +203,9 @@ const Checkout: FC<CheckoutProps> = (data) => {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const cookies = cookie.parse(context.req.headers.cookie || "");
-  const token =
-    NODE_ENV === "development"
-      ? cookies["next-auth.session-token"]
-      : cookies["__Secure-next-auth.session-token"];
+  const token = NODE_ENV === "development"
+    ? cookies["next-auth.session-token"]
+    : cookies["__Secure-next-auth.session-token"];
 
   if (!token) {
     return {

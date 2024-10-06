@@ -62,7 +62,7 @@ const ClientStorePage = () => {
 
   return (
     <ContentWrapper className="bg-transparent">
-      <GenerateMetaData title="Store" desc="" />
+      <GenerateMetaData title="Store" desc="Store Page" />
       <Typography variant="h2" color="black" placeholder="Blog Page">
         Store
       </Typography>

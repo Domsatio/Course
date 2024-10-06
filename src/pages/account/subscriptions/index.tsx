@@ -5,7 +5,7 @@ import GenerateMetaData from '@/components/GenerateMetaData'
 const ClientAccountSubscriptionsPage = () => {
   return (
     <AccountLayout>
-      <GenerateMetaData title='Subscriptions' desc='Subscription Page' />
+      <GenerateMetaData title='Subscription | Account' desc='Subscription Page' />
       <Typography variant="h4" color="black" placeholder='Blog Page'>
         Subscriptions
       </Typography>

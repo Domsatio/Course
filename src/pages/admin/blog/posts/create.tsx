@@ -1,4 +1,4 @@
-import {FormInput} from "@/components/admin/FormInput";
+import { FormInput } from "@/components/admin/FormInput";
 import { FormInputListRenderer } from "../../../../constants/admin/InputLists/inputLayoutPost";
 import { useSession } from "next-auth/react";
 import { postServices } from "@/services/serviceGenerator";
@@ -10,7 +10,7 @@ export default function Create() {
 
   return (
     <Fragment>
-      <GenerateMetaData title="Create Post" desc="Create Post Page" />
+      <GenerateMetaData title="Create Post | Admin" desc="Create Post Page" />
       {status !== "loading" &&
         <FormInput
           inputList={FormInputListRenderer({ id: session?.user.id || "" })}

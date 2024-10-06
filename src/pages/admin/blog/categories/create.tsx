@@ -7,7 +7,7 @@ import { Fragment } from "react";
 export default function Create() {
   return (
     <Fragment>
-      <GenerateMetaData title="Create Category" desc="Create Category Page" />
+      <GenerateMetaData title="Create Category | Admin" desc="Create Category Page" />
       <FormInput
         inputList={FormInputList}
         method="POST"

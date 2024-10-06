@@ -1,7 +1,6 @@
 import { ShareIcon } from "@heroicons/react/24/solid";
 import { IconButton } from "@material-tailwind/react";
 import React from "react";
-import { cn } from "@/libs/cn";
 
 type ButtonShareProps = {
   className?: string;
@@ -9,16 +8,12 @@ type ButtonShareProps = {
 };
 
 export default function ButtonShare({
-  className = '',
   setIsOpen,
 }: ButtonShareProps) {
   return (
     <IconButton
-      variant="outlined"
-      className={cn(
-        "rounded-full",
-        className
-      )}
+      variant="text"
+      className="rounded-full"
       onClick={() => setIsOpen(true)}
     >
       <ShareIcon className="h-4 w-4" />

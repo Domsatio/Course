@@ -14,7 +14,7 @@ type DataProps = {
   size: number;
 }
 
-const TABLE_HEAD = ["No", "Name", "Email", "Subscribe", "Subscribe Start", "Subscribe End"];
+const TABLE_HEAD = ["No", "Name", "Email", "Subscribe", "Subscribe Start", "Subscribe End", "Action"];
 
 export default function Index() {
   const [data, setData] = useState<DataProps>({
@@ -23,14 +23,14 @@ export default function Index() {
     size: 0,
   });
 
-  const { Table } = TableData({
+  const { Table, TableAction } = TableData({
     title: "Users",
     description: "List of users",
     tableHeader: TABLE_HEAD,
     service: userServices,
     realtimeTable: "User",
     onSuccess: (data: DataProps) => setData(data),
-    // filter: FilterInputList,
+    filter: FilterInputList,
     isActionAdd: false,
   });
 
@@ -98,9 +98,9 @@ export default function Index() {
               {user.subscribeEnd ? dateFormater(user.subscribeEnd, "short") : "-"}
             </Typography>
           </td>
-          {/* <td className={classes}>
+          <td className={classes}>
             <TableAction data={dataAction} id={user.id} />
-          </td> */}
+          </td>
         </tr>
       );
     })
