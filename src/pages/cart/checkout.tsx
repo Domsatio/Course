@@ -18,6 +18,7 @@ import { GetProduct } from "@/types/product.type";
 import toast from "react-hot-toast";
 import CartItem from "@/components/client/CartItem";
 import { useRouter } from "next/router";
+import { set } from "date-fns";
 
 type Carts = {
   id: string;
@@ -67,6 +68,14 @@ const Checkout: FC<CheckoutProps> = (data) => {
     setShippingAddress(shippingAddress);
   }, [address]);
 
+  const handleSetQuantity = async (id: string, quantity: number) => {
+    setCarts((prev) =>
+      prev.map((cart: GetCart) =>
+        cart.id === id ? { ...cart, quantity } : cart
+      )
+    );
+  };
+
   const setCheckedCart = async () => {
     cartServices.updateItem({
       id: "all",
@@ -101,7 +110,7 @@ const Checkout: FC<CheckoutProps> = (data) => {
           setLoading(false);
         },
         onPending: function (result: any) {
-          toast.success("Checkout pending!");
+          toast("Checkout pending!");
           setCheckedCart();
           setLoading(false);
         },
@@ -166,7 +175,12 @@ const Checkout: FC<CheckoutProps> = (data) => {
             <div className="space-y-2">
               {carts.length > 0 ? (
                 carts.map((cart: GetCart, index: number) => (
-                  <CartItem key={index} cart={cart} />
+                  <CartItem
+                    key={index}
+                    cart={cart}
+                    handleSetQuantity={handleSetQuantity}
+                    setLoading={setLoading}
+                  />
                 ))
               ) : (
                 <p>No items in the cart.</p>

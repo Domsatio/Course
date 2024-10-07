@@ -26,7 +26,10 @@
     "**/*.jsx",
     "src/pages/api/uploadthing",
     "src/types/midtrans.d.ts",
-    "src/libs/midtrans.ts"
+    // "src/types/openAI.d.ts",
+    "src/libs/midtrans.ts",
+    // "src/libs/openAI.client.ts"
+
   ],
   "exclude": ["node_modules"]
 }

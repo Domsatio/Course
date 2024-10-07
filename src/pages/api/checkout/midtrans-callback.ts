@@ -14,8 +14,9 @@ export default async function handler(
   );
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
+  const transaction_status = req.body.transaction_status;
   if (req.method === "POST") {
-    if (req.body.trasaction_status === "expire") {
+    if (transaction_status === "expire" || transaction_status === "cancel") {
       await deleteOrder(req.body.order_id);
       res.status(200).send({
         success: true,

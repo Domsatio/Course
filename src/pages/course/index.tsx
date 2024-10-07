@@ -16,7 +16,6 @@ import { cn } from "@/libs/cn";
 import GenerateMetaData from "@/components/GenerateMetaData";
 import toast from "react-hot-toast";
 
-
 type Params = {
   skip: number;
   take: number | string;

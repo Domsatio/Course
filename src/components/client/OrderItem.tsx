@@ -24,8 +24,13 @@ const OrderStatus = (status: string) => {
   }
 }
 
-const OrderItem: FC<Order> = (props) => {
-  const { products, grossAmount, transactionStatus, transactionTime, token } = props;
+type OrderItemProps = {
+  order: Order,
+  cancelTransaction: () => void
+}
+
+const OrderItem: FC<OrderItemProps> = ({ order, cancelTransaction }) => {
+  const { products, grossAmount, transactionStatus, transactionTime, token } = order;
 
   const handleCopyPaymentLink = (paymentLink: string): void => {
     navigator.clipboard.writeText(paymentLink);
@@ -38,7 +43,7 @@ const OrderItem: FC<Order> = (props) => {
         toast.success("Checkout successfully!");
       },
       onPending: function (result: any) {
-        toast.success("Checkout pending!");
+        toast("Checkout pending!");
       },
       onError: function (result: any) {
         toast.error("Failed to checkout!");
@@ -53,7 +58,7 @@ const OrderItem: FC<Order> = (props) => {
       <CardBody className='p-0 space-y-2'>
         <div className='p-2 flex justify-between items-center border-b border-gray-300'>
           <div className='ml-1 flex gap-2'>
-            <Typography color='black' variant='small'>{dateFormater(String(transactionTime), 'long')}</Typography>
+            <Typography color='black' variant='small'>{dateFormater(String(transactionTime), 'detail')}</Typography>
           </div>
           {OrderStatus(transactionStatus)}
         </div>
@@ -95,14 +100,14 @@ const OrderItem: FC<Order> = (props) => {
                   <MenuItem onClick={() => handleCopyPaymentLink(token.redirect_url)}>
                     Copy Payment Link
                   </MenuItem>
-                  <MenuItem className='text-red-600 hover:text-red-600' onClick={() => console.log('Cancel Transaction')}>
+                  <MenuItem className='text-red-600 hover:text-red-600' onClick={() => cancelTransaction()}>
                     Cancel Transaction
                   </MenuItem>
                 </MenuList>
               </Menu>
             </div>
           ) : (
-            <DetailOrder {...props} />
+            <DetailOrder {...order} />
           )}
         </div>
       </CardBody>
