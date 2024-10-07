@@ -8,7 +8,7 @@ export default function Update() {
   const { query: { id } } = useRouter()
 
   return (
-    <div>
+    <>
       <GenerateMetaData title="Update Post | Admin" desc="Update Post Page" />
       <FormInput
         inputList={FormInputListRenderer({ id: id as string })}
@@ -21,7 +21,7 @@ export default function Update() {
           error: "Failed to update post",
         }}
       />
-    </div>
+    </>
   );
 }
 
