@@ -140,7 +140,7 @@ const Cart: FC<{ data: GetCart[] }> = ({ data = [] }) => {
         <div className="w-full lg:w-4/6">
           {carts.length > 0 ? (
             <div className="space-y-2">
-              <div className="flex items-center justify-between p-4 shadow-md rounded-tl-lg rounded-tr-lg">
+              <div className="flex items-center justify-between p-2 lg:p-4 shadow-md rounded-tl-lg rounded-tr-lg">
                 <div className="flex items-center gap-2">
                   <Checkbox
                     color="success"

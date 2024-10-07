@@ -55,7 +55,7 @@ const ClientAccountOrdersPage = () => {
           />
           <DatePickerComponent />
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 overflow-auto">
           {OrderTab.map(({ label }) => (
             <Button
               key={label}
