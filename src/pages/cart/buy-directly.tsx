@@ -18,6 +18,7 @@ import { GetProduct } from "@/types/product.type";
 import { getItem } from "@/utils/localstorage";
 import CartItem from "@/components/client/CartItem";
 import toast from "react-hot-toast";
+import { useRouter } from "next/router";
 
 type CheckoutProps = {
   address: UpdateAddress;
@@ -58,6 +59,7 @@ const BuyDirectly: FC<CheckoutProps> = (data) => {
     `${data.address?.address}, ${data.address?.city}, ${data.address?.state}, ${data.address?.country}, ${data.address?.zip}, ${data.address?.phone}` ||
     "No address available"
   );
+  const { push } = useRouter();
 
   const handleSetQuantity = async (id: string, quantity: number) => {
     setCart((prev) => ({ ...prev, quantity }));
@@ -98,10 +100,12 @@ const BuyDirectly: FC<CheckoutProps> = (data) => {
         onSuccess: function (result: any) {
           toast.success("Checkout successfull!");
           setLoading(false);
+          push("/store");
         },
         onPending: function (result: any) {
-          toast.success("Checkout pending!");
+          toast("Checkout pending!");
           setLoading(false);
+          push("/store");
         },
         onError: function (result: any) {
           toast.error("Failed to checkout!");

@@ -75,7 +75,8 @@ export function ChatPopover() {
       setIsTyping(true);
       console.log(message);
 
-      const API_URL = "https://api-inference.huggingface.co/models/meta-llama/Llama-3.2-1B";
+      // const API_URL = "https://api-inference.huggingface.co/models/EleutherAI/gpt-j-6B";
+      const API_URL = "https://api-inference.huggingface.co/models/mistralai/Mistral-Nemo-Instruct-2407";
       const headers = {
         Authorization: `Bearer ${process.env.NEXT_PUBLIC_HUGGING_FACE_API_KEY}`,
         "Content-Type": "application/json",
@@ -86,11 +87,27 @@ export function ChatPopover() {
         headers: headers,
         body: JSON.stringify({
           inputs: message,
+          parameters: {
+            max_new_tokens: 200,
+            temperature: 0.7,
+            top_p: 0.9,
+            do_sample: true,
+            no_repeat_ngram_size: 2
+          },
           options: {
             use_cache: false,
           },
         }),
       });
+
+      // const result = await response.json();
+      // console.log(result, "result response");
+      
+      // Post-process the response
+      // let generatedText = result[0].generated_text;
+      // generatedText = generatedText.replace(message, '').trim();
+      // generatedText = generatedText.split('\n').map((line: any) => line.trim()).join('\n');
+      // console.log(generatedText);
 
       const data = await response.json();
       console.log(data, "data response");
@@ -153,7 +170,7 @@ export function ChatPopover() {
               </div>
             )}
           </div>
-          <div className="flex gap-2 mt-2">
+          <div className="flex gap-2 mt-3">
             <Input
               type="text"
               crossOrigin={"anonymous"}

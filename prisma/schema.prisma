@@ -129,13 +129,13 @@ model Order {
   id                String  @id @default(uuid())
   userId            String
   products          Json[]
-  grossAmount       Float
-  totalDiscount     Float?  @default(0)
   settlementTime    String?
   token             Json
   transactionStatus String
   transactionTime   String?
   customerDetails   Json
+  totalDiscount     Float?  @default(0)
+  grossAmount       Float
   user              User    @relation(fields: [userId], references: [id])
 
   @@index([userId])

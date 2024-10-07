@@ -18,6 +18,7 @@ import { GetProduct } from "@/types/product.type";
 import toast from "react-hot-toast";
 import CartItem from "@/components/client/CartItem";
 import { useRouter } from "next/router";
+import { set } from "date-fns";
 
 type Carts = {
   id: string;
@@ -47,7 +48,7 @@ const Checkout: FC<CheckoutProps> = (data) => {
   const [carts, setCarts] = useState<GetCart[]>(data.carts);
   const [shippingAddress, setShippingAddress] = useState<string>(
     `${data.address?.address}, ${data.address?.city}, ${data.address?.state}, ${data.address?.country}, ${data.address?.zip}, ${data.address?.phone}` ||
-    "No address available"
+      "No address available"
   );
   const { push } = useRouter();
 
@@ -66,6 +67,14 @@ const Checkout: FC<CheckoutProps> = (data) => {
       : "No address available";
     setShippingAddress(shippingAddress);
   }, [address]);
+
+  const handleSetQuantity = async (id: string, quantity: number) => {
+    setCarts((prev) =>
+      prev.map((cart: GetCart) =>
+        cart.id === id ? { ...cart, quantity } : cart
+      )
+    );
+  };
 
   const setCheckedCart = async () => {
     cartServices.updateItem({
@@ -101,7 +110,7 @@ const Checkout: FC<CheckoutProps> = (data) => {
           setLoading(false);
         },
         onPending: function (result: any) {
-          toast.success("Checkout pending!");
+          toast("Checkout pending!");
           setCheckedCart();
           setLoading(false);
         },
@@ -166,7 +175,12 @@ const Checkout: FC<CheckoutProps> = (data) => {
             <div className="space-y-2">
               {carts.length > 0 ? (
                 carts.map((cart: GetCart, index: number) => (
-                  <CartItem key={index} cart={cart} />
+                  <CartItem
+                    key={index}
+                    cart={cart}
+                    handleSetQuantity={handleSetQuantity}
+                    setLoading={setLoading}
+                  />
                 ))
               ) : (
                 <p>No items in the cart.</p>
@@ -203,9 +217,10 @@ const Checkout: FC<CheckoutProps> = (data) => {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const cookies = cookie.parse(context.req.headers.cookie || "");
-  const token = NODE_ENV === "development"
-    ? cookies["next-auth.session-token"]
-    : cookies["__Secure-next-auth.session-token"];
+  const token =
+    NODE_ENV === "development"
+      ? cookies["next-auth.session-token"]
+      : cookies["__Secure-next-auth.session-token"];
 
   if (!token) {
     return {

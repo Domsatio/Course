@@ -4,6 +4,7 @@ import {
   generateRandomString,
   formatMidtransExpiryDate,
 } from "@/helpers/appFunction";
+import axios from "axios";
 
 const mapItemDetails = (cartItems: any[]) => {
   return cartItems.map((cart) => ({
@@ -173,3 +174,22 @@ export const createTransactionBuyDirectly = async (userId: string) => {
     return false;
   }
 };
+
+export const cencelTransaction = async (orderId: string) => {
+  try {
+    await axios.post(
+      `https://api.sandbox.midtrans.com/v2/${orderId}/cancel`,
+      {},
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Basic ${Buffer.from(process.env.MIDTRANS_SERVER_KEY + ':').toString('base64')}`,
+        },
+      }
+    );
+    return true;
+  } catch (error) {
+    console.error("Midtrans error:", error);
+    return false;
+  }
+}

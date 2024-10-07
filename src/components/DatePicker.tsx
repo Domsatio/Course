@@ -4,12 +4,13 @@ import { getYear, getMonth } from "date-fns";
 import "react-datepicker/dist/react-datepicker.css";
 import { IconButton } from "@material-tailwind/react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
+import { dateFormater } from "@/utils/date";
 
 const range = (start: number, end: number, step: number): number[] => {
   return Array.from({ length: (end - start) / step + 1 }, (_, i) => start + i * step);
 };
 
-const DatePickerComponent: FC = () => {
+const DatePickerComponent = ({onChangeDate}:{onChangeDate: (value:any) => void}) => {
   const [startDate, setStartDate] = useState<Date>(new Date());
   const years: number[] = range(1990, getYear(new Date()) + 1, 1);
   const months: string[] = [
@@ -84,7 +85,12 @@ const DatePickerComponent: FC = () => {
       )}
       className="border border-blue-gray-200 rounded-lg px-3 py-2.5 w-full text-sm font-normal text-blue-gray-700 focus:outline-none focus:border-gray-900"
       selected={startDate}
-      onChange={(date: Date | null) => setStartDate(date || new Date())}
+      onChange={(date: Date | null) => {
+        setStartDate(date || new Date())
+        if (date) {
+          onChangeDate(date.toISOString().split('T')[0])
+        }
+      }}
     />
   );
 };
