@@ -81,10 +81,10 @@ const HomeView = () => {
       <section className="w-full flex overflow-hidden relative flex-col items-center lg:px-96 py-16 lg:py-24 bg-white px-5">
         <div className="flex absolute inset-0 z-0 bg-black opacity-50 min-h-[636px] max-md:max-w-full" />
         <div className="flex z-0 flex-col self-center w-full lg:w-[935px]">
-          <h2 className="text-6xl text-black font-bold leading-[75.6px] max-md:max-w-full max-md:text-4xl">
+          <h2 className="text-4xl lg:text-6xl text-black font-bold leading-[75.6px] max-md:max-w-full">
             Extraordinary Features
           </h2>
-          <div className="flex overflow-hidden flex-col justify-center mt-10 text-xl leading-8 max-w-[600px] text-sky-950 w-[600px] max-md:max-w-full">
+          <div className="flex overflow-hidden flex-col justify-center mt-10 text-xl leading-8 max-w-[600px] text-sky-950 max-md:max-w-full">
             <p className="w-full">
               Dive into our vast collection of courses, meticulously crafted by{" "}
               <br /> experienced educators. We believe in edutainment, an

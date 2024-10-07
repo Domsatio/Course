@@ -24,8 +24,8 @@ const OrderStatus = (status: string) => {
   }
 }
 
-const OrderItem: FC<Order> = (props) => {
-  const { products, grossAmount, transactionStatus, transactionTime, token } = props;
+const OrderItem = ({order, cencelTransaction}: {order:Order, cencelTransaction: () => void}) => {
+  const { products, grossAmount, transactionStatus, transactionTime, token } = order;
 
   const handleCopyPaymentLink = (paymentLink: string): void => {
     navigator.clipboard.writeText(paymentLink);
@@ -38,7 +38,7 @@ const OrderItem: FC<Order> = (props) => {
         toast.success("Checkout successfully!");
       },
       onPending: function (result: any) {
-        toast.success("Checkout pending!");
+        toast("Checkout pending!");
       },
       onError: function (result: any) {
         toast.error("Failed to checkout!");
@@ -47,6 +47,7 @@ const OrderItem: FC<Order> = (props) => {
       },
     });
   }
+
 
   return (
     <Card className='shadow-none border border-gray-300'>
@@ -95,14 +96,14 @@ const OrderItem: FC<Order> = (props) => {
                   <MenuItem onClick={() => handleCopyPaymentLink(token.redirect_url)}>
                     Copy Payment Link
                   </MenuItem>
-                  <MenuItem className='text-red-600 hover:text-red-600' onClick={() => console.log('Cancel Transaction')}>
+                  <MenuItem className='text-red-600 hover:text-red-600' onClick={() => cencelTransaction()}>
                     Cancel Transaction
                   </MenuItem>
                 </MenuList>
               </Menu>
             </div>
           ) : (
-            <DetailOrder {...props} />
+            <DetailOrder {...order} />
           )}
         </div>
       </CardBody>

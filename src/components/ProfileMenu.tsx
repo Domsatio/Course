@@ -8,18 +8,18 @@ import { useState } from "react";
 
 export const ProfileMenu = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { pathname } = useRouter();
+  const { pathname, push } = useRouter();
   const { data: session } = useSession();
 
   const closeMenu = () => setIsMenuOpen(false);
 
   if (session?.user.role === "ADMIN" && !pathname.startsWith("/admin")) {
     return (
-      <Link href="/admin/dashboard">
-        <Button size="sm" variant="outlined" className="rounded-full border-gray-600">
+      // <Link href="/admin/dashboard">
+        <Button size="sm" variant="outlined" className="rounded-full border-gray-600" onClick={() => push('/admin/dashboard')}>
           Admin Panel
         </Button>
-      </Link>
+      // </Link>
     )
   }
 

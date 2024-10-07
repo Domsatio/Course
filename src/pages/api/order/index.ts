@@ -130,7 +130,12 @@ export default async function handlerOrder(
       try {
         if (req.query.userId) {
           const { userId } = req.query;
-          const data = await getOrderByUserId(userId as string);
+          const data = await getOrderByUserId({
+            userId: userId as string,
+            search: req.query.search as string,
+            status: req.query.status as string,
+            date: req.query.date as string,
+          });
           console.info("Get orders success");
           return res.status(200).send({
             status: true,
@@ -140,10 +145,13 @@ export default async function handlerOrder(
           });
         } else {
           const { skip, take } = req.query;
-          const { totalData, data } = await getOrders(
-            Number(skip),
-            Number(take)
-          );
+          const { totalData, data } = await getOrders({
+            skip: Number(skip),
+            take: Number(take),
+            search: req.query.search as string,
+            status: req.query.status as string,
+            date: req.query.date as string,
+          });
           console.info("Get orders success");
           return res.status(200).send({
             status: true,

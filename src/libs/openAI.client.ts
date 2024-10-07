@@ -1,0 +1,1 @@
+export const OPENAI_SECRET_KEY = process.env.NEXT_PUBLIC_OPENAI_SECRET_KEY;
