@@ -6,6 +6,7 @@ import { Typography, Avatar } from "@material-tailwind/react";
 import { NullProof, numberlistPagination } from "@/helpers/appFunction";
 import { productServices } from "@/services/serviceGenerator";
 import { GetProduct } from "@/types/product.type";
+import {excelLayout} from "@/features/excel/product.excel";
 
 type DataProps = {
   data: GetProduct[];
@@ -30,11 +31,15 @@ export default function Index() {
     page: 0,
     size: 0,
   });
+  
   const { Table, TableAction } = TableData({
     title: "Products",
     description: "List of products",
     tableHeader: TABLE_HEAD,
     realtimeTable: "Product",
+    exportExcel: (data) => {
+      excelLayout(data)
+    },
     onSuccess: (data: DataProps) => setData(data),
     service: productServices,
   });

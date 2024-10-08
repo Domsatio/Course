@@ -3,7 +3,7 @@ import { Product, UpdateProduct } from "@/types/product.type";
 
 export const getProducts = async (
   skip: number = 0,
-  take: number = 5,
+  take: number | 'all' = 5,
   search: string = ""
 ) => {
   let whereCondition: any = {
@@ -32,7 +32,8 @@ export const getProducts = async (
       }
     );
   }
-
+  console.log(take, 'takeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee');
+  
   return prisma.$transaction(
     async (tx) => {
       const totalData = await tx.product.count({
@@ -42,7 +43,7 @@ export const getProducts = async (
       const res = await tx.product.findMany({
         where: whereCondition,
         skip,
-        take,
+        take: take === "all" ? totalData : take,
         orderBy: {
           createdAt: "desc",
         },
