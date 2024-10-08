@@ -64,16 +64,26 @@ const ClientAccountOrdersPage = () => {
   };
 
   const handleCencelOrder = async (id: string) => {
-    const data = await fetch(`/api/checkout?id=${id}`, {
-      method: "DELETE",
-    });
-    const { success } = await data.json();
-    if (success) {
-      setOrders((prev) => prev.filter((order) => order.id !== id));
-      toast.success("Order cenceled successfully");
-    } else {
-      toast.error("Failed to cancel order");
-    }
+    toast
+      .promise(
+        new Promise<void>(async (resolve, reject) => {
+          const data = await fetch(`/api/checkout?id=${id}`, {
+            method: "DELETE",
+          });
+          const { success } = await data.json();
+          if (success) {
+            setOrders((prev) => prev.filter((order) => order.id !== id));
+            resolve();
+          } else {
+            reject();
+          }
+        }),
+        {
+          loading: <b>Cenceling order...</b>,
+          success: <b>Order cenceled successfully</b>,
+          error: <b>Error cenceling order</b>,
+        }
+      )
   };
 
   useEffect(() => {

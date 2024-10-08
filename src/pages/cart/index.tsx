@@ -40,25 +40,38 @@ const Cart: FC<{ data: GetCart[] }> = ({ data = [] }) => {
   const { checkCart } = useGlobalStore();
 
   const handleDeleteCart = async (id: string[]) => {
-    setLoading(true);
-    try {
-      await cartServices.deleteItem({ idCart: `[${id}]` });
-      const rest_cart = carts.filter((cart: GetCart) => !id.includes(cart.id));
-      setCarts(rest_cart);
-      if (id === selectedCart) {
-        setSelectedCart([]);
-      } else {
-        setSelectedCart((prev) =>
-          prev.filter((prevId: string) => !id.includes(prevId))
-        );
-      }
-      checkCart();
-      toast.success("Cart deleted successfully");
-    } catch (error) {
-      toast.error("Error deleting cart");
-      console.error("Error deleting cart:", error);
-    }
-    setLoading(false);
+    toast
+      .promise(
+        new Promise<void>(async (resolve, reject) => {
+          setLoading(true);
+          try {
+            await cartServices.deleteItem({ idCart: `[${id}]` });
+            const rest_cart = carts.filter(
+              (cart: GetCart) => !id.includes(cart.id)
+            );
+            setCarts(rest_cart);
+            if (id === selectedCart) {
+              setSelectedCart([]);
+            } else {
+              setSelectedCart((prev) =>
+                prev.filter((prevId: string) => !id.includes(prevId))
+              );
+            }
+            checkCart();
+            resolve();
+          } catch (error) {
+            reject(error);
+          }
+        }),
+        {
+          loading: <b>Deleting...</b>,
+          success: <b>Cart deleted successfully</b>,
+          error: <b>Error deleting cart</b>,
+        }
+      )
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   const handleChangeSelectedCart = async (id: string) => {
@@ -196,10 +209,7 @@ const Cart: FC<{ data: GetCart[] }> = ({ data = [] }) => {
               fullWidth
               onClick={() => {
                 if (selectedCart.length === 0) {
-                  toast(
-                    'Please select item to checkout',
-                    { duration: 2700 }
-                  );
+                  toast("Please select item to checkout", { duration: 2700 });
                   return;
                 } else {
                   push("/cart/checkout");

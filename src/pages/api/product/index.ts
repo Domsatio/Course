@@ -76,7 +76,7 @@ export default async function handlerProduct(
         const { skip, take, search } = req.query;
         const { totalData, data } = await getProducts(
           Number(skip),
-          Number(take),
+          take === "all" ? "all" : Number(take),
           search as string
         );
         console.info("Get all products success");

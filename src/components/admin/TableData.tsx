@@ -8,6 +8,7 @@ import {
   TrashIcon,
   PencilSquareIcon,
   XMarkIcon,
+  ArrowDownTrayIcon,
 } from "@heroicons/react/24/solid";
 import {
   Card,
@@ -49,10 +50,12 @@ export default function TableData({
   filter,
   service,
   realtimeTable,
+  exportExcel,
 }: TableDataProps) {
+
   const [modalFilter, setModalFilter] = useState<boolean>(false);
   const { debounceValue, searchQuery, setSearchQuery } = SearchHook({});
-  const { isLoad, isError, setIsLoad, setIsError } = FetchDataHook();
+  const { isLoad, isError, setIsLoad, setIsError, data, setData } = FetchDataHook();
   const {
     activePage,
     setActivePage,
@@ -98,6 +101,34 @@ export default function TableData({
       setIsLoad(false);
     }
   };
+
+  const exportData = () => {
+    toast.promise(
+      new Promise<void>(async (resolve, reject) => {
+      try {
+        setIsLoad(true);
+        const {
+          data: { totalData, data },
+        } = await service.getItems({
+          skip:0, 
+          take: "all",
+          ...getQueryParams()
+        });
+        resolve();
+        exportExcel?.(data);
+      } catch (error) {
+        reject();
+      }
+    }), 
+    {
+      loading: "Exporting...",
+      success: "Export success",
+      error: "Export failed",
+    })
+    .finally(() => {
+      setIsLoad(false);
+    });
+  }
 
   const handleDelete = async (id: string) => {
     try {
@@ -237,6 +268,18 @@ export default function TableData({
               </Fragment>
             )}
           </div>
+        </div>
+        <div className="flex justify-end">
+          {exportExcel && (
+            <Button
+              color="green"
+              onClick={() => exportData()}
+              className="flex items-center gap-1 px-3"
+              loading={isLoad}
+            >
+              <ArrowDownTrayIcon className="h-4 w-4 font-bold" /> Excel 
+            </Button>
+          )}
         </div>
       </CardHeader>
       <CardBody className="overflow-auto px-0 max-h-[500px]">

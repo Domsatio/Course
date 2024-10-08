@@ -5,8 +5,8 @@ import Link from "next/link";
 const SubscribersOnly = () => {
   return (
     <div className="flex justify-center">
-      <Card className="overflow-hidden border border-gray-300 shadow-sm w-96 items-center">
-        <CardBody className="space-y-5 flex flex-col items-center">
+      <Card className="overflow-hidden border border-gray-300 shadow-sm lg:w-96 items-center">
+        <CardBody className="space-y-5 flex flex-col items-center text-center">
           <Typography variant="h5" color="black">
             For Subscribers Only
           </Typography>

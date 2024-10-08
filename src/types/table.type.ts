@@ -9,5 +9,6 @@ export type TableDataProps = {
   filter?: InputListProps[];
   service: any;
   realtimeTable?: string;
+  exportExcel?: (data: any) => void;
   // children?: React.ReactNode;
 };
