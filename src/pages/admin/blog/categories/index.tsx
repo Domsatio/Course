@@ -6,6 +6,7 @@ import { GetCategory } from "@/types/category.type";
 import { categoryServices } from "@/services/serviceGenerator";
 import { NullProof, numberlistPagination } from "@/helpers/appFunction";
 import GenerateMetaData from "@/components/GenerateMetaData";
+import { tableHeaderProps } from "@/types/table.type";
 
 type DataProps = {
   data: GetCategory[];
@@ -13,7 +14,12 @@ type DataProps = {
   size: number;
 }
 
-const TABLE_HEAD = ["No", "Name", "Total Post(s)", "Action"];
+const TABLE_HEAD: tableHeaderProps[] = [
+  { label: "No." },
+  { label: "Name" },
+  { label: "Posts" },
+  { label: "Actions" },
+];
 
 const Index: FC = () => {
   const [data, setData] = useState<DataProps>({

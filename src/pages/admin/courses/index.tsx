@@ -7,6 +7,7 @@ import { courseServices } from "@/services/serviceGenerator";
 import { Course } from "@/types/course.type";
 import { Chip } from "@material-tailwind/react";
 import { FilterInputList } from "../../../constants/admin/InputLists/inputLayoutCourse";
+import { tableHeaderProps } from "@/types/table.type";
 
 type DataProps = {
   data: Course[];
@@ -14,7 +15,13 @@ type DataProps = {
   size: number;
 }
 
-const TABLE_HEAD = ["No", "Title", "Description", "Published", "Action"];
+const TABLE_HEAD: tableHeaderProps[] = [
+  { label: "No." },
+  { label: "Title" },
+  { label: "Description" },
+  { label: "Status" },
+  { label: "Actions" },
+];
 
 export default function Index() {
   const [data, setData] = useState<DataProps>({

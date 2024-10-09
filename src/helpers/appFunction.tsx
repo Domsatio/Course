@@ -209,6 +209,17 @@ function formatMidtransExpiryDate(date: Date) {
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds} ${sign}${offsetHours}:${offsetMinutes}`;
 }
 
+const generateOrderBy = (param:any) => {
+  if (typeof param === "string") {
+    const getSortBy = param.split(":").length === 2 ? param.split(":") : ["createdAt", "desc"];
+    return {
+      [getSortBy[0]]: getSortBy[1],
+    };
+  }else{
+    return param
+  }
+}
+
 export {
   NullProof,
   ConvertCurrency,
@@ -219,4 +230,5 @@ export {
   convertStringToBoolean,
   generateRandomString,
   formatMidtransExpiryDate,
+  generateOrderBy
 };

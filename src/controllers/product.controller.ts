@@ -1,11 +1,14 @@
 import prisma from "@/libs/prisma/db";
 import { Product, UpdateProduct } from "@/types/product.type";
+import { generateOrderBy } from "@/helpers/appFunction";
 
 export const getProducts = async (
   skip: number = 0,
   take: number | 'all' = 5,
-  search: string = ""
+  search: string = "",
+  orderByParam: any = { createdAt: "desc" }
 ) => {
+
   let whereCondition: any = {
     OR: [
       {
@@ -32,8 +35,7 @@ export const getProducts = async (
       }
     );
   }
-  console.log(take, 'takeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee');
-  
+
   return prisma.$transaction(
     async (tx) => {
       const totalData = await tx.product.count({
@@ -44,9 +46,7 @@ export const getProducts = async (
         where: whereCondition,
         skip,
         take: take === "all" ? totalData : take,
-        orderBy: {
-          createdAt: "desc",
-        },
+        orderBy: generateOrderBy(orderByParam),
       });
 
       const data = res.map((item) => ({
