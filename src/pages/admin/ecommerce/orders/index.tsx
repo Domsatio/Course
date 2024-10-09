@@ -1,14 +1,9 @@
 import React, { useState } from "react";
-import {
-  Typography,
-  Avatar,
-  Chip,
-} from "@material-tailwind/react";
 import { Order } from "@/types/order.type";
 import TableData, { TableActionProps } from "@/components/admin/TableData";
 import { orderServices } from "@/services/serviceGenerator";
-import { dateFormater } from "@/utils/date";
 import { NullProof } from "@/helpers/appFunction";
+import { tableHeaderProps } from "@/types/table.type";
 
 type DataProps = {
   data: Order[];
@@ -16,14 +11,14 @@ type DataProps = {
   size: number;
 }
 
-const TABLE_HEAD = [
-  "Date",
-  "Product",
-  "Quantity",
-  "Price",
-  "Ordered by",
-  "Status",
-  "Action"
+const TABLE_HEAD: tableHeaderProps[] = [
+  { label: "Date" },
+  { label: "Product" },
+  { label: "Quantity" },
+  { label: "Price" },
+  { label: "User" },
+  { label: "Status" },
+  { label: "Actions" },
 ];
 
 export default function Index() {

@@ -52,7 +52,7 @@ const Pagination: FC<PaginationProps> = ({
   }
 
   return (
-    <CardFooter className="flex border-t border-blue-gray-50 p-4 justify-between items-center">
+    <CardFooter className="flex flex-col flex-col-reverse md:flex-row border-t border-blue-gray-50 p-4 justify-between items-center gap-5">
       <div className="flex items-center gap-3">
         <p>Showing</p>
         <Menu>
@@ -77,7 +77,7 @@ const Pagination: FC<PaginationProps> = ({
         <p>of {totalData} items per page</p>
       </div>
       {totalPages > 1 && (
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 overflow-x-auto">
           <Button
             variant="text"
             size="sm"

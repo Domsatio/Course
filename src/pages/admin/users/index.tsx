@@ -7,6 +7,7 @@ import { FilterInputList } from "../../../constants/admin/InputLists/inputLayout
 import { userServices } from "@/services/serviceGenerator";
 import { GetUser } from "@/types/user.type";
 import { dateFormater } from "@/utils/date";
+import { tableHeaderProps } from "@/types/table.type";
 
 type DataProps = {
   data: GetUser[];
@@ -14,7 +15,15 @@ type DataProps = {
   size: number;
 }
 
-const TABLE_HEAD = ["No", "Name", "Email", "Subscribe", "Subscribe Start", "Subscribe End", "Action"];
+const TABLE_HEAD: tableHeaderProps[] = [
+  { label: "No." },
+  { label: "Name" },
+  { label: "Email" },
+  { label: "Subscription" },
+  { label: "Start" },
+  { label: "End" },
+  { label: "Actions" },
+];
 
 export default function Index() {
   const [data, setData] = useState<DataProps>({

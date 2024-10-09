@@ -7,6 +7,7 @@ import { NullProof, numberlistPagination } from "@/helpers/appFunction";
 import { productServices } from "@/services/serviceGenerator";
 import { GetProduct } from "@/types/product.type";
 import {excelLayout} from "@/features/excel/product.excel";
+import { tableHeaderProps } from "@/types/table.type";
 
 type DataProps = {
   data: GetProduct[];
@@ -14,15 +15,15 @@ type DataProps = {
   size: number;
 }
 
-const TABLE_HEAD = [
-  "No",
-  "Thumbnail",
-  "Name",
-  "Description",
-  "Price",
-  "Discount",
-  "Quantity",
-  "Action",
+const TABLE_HEAD: tableHeaderProps[] = [
+  { label: "No." },
+  { label: "Thumbnail" },
+  { label: "Name" },
+  { label: "Description" },
+  { label: "Price", orderBy: "price" },
+  { label: "Discount", orderBy: "discount" },
+  { label: "Quantity", orderBy: "quantity" },
+  { label: "Actions" },
 ];
 
 export default function Index() {

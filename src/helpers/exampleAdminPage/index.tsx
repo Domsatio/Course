@@ -7,15 +7,16 @@ import { CategoryPost, GetPost } from "@/types/post.type";
 import { dateFormater } from "@/utils/date";
 import { NullProof, numberlistPagination } from "@/helpers/appFunction";
 import { FilterInputList } from "./inputLayout";
+import { tableHeaderProps } from "@/types/table.type";
 
-const TABLE_HEAD = [
-  "No",
-  "Title",
-  "Body",
-  "Category(es)",
-  "Published",
-  "Date Created",
-  "Action",
+const TABLE_HEAD: tableHeaderProps[] = [
+  { label: "No.", style: "md:sticky md:left-0 md:z-10" },
+  { label: "Title", style: "md:sticky md:left-[54px] md:z-10" },
+  { label: "Body" },
+  { label: "Categories" },
+  { label: "Status" },
+  { label: "Created At", orderBy: "createdAt" },
+  { label: "Actions" },
 ];
 
 export default function Index() {
