@@ -20,7 +20,7 @@ export default async function handler(
 
     const token = signJWT({ userId: user.id }, { expiresIn: "30m" });
 
-    const resetUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/forgot-password/reset-password?token=${token}`;
+    const resetUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/forgot-password/reset-password?token=${token}`; 
     await sendPasswordResetEmail(user.email, resetUrl);
 
     res.status(200).send({

@@ -1,7 +1,4 @@
 import prisma from "@/libs/prisma/db";
-import { Order } from "@/types/order.type";
-import { date } from "yup";
-// import { Order, UpdateOrder } from "@/types/order.type";
 
 export const getOrders = async ({
   skip = 0,
@@ -109,7 +106,6 @@ export const getOrderByUserId = async ({
   }
 
   if (date) {
-    console.log(new Date(date), 'pppppppppppppppppppppppppppppppppppppp');
     whereCondition.transactionTime = {
       gte: new Date(date).toISOString(),
       lt: new Date(new Date(date).setDate(new Date(date).getDate() + 1)).toISOString(),

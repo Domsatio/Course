@@ -4,6 +4,7 @@ export type tableHeaderProps = {
   label: string;
   style?: string;
   orderBy?: string;
+  visible?: boolean;
 };
 
 export type TableDataProps = {

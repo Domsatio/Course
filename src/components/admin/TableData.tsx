@@ -16,12 +16,16 @@ import {
 import {
   Card,
   CardHeader,
+  Checkbox,
   Typography,
   Button,
   CardBody,
   Input,
   IconButton,
   Tooltip,
+  Popover,
+  PopoverHandler,
+  PopoverContent,
 } from "@material-tailwind/react";
 import TableSkeleton from "../Skeleton/table.skeleton";
 import { TableDataProps } from "@/types/table.type";
@@ -52,6 +56,15 @@ type SortByProps = {
   time: Date;
 };
 
+// type VisibleColumnsProps = {
+//   [key: string]: boolean;
+// };
+
+type VisibleColumnsProps = {
+  isVisible: boolean;
+  label: string;
+};
+
 export default function TableData({
   tableHeader = [],
   title = "",
@@ -67,6 +80,7 @@ export default function TableData({
   const { debounceValue, searchQuery, setSearchQuery } = SearchHook({});
   const { isLoad, isError, setIsLoad, setIsError, data, setData } =
     FetchDataHook();
+  const [orderBy, setOrderBy] = useState<{ [key: string]: SortByProps }>({});
   const {
     activePage,
     setActivePage,
@@ -78,26 +92,28 @@ export default function TableData({
   } = PaginationHook({});
   const router = useRouter();
 
-  const generateSortBy = ({ name, param, time }: SortByProps) => ({
-    name,
-    param,
-    time,
-  });
-  const initialSortBy = tableHeader.reduce(
-    (acc: any, head: tableHeaderProps) => {
-      if (head.orderBy)
-        acc[head.orderBy as string] = generateSortBy({
-          name: head.orderBy as string,
-          param: "neutral",
-          time: new Date(),
-        });
+  const keyVisibleColumns = (key: string) => {
+    return key.toLowerCase().split(" ").join("") || key.toLowerCase();
+  };
+  const initialVisibleColumns = tableHeader.reduce(
+    (acc: { [key: string]: any }, head: tableHeaderProps) => {
+      if (head.visible) {
+        const key = keyVisibleColumns(head.label);
+        acc[key] = {
+          isVisible: true,
+          label: head.label,
+        };
+      }
       return acc;
     },
     {}
   );
-  const [orderBy, setOrderBy] = useState<{ [key: string]: SortByProps }>({});
+  const [visibleColumns, setVisibleColumns] = useState<{
+    [key: string]: VisibleColumnsProps;
+  }>(initialVisibleColumns);
+  console.log(visibleColumns);
 
-  const filterSortBy = (): SortByProps | null => {
+  const filterOrderBy = (): SortByProps | null => {
     const sort = Object.entries(orderBy).filter(
       ([key, value]) => value.param !== "neutral"
     );
@@ -116,7 +132,7 @@ export default function TableData({
   };
 
   const getDataTable = async () => {
-    const orderByParam = filterSortBy();
+    const orderByParam = filterOrderBy();
     const skip = activePage * take - take;
     const params: {
       skip: number;
@@ -156,13 +172,13 @@ export default function TableData({
         new Promise<void>(async (resolve, reject) => {
           try {
             setIsLoad(true);
-            const orderBy = filterSortBy();
-            let param:any= {
+            const orderBy = filterOrderBy();
+            let param: any = {
               skip: 0,
               take: "all",
               ...getQueryParams(),
-            }
-            if(orderBy) param.orderBy = `${orderBy.name}:${orderBy.param}`
+            };
+            if (orderBy) param.orderBy = `${orderBy.name}:${orderBy.param}`;
             const {
               data: { totalData, data },
             } = await service.getItems(param);
@@ -297,35 +313,109 @@ export default function TableData({
                 <Button color="blue">Create</Button>
               </Link>
             )}
-            {filter && (
-              <Fragment>
-                <Tooltip content="Filter">
-                  <IconButton
-                    variant="text"
-                    onClick={() => setModalFilter(true)}
+
+            <Fragment>
+              <Tooltip content="Filter">
+                <Popover placement="bottom-end">
+                  <PopoverHandler>
+                    <IconButton variant="text">
+                      <FunnelIcon className="h-5 w-5" />
+                    </IconButton>
+                  </PopoverHandler>
+                  <PopoverContent
+                    className={cn(
+                      "min-w-max flex flex-col gap-3 z-30",
+                      filter && "min-w-[300px]"
+                    )}
                   >
-                    <FunnelIcon className="h-5 w-5" />
-                  </IconButton>
-                </Tooltip>
-                <FormInput
-                  inputList={filter}
-                  method="GET"
-                  service={service}
-                  title="Filter"
-                  asModal={{
-                    isOpen: modalFilter,
-                    handler: setModalFilter,
-                  }}
-                  onSubmit={() => getDataTable()}
-                  onSuccess={(data) => onSuccess?.(data)}
-                  isFilter={true}
-                  toastMessage={{
-                    success: "Filter success",
-                    error: "Filter failed",
-                  }}
-                />
-              </Fragment>
-            )}
+                    <div className="flex justify-between items-center">
+                      <h3 className="font-semibold text-lg">Filter</h3>
+                      {filter && (
+                        <div>
+                          <Button
+                            size="sm"
+                            color="blue"
+                            onClick={() => setModalFilter(true)}
+                          >
+                            Filter lainnya
+                          </Button>
+                          <FormInput
+                            inputList={filter}
+                            method="GET"
+                            service={service}
+                            title="Filter"
+                            asModal={{
+                              isOpen: modalFilter,
+                              handler: setModalFilter,
+                            }}
+                            onSubmit={() => getDataTable()}
+                            onSuccess={(data) => onSuccess?.(data)}
+                            isFilter={true}
+                            toastMessage={{
+                              success: "Filter success",
+                              error: "Filter failed",
+                            }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex flex-col">
+                      <h5 className="font-semibold border-b-2">
+                        Visible column
+                      </h5>
+                      <Checkbox
+                        crossOrigin={"toggle all column"}
+                        type="checkbox"
+                        label="Toggle All"
+                        checked={Object.values(visibleColumns).every(
+                          (col) => col.isVisible
+                        )} // Check if all columns are visible
+                        onChange={() => {
+                          const allVisible = Object.values(
+                            visibleColumns
+                          ).every((col) => col.isVisible);
+                          setVisibleColumns((prev) => {
+                            const updated = Object.keys(prev).reduce(
+                              (
+                                acc: { [key: string]: VisibleColumnsProps },
+                                key
+                              ) => {
+                                acc[key] = {
+                                  ...prev[key],
+                                  isVisible: !allVisible,
+                                };
+                                return acc;
+                              },
+                              {}
+                            );
+                            return updated;
+                          });
+                        }}
+                      />
+                      {visibleColumns &&
+                        Object.keys(visibleColumns).map((key) => (
+                          <Checkbox
+                            crossOrigin={"visible column"}
+                            label={visibleColumns[key].label}
+                            checked={visibleColumns[key].isVisible}
+                            onChange={() => {
+                              setVisibleColumns(
+                                (prev: { [x: string]: any }) => ({
+                                  ...prev,
+                                  [key]: {
+                                    isVisible: !prev[key].isVisible,
+                                    label: prev[key].label,
+                                  },
+                                })
+                              );
+                            }}
+                          />
+                        ))}
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </Tooltip>
+            </Fragment>
           </div>
         </div>
         <div className="flex justify-end">
@@ -343,9 +433,11 @@ export default function TableData({
       </CardHeader>
       <CardBody className="overflow-auto px-0 max-h-[500px]">
         <table className="w-full min-w-max text-left">
-          <thead className="sticky -top-[24.5px] h-8 z-30 bg-blue-gray-50">
+          <thead className="sticky -top-[24.5px] h-8 z-20 bg-blue-gray-50">
             <tr>
               {tableHeader.map((head: tableHeaderProps, index: number) => {
+                const visibleKey = keyVisibleColumns(head.label);
+                if (head.visible && !visibleColumns[visibleKey].isVisible) return null;
                 return (
                   <th
                     key={index}
@@ -438,6 +530,26 @@ export default function TableData({
     </Card>
   );
 
+  const TableCol = ({
+    name,
+    className,
+    children,
+  }: {
+    name: string;
+    className: string;
+    children: React.ReactNode;
+  }) => {
+    return (
+      <td
+        className={cn(className, {
+          hidden: !visibleColumns[keyVisibleColumns(name)].isVisible,
+        })}
+      >
+        {children}
+      </td>
+    );
+  };
+
   // table action component
   const TableAction = ({
     data,
@@ -494,5 +606,6 @@ export default function TableData({
   return {
     Table,
     TableAction,
+    TableCol,
   };
 }

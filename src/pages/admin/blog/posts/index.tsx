@@ -19,10 +19,10 @@ type DataProps= {
 const TABLE_HEAD: tableHeaderProps[] = [
   { label: "No.", style: "md:sticky md:left-0 md:z-10" },
   { label: "Title", style: "md:sticky md:left-[54px] md:z-10" },
-  { label: "Body" },
-  { label: "Categories" },
-  { label: "Status" },
-  { label: "Created At", orderBy: "createdAt" },
+  { label: "Body", visible: true },
+  { label: "Categories", visible: true },
+  { label: "Status", visible: true },
+  { label: "Created At", orderBy: "createdAt", visible: true },
   { label: "Actions" },
 ];
 
@@ -32,7 +32,7 @@ export default function Index() {
     page: 0,
     size: 0,
   });
-  const { Table, TableAction } = TableData({
+  const { Table, TableCol, TableAction } = TableData({
     title: "Posts",
     description: "List of posts",
     tableHeader: TABLE_HEAD,
@@ -77,7 +77,7 @@ export default function Index() {
               </p>
             </div>
           </td>
-          <td className={`${classes} max-w-[370px] max-h-min`}>
+          <TableCol name='body' className={`${classes} max-w-[370px] max-h-min`}>
             <article
               color="blue-gray"
               className="prose font-normal line-clamp-2 text-sm"
@@ -85,8 +85,8 @@ export default function Index() {
                 __html: NullProof({ input: post, params: "body" }),
               }}
             ></article>
-          </td>
-          <td className={`${classes} max-w-[370px] max-h-min`}>
+          </TableCol>
+          <TableCol name='categories' className={`${classes} max-w-[370px] max-h-min`}>
             <Typography
               variant="small"
               color="blue-gray"
@@ -102,8 +102,8 @@ export default function Index() {
                 ))}
               </div>
             </Typography>
-          </td>
-          <td className={classes}>
+          </TableCol>
+          <TableCol name='status' className={classes}>
             <Typography
               variant="small"
               color="blue-gray"
@@ -122,8 +122,8 @@ export default function Index() {
                 }
               />
             </Typography>
-          </td>
-          <td className={classes}>
+          </TableCol>
+          <TableCol name='createdAt' className={classes}>
             <div className="flex items-center gap-3">
               <Typography
                 variant="small"
@@ -133,7 +133,7 @@ export default function Index() {
                 {dateFormater(post.createdAt, "short")}
               </Typography>
             </div>
-          </td>
+          </TableCol>
           <td className={classes}>
             <TableAction data={dataAction} id={post.id} />
           </td>
