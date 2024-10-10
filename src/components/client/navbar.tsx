@@ -95,7 +95,7 @@ export default function ComplexNavbar() {
         </IconButton>
         {session ? (
           <div className=" flex items-center gap-3 lg:gap-5 cursor-pointer">
-            <NavCart />
+            {session.user.role === 'USER' && <NavCart />}
             <ProfileMenu />
           </div>
         ) : (

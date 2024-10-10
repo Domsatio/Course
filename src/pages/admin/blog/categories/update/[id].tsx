@@ -10,7 +10,7 @@ export default function Update() {
   } = useRouter();
 
   return (
-    <div>
+    <>
       <GenerateMetaData title="Update Category | Account" desc="Update Category Page" />
       <FormInput
         inputList={FormInputList}
@@ -23,6 +23,6 @@ export default function Update() {
           error: "Failed to update category",
         }}
       />
-    </div>
+    </>
   );
 }

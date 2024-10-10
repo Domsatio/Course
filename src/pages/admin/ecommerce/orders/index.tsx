@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import { Order } from "@/types/order.type";
 import TableData, { TableActionProps } from "@/components/admin/TableData";
 import { orderServices } from "@/services/serviceGenerator";
-import { NullProof } from "@/helpers/appFunction";
+import { ConvertCurrency, NullProof } from "@/helpers/appFunction";
 import { tableHeaderProps } from "@/types/table.type";
+import { Chip, Typography } from "@material-tailwind/react";
+import { dateFormater } from "@/utils/date";
 
 type DataProps = {
   data: Order[];
@@ -34,21 +36,8 @@ export default function Index() {
     realtimeTable: "Order",
     onSuccess: (data: DataProps) => setData(data),
     service: orderServices,
+    isActionAdd: false
   });
-
-//   const orderStatus = (status: string) => {
-//     if (status === "PENDING") {
-//       return "pink"
-//     } else if (status === "PROCESSING") {
-//       return "amber"
-//     } else if (status === "SHIPPING") {
-//       return "blue"
-//     } else if (status === "DELIVERED") {
-//       return "green"
-//     } else if (status === "CANCELLED") {
-//       return "red"
-//     }
-//   }
 
   return Table(
     NullProof({
@@ -58,15 +47,16 @@ export default function Index() {
     }).map((order: Order, index: number) => {
       const isLast = index === data.data.length - 1;
       const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
+      const totalItems = order.products.reduce((acc, curr) => acc + curr.quantity, 0);
       return (
         <tr key={order.id}>
-          {/* <td className={classes}>
+          <td className={classes}>
             <Typography
               variant="small"
               color="blue-gray"
               className="font-normal"
             >
-              {NullProof({ input: order, params: "date" })}
+              {dateFormater(String(order.transactionTime), "short")}
             </Typography>
           </td>
           <td className={classes}>
@@ -75,7 +65,7 @@ export default function Index() {
               color="blue-gray"
               className="font-normal"
             >
-              {NullProof({ input: order, params: "product" }).name}
+              {totalItems > 1 ? `${totalItems} items` : `${totalItems} item`}
             </Typography>
           </td>
           <td className={classes}>
@@ -84,7 +74,7 @@ export default function Index() {
               color="blue-gray"
               className="font-normal"
             >
-              {NullProof({ input: order, params: "quantity" })}
+              {ConvertCurrency(order.grossAmount)}
             </Typography>
           </td>
           <td className={classes}>
@@ -93,30 +83,30 @@ export default function Index() {
               color="blue-gray"
               className="font-normal"
             >
-              {NullProof({ input: order, params: "price" })}
+              {`${order.customerDetails.first_name} ${order.customerDetails.last_name} (${order.customerDetails.email})`}
             </Typography>
           </td>
           <td className={classes}>
-            <div className="flex items-center">
-              <Avatar
-                src={NullProof({ input: order, params: "user" }).avatar}
+            <Typography
+              variant="small"
+              color="blue-gray"
+              className="font-normal flex"
+            >
+              <Chip
+                variant="ghost"
+                color={order.transactionStatus === "settlement" || order.transactionStatus === "capture" ? "green" : "yellow"}
+                size="sm"
+                value={order.transactionStatus === "settlement" || order.transactionStatus === "capture" ? "Completed" : "Waiting Payment"}
+                icon={
+                  <span className={`mx-auto mt-1 block h-2 w-2 rounded-full content-[''] 
+                    ${order.transactionStatus === "settlement" || order.transactionStatus === "capture" ? "bg-green-900" : "bg-yellow-900"}`}
+                  />
+                }
               />
-              <Typography
-                variant="small"
-                color="blue-gray"
-                className="font-normal ml-2"
-              >
-                {NullProof({ input: order, params: "user" }).name}
-              </Typography>
-            </div>
+            </Typography>
           </td>
           <td className={classes}>
-            <Chip
-              value={order.transactionStatus}
-            />
-          </td> */}
-          <td className={classes}>
-            {TableAction({ data: dataAction, id: order.id })}
+            <TableAction data={dataAction} id={order.id} />
           </td>
         </tr>
       );
@@ -127,11 +117,5 @@ export default function Index() {
 const dataAction: TableActionProps[] = [
   {
     action: "view",
-  },
-  {
-    action: "update",
-  },
-  {
-    action: "delete",
-  },
+  }
 ];

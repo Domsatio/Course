@@ -175,15 +175,17 @@ export const createTransactionBuyDirectly = async (userId: string) => {
   }
 };
 
-export const cencelTransaction = async (orderId: string) => {
+export const cancelTransaction = async (orderId: string) => {
   try {
     await axios.post(
       `https://api.sandbox.midtrans.com/v2/${orderId}/cancel`,
       {},
       {
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Basic ${Buffer.from(process.env.MIDTRANS_SERVER_KEY + ':').toString('base64')}`,
+          "Content-Type": "application/json",
+          Authorization: `Basic ${Buffer.from(
+            process.env.MIDTRANS_SERVER_KEY + ":"
+          ).toString("base64")}`,
         },
       }
     );
@@ -192,9 +194,13 @@ export const cencelTransaction = async (orderId: string) => {
     console.error("Midtrans error:", error);
     return false;
   }
-}
+};
 
-export const createSubscription = async (userId: string, duration: 'monthly' | 'annually', paymentMethod: 'credit_card'|'gopay') => {
+export const createSubscription = async (
+  userId: string,
+  duration: "monthly" | "annually",
+  paymentMethod: "credit_card" | "gopay"
+) => {
   const user = await prisma.user.findUnique({
     where: { id: userId },
     include: {
@@ -205,9 +211,9 @@ export const createSubscription = async (userId: string, duration: 'monthly' | '
   if (!user) {
     return false;
   }
-  let token = '';
+  let token = "";
 
-  if(paymentMethod === 'credit_card') {
+  if (paymentMethod === "credit_card") {
     token = await coreApi.createToken({
       card_number: "4811111111111114",
       card_cvv: "123",
@@ -216,20 +222,20 @@ export const createSubscription = async (userId: string, duration: 'monthly' | '
       client_key: process.env.MIDTRANS_CLIENT_KEY,
     });
   } else {
-    token = await coreApi.getPaymentAccount('088985977908')
+    token = await coreApi.getPaymentAccount("088985977908");
   }
-  console.log(token, 'tpkennnnnnnnnnnnnnnnnnnnnnnnn');
+  console.log(token, "tpkennnnnnnnnnnnnnnnnnnnnnnnn");
   const params = {
     name: `Domsat ${duration} Subscription`,
-    amount: duration === 'monthly' ? 49999 : 529999,
+    amount: duration === "monthly" ? 49999 : 529999,
     currency: "IDR",
     payment_type: paymentMethod,
     token: token,
     schedule: {
       interval: 1,
-      interval_unit: duration === 'monthly' ? 'month' : 'year',
-      max_interval: duration === 'monthly' ? 12 : 1,
-      start_time: ""
+      interval_unit: duration === "monthly" ? "month" : "year",
+      max_interval: duration === "monthly" ? 12 : 1,
+      start_time: "",
     },
     metadata: {
       description: "Recurring payment for a Domsat subscription",
@@ -244,7 +250,7 @@ export const createSubscription = async (userId: string, duration: 'monthly' | '
 
   try {
     // const token = await coreApi.createSubscription(params);
-    return { subcriptionData: params};
+    return { subcriptionData: params };
   } catch (error) {
     console.error("Midtrans error:", error);
     return false;

@@ -1,4 +1,4 @@
-import React, { FC, Fragment, useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { NullProof } from "@/helpers/appFunction";
 import DataDetailPage, {
   LabelDetailPage,
@@ -35,7 +35,7 @@ const DetailCourse: FC = () => {
   }, [data]);
 
   return (
-    <Fragment>
+    <>
       <GenerateMetaData title={"Course Detail | Admin"} desc={NullProof({ input: data, params: "title" }) || "Course Detail"} />
       <DetailPage title="Course" service={courseServices}>
         <div className="space-y-5">
@@ -104,7 +104,7 @@ const DetailCourse: FC = () => {
           )}
         </div>
       </DetailPage>
-    </Fragment>
+    </>
   );
 }
 

@@ -65,7 +65,7 @@ export default function CartItem({
     <div
       key={cart.id}
       className={cn(
-        "relative flex items-center justify-between gap-3 shadow-md p-4",
+        "relative flex flex-col lg:flex-row lg:items-center justify-between gap-3 shadow-md p-2 lg:p-4",
         { "rounded-b-lg": index === cartLength - 1 }
       )}
     >
@@ -87,6 +87,7 @@ export default function CartItem({
             className="w-full h-full object-contain"
             height={60}
             width={60}
+            priority
           />
         </div>
         <div className="self-start">

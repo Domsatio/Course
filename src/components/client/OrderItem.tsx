@@ -25,7 +25,12 @@ const OrderStatus = (status: string) => {
   }
 }
 
-const OrderItem = ({order, cencelTransaction}: {order:Order, cencelTransaction: () => void}) => {
+type OrderItemProps = {
+  order: Order,
+  cancelTransaction: () => void
+}
+
+const OrderItem: FC<OrderItemProps> = ({ order, cancelTransaction }) => {
   const { products, grossAmount, transactionStatus, transactionTime, token } = order;
 
   const handleCopyPaymentLink = (paymentLink: string): void => {
@@ -50,8 +55,8 @@ const OrderItem = ({order, cencelTransaction}: {order:Order, cencelTransaction: 
   }
 
   const handleCancelTransaction = () => {
-    
-  }  
+
+  }
 
 
   return (
@@ -122,19 +127,19 @@ const OrderItem = ({order, cencelTransaction}: {order:Order, cencelTransaction: 
                             size='sm'
                             color='red'
                             onClick={() => {
-                              cencelTransaction();
+                              cancelTransaction();
                               toast.dismiss(t.id);
                             }}
                           >
-                            Confirm 
+                            Confirm
                           </Button>
                         </div>
                       </div>
                     ),
-                    {
-                      duration: 6000,
-                    }
-                  )
+                      {
+                        duration: 6000,
+                      }
+                    )
                   }}>
                     Cancel Transaction
                   </MenuItem>

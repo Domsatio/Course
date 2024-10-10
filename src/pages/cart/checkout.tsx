@@ -48,7 +48,7 @@ const Checkout: FC<CheckoutProps> = (data) => {
   const [carts, setCarts] = useState<GetCart[]>(data.carts);
   const [shippingAddress, setShippingAddress] = useState<string>(
     `${data.address?.address}, ${data.address?.city}, ${data.address?.state}, ${data.address?.country}, ${data.address?.zip}, ${data.address?.phone}` ||
-      "No address available"
+    "No address available"
   );
   const { push } = useRouter();
 
@@ -217,10 +217,9 @@ const Checkout: FC<CheckoutProps> = (data) => {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const cookies = cookie.parse(context.req.headers.cookie || "");
-  const token =
-    NODE_ENV === "development"
-      ? cookies["next-auth.session-token"]
-      : cookies["__Secure-next-auth.session-token"];
+  const token = NODE_ENV === "development"
+    ? cookies["next-auth.session-token"]
+    : cookies["__Secure-next-auth.session-token"];
 
   if (!token) {
     return {

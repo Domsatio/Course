@@ -144,13 +144,13 @@ export default async function handlerOrder(
             data,
           });
         } else {
-          const { skip, take } = req.query;
+          const { skip, take, search = "", status, date } = req.query;
           const { totalData, data } = await getOrders({
             skip: Number(skip),
             take: Number(take),
-            search: req.query.search as string,
-            status: req.query.status as string,
-            date: req.query.date as string,
+            search: search as string,
+            status: status as string,
+            date: date as string,
           });
           console.info("Get orders success");
           return res.status(200).send({

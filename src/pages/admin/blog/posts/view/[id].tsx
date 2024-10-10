@@ -10,67 +10,69 @@ import GenerateMetaData from "@/components/GenerateMetaData";
 
 const DetailPostAdmin: FC<GetPost> = (data) => {
   return (
-    <DetailPage title="Post" service={postServices}>
-      <div className="space-y-5">
-        <LabelDetailPage label="Thumbnail">
-          <div className="relative h-96 w-full">
-            <Image
-              src={data.thumbnail}
-              alt={data.title + " thumbnail"}
-              className="transform transition-transform duration-500 group-hover:scale-110"
-              style={{ objectFit: "contain" }}
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              priority
-              fill
-            />
-          </div>
-        </LabelDetailPage>
-        <GenerateMetaData title="Post Detail | Admin" desc={NullProof({ input: data, params: "title" }) || "Post Detail"} />
-        <LabelDetailPage label="Title">
-          {NullProof({ input: data, params: "title" })}
-        </LabelDetailPage>
-        <LabelDetailPage label="Slug">
-          {NullProof({ input: data, params: "slug" })}
-        </LabelDetailPage>
-        <LabelDetailPage label="Body">
-          <article
-            className="prose  max-w-full"
-            dangerouslySetInnerHTML={{
-              __html: NullProof({ input: data, params: "body" }),
-            }}
-          ></article>
-        </LabelDetailPage>
-        <LabelDetailPage label="Categories">
-          <div className="flex flex-wrap gap-1">
-            {NullProof({
-              input: data,
-              params: "categories",
-              isMap: true,
-            }).map(({ category: { id, name } }: CategoryPost) => (
-              <Chip key={id} value={name} size="sm" variant="outlined" />
-            ))}
-          </div>
-        </LabelDetailPage>
-        <LabelDetailPage label="Publised">
-          <Chip
-            variant="ghost"
-            color={data.published ? "green" : "red"}
-            size="sm"
-            value={data.published ? "Published" : "Draft"}
-            icon={
-              <span
-                className={`mx-auto mt-1 block h-2 w-2 rounded-full content-[''] ${data.published ? "bg-green-900" : "bg-red-900"
-                  }`}
+    <>
+      <GenerateMetaData title="Post Detail | Admin" desc={NullProof({ input: data, params: "title" }) || "Post Detail"} />
+      <DetailPage title="Post" service={postServices}>
+        <div className="space-y-5">
+          <LabelDetailPage label="Thumbnail">
+            <div className="relative h-96 w-full">
+              <Image
+                src={data.thumbnail}
+                alt={data.title + " thumbnail"}
+                className="transform transition-transform duration-500 group-hover:scale-110"
+                style={{ objectFit: "contain" }}
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                priority
+                fill
               />
-            }
-            className="max-w-min"
-          />
-        </LabelDetailPage>
-        <LabelDetailPage label="Created At">
-          {NullProof({ input: data, params: "createdAt", type: "date" })}
-        </LabelDetailPage>
-      </div>
-    </DetailPage>
+            </div>
+          </LabelDetailPage>
+          <LabelDetailPage label="Title">
+            {NullProof({ input: data, params: "title" })}
+          </LabelDetailPage>
+          <LabelDetailPage label="Slug">
+            {NullProof({ input: data, params: "slug" })}
+          </LabelDetailPage>
+          <LabelDetailPage label="Body">
+            <article
+              className="prose  max-w-full"
+              dangerouslySetInnerHTML={{
+                __html: NullProof({ input: data, params: "body" }),
+              }}
+            ></article>
+          </LabelDetailPage>
+          <LabelDetailPage label="Categories">
+            <div className="flex flex-wrap gap-1">
+              {NullProof({
+                input: data,
+                params: "categories",
+                isMap: true,
+              }).map(({ category: { id, name } }: CategoryPost) => (
+                <Chip key={id} value={name} size="sm" variant="outlined" />
+              ))}
+            </div>
+          </LabelDetailPage>
+          <LabelDetailPage label="Publised">
+            <Chip
+              variant="ghost"
+              color={data.published ? "green" : "red"}
+              size="sm"
+              value={data.published ? "Published" : "Draft"}
+              icon={
+                <span
+                  className={`mx-auto mt-1 block h-2 w-2 rounded-full content-[''] ${data.published ? "bg-green-900" : "bg-red-900"
+                    }`}
+                />
+              }
+              className="max-w-min"
+            />
+          </LabelDetailPage>
+          <LabelDetailPage label="Created At">
+            {NullProof({ input: data, params: "createdAt", type: "date" })}
+          </LabelDetailPage>
+        </div>
+      </DetailPage>
+    </>
   );
 }
 

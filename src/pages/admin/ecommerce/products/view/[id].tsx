@@ -1,4 +1,4 @@
-import React, { FC, Fragment } from "react";
+import React, { FC } from "react";
 import Image from "next/image";
 import { NullProof } from "@/helpers/appFunction";
 import { LabelDetailPage, DetailPage } from "@/components/admin/DetailPage";
@@ -11,7 +11,7 @@ const DetailProductAdmin: FC<GetProduct> = (data) => {
   const displayDiscount = data.discount > 0 ? `${data.discount}%` : "No discount";
 
   return (
-    <Fragment>
+    <>
       <GenerateMetaData title="Product Detail | Admin" desc={NullProof({ input: data, params: "title" }) || "Product Detail"} />
       <DetailPage title="Product" service={productServices}>
         <div className="flex flex-row flex-wrap gap-5">
@@ -40,7 +40,7 @@ const DetailProductAdmin: FC<GetProduct> = (data) => {
           </div>
         </div>
       </DetailPage>
-    </Fragment>
+    </>
   );
 }
 
