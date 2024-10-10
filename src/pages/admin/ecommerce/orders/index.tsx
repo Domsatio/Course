@@ -1,9 +1,5 @@
 import React, { useState } from "react";
-import {
-  Typography,
-  Avatar,
-  Chip,
-} from "@material-tailwind/react";
+import { Typography, Chip } from "@material-tailwind/react";
 import { Order } from "@/types/order.type";
 import TableData, { TableActionProps } from "@/components/admin/TableData";
 import { orderServices } from "@/services/serviceGenerator";
@@ -67,7 +63,7 @@ export default function Index() {
               color="blue-gray"
               className="font-normal"
             >
-              {totalItems}
+              {totalItems > 1 ? `${totalItems} items` : `${totalItems} item`}
             </Typography>
           </td>
           <td className={classes}>
@@ -85,7 +81,7 @@ export default function Index() {
               color="blue-gray"
               className="font-normal"
             >
-              {order.user.name}
+              {`${order.customerDetails.first_name} ${order.customerDetails.last_name} (${order.customerDetails.email})`}
             </Typography>
           </td>
           <td className={classes}>
@@ -100,9 +96,8 @@ export default function Index() {
                 size="sm"
                 value={order.transactionStatus === "settlement" || order.transactionStatus === "capture" ? "Completed" : "Waiting Payment"}
                 icon={
-                  <span
-                    className={`mx-auto mt-1 block h-2 w-2 rounded-full content-[''] ${order.transactionStatus === "settlement" || order.transactionStatus === "capture" ? "bg-green-900" : "bg-yellow-900"
-                      }`}
+                  <span className={`mx-auto mt-1 block h-2 w-2 rounded-full content-[''] 
+                    ${order.transactionStatus === "settlement" || order.transactionStatus === "capture" ? "bg-green-900" : "bg-yellow-900"}`}
                   />
                 }
               />

@@ -16,24 +16,43 @@ export const getOrders = async ({
   status?: string;
   date?: string;
 }) => {
-  let whereCondition: any = {};
+  let whereCondition: any = {
+    OR: [
+      {
+        user: {
+          email: {
+            contains: search,
+            mode: "insensitive",
+          },
+        },
+      },
+      {
+        user: {
+          name: {
+            contains: search,
+            mode: "insensitive",
+          },
+        },
+      },
+    ],
+  };
 
   // Apply search condition
-  if (search) {
-    const ordersWithProducts: any = await prisma.$queryRaw`
-      SELECT *
-      FROM "Order"
-      WHERE EXISTS (
-        SELECT 1
-        FROM jsonb_array_elements("products") as product
-        WHERE product->>'name' ILIKE ${"%" + search + "%"}
-      )
-    `;
+  // if (search) {
+  //   const ordersWithProducts: any = await prisma.$queryRaw`
+  //     SELECT *
+  //     FROM "Order"
+  //     WHERE EXISTS (
+  //       SELECT 1
+  //       FROM jsonb_array_elements("products") as product
+  //       WHERE product->>'name' ILIKE ${"%" + search + "%"}
+  //     )
+  //   `;
 
-    whereCondition.id = {
-      in: ordersWithProducts.map((order: any) => order.id),
-    };
-  }
+  //   whereCondition.id = {
+  //     in: ordersWithProducts.map((order: any) => order.id),
+  //   };
+  // }
 
   // Apply status condition
   if (status) {

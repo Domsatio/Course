@@ -128,26 +128,28 @@ const ClientAccountOrdersPage = () => {
           </Button>
         </div>
         <div className="space-y-5">
-          {orders.length > 0 ? (
-            orders.map((order, index: number) => (
-              <OrderItem
-                key={index}
-                order={order}
-                cancelTransaction={() => handleCancelOrder(order.id)}
-              />
-            ))
-          ) : loading ? (
+          {loading ? (
             <div className="h-32 flex items-center justify-center">
               <Typography variant="lead">Loading...</Typography>
             </div>
-          ) : (
-            <div className="h-32 flex flex-col gap-3 items-center justify-center">
-              <Typography variant="lead">No orders found</Typography>
-              <Link href="/store">
-                <Button>Shop Now</Button>
-              </Link>
-            </div>
-          )}
+          ) :
+            orders.length > 0 ? (
+              orders.map((order, index: number) => (
+                <OrderItem
+                  key={index}
+                  order={order}
+                  cancelTransaction={() => handleCancelOrder(order.id)}
+                />
+              ))
+            ) : (
+              <div className="h-32 flex flex-col gap-3 items-center justify-center">
+                <Typography variant="lead">No orders found</Typography>
+                <Link href="/store">
+                  <Button>Shop Now</Button>
+                </Link>
+              </div>
+            )
+          }
         </div>
       </div>
     </AccountLayout>
