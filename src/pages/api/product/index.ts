@@ -73,11 +73,12 @@ export default async function handlerProduct(
       }
     } else {
       try {
-        const { skip, take, search } = req.query;
+        const { skip, take, search, orderBy } = req.query;
         const { totalData, data } = await getProducts(
           Number(skip),
-          Number(take),
-          search as string
+          take === "all" ? "all" : Number(take),
+          search as string,
+          orderBy as string
         );
         console.info("Get all products success");
         return res.status(200).send({

@@ -6,6 +6,8 @@ import { Typography, Avatar } from "@material-tailwind/react";
 import { NullProof, numberlistPagination } from "@/helpers/appFunction";
 import { productServices } from "@/services/serviceGenerator";
 import { GetProduct } from "@/types/product.type";
+import {excelLayout} from "@/features/excel/product.excel";
+import { tableHeaderProps } from "@/types/table.type";
 
 type DataProps = {
   data: GetProduct[];
@@ -13,15 +15,15 @@ type DataProps = {
   size: number;
 }
 
-const TABLE_HEAD = [
-  "No",
-  "Thumbnail",
-  "Name",
-  "Description",
-  "Price",
-  "Discount",
-  "Quantity",
-  "Action",
+const TABLE_HEAD: tableHeaderProps[] = [
+  { label: "No." },
+  { label: "Thumbnail" },
+  { label: "Name" },
+  { label: "Description" },
+  { label: "Price", orderBy: "price" },
+  { label: "Discount", orderBy: "discount" },
+  { label: "Quantity", orderBy: "quantity" },
+  { label: "Actions" },
 ];
 
 export default function Index() {
@@ -30,11 +32,15 @@ export default function Index() {
     page: 0,
     size: 0,
   });
+  
   const { Table, TableAction } = TableData({
     title: "Products",
     description: "List of products",
     tableHeader: TABLE_HEAD,
     realtimeTable: "Product",
+    exportExcel: (data) => {
+      excelLayout(data)
+    },
     onSuccess: (data: DataProps) => setData(data),
     service: productServices,
   });

@@ -8,6 +8,10 @@ import {
   TrashIcon,
   PencilSquareIcon,
   XMarkIcon,
+  ArrowDownTrayIcon,
+  ArrowsUpDownIcon,
+  ArrowUpIcon,
+  ArrowDownIcon,
 } from "@heroicons/react/24/solid";
 import {
   Card,
@@ -30,6 +34,8 @@ import { SearchHook } from "@/hooks/searchHook";
 import Link from "next/link";
 import { ModalConfirmation } from "./ModalConfirmation";
 import toast from "react-hot-toast";
+import { cn } from "@/libs/cn";
+import { tableHeaderProps } from "@/types/table.type";
 
 export interface TableActionProps {
   action: "update" | "delete" | "view" | "custom";
@@ -40,6 +46,12 @@ export interface TableActionProps {
   };
 }
 
+type SortByProps = {
+  name: string;
+  param: "asc" | "desc" | "neutral";
+  time: Date;
+};
+
 export default function TableData({
   tableHeader = [],
   title = "",
@@ -49,10 +61,12 @@ export default function TableData({
   filter,
   service,
   realtimeTable,
+  exportExcel,
 }: TableDataProps) {
   const [modalFilter, setModalFilter] = useState<boolean>(false);
   const { debounceValue, searchQuery, setSearchQuery } = SearchHook({});
-  const { isLoad, isError, setIsLoad, setIsError } = FetchDataHook();
+  const { isLoad, isError, setIsLoad, setIsError, data, setData } =
+    FetchDataHook();
   const {
     activePage,
     setActivePage,
@@ -64,17 +78,51 @@ export default function TableData({
   } = PaginationHook({});
   const router = useRouter();
 
+  const generateSortBy = ({ name, param, time }: SortByProps) => ({
+    name,
+    param,
+    time,
+  });
+  const initialSortBy = tableHeader.reduce(
+    (acc: any, head: tableHeaderProps) => {
+      if (head.orderBy)
+        acc[head.orderBy as string] = generateSortBy({
+          name: head.orderBy as string,
+          param: "neutral",
+          time: new Date(),
+        });
+      return acc;
+    },
+    {}
+  );
+  const [orderBy, setOrderBy] = useState<{ [key: string]: SortByProps }>({});
+
+  const filterSortBy = (): SortByProps | null => {
+    const sort = Object.entries(orderBy).filter(
+      ([key, value]) => value.param !== "neutral"
+    );
+    if (sort.length === 0) return null;
+    if (sort.length === 1) return sort[0][1];
+    return sort.reduce<[string, SortByProps]>((latest, current) => {
+      return new Date(current[1].time) > new Date(latest[1].time)
+        ? current
+        : latest;
+    }, sort[0])[1];
+  };
+
   const handleSetLimit = (item: number) => {
     setTake(item);
     setActivePage(1);
   };
 
   const getDataTable = async () => {
+    const orderByParam = filterSortBy();
     const skip = activePage * take - take;
     const params: {
       skip: number;
       take: number;
       search?: string;
+      orderBy?: string;
     } = {
       skip: skip,
       take,
@@ -82,6 +130,9 @@ export default function TableData({
     };
     if (searchQuery) {
       params.search = debounceValue || "";
+    }
+    if (orderByParam) {
+      params.orderBy = `${orderByParam.name}:${orderByParam.param}`;
     }
     setIsLoad(true);
     setIsError(false);
@@ -99,15 +150,48 @@ export default function TableData({
     }
   };
 
+  const exportData = () => {
+    toast
+      .promise(
+        new Promise<void>(async (resolve, reject) => {
+          try {
+            setIsLoad(true);
+            const orderBy = filterSortBy();
+            let param:any= {
+              skip: 0,
+              take: "all",
+              ...getQueryParams(),
+            }
+            if(orderBy) param.orderBy = `${orderBy.name}:${orderBy.param}`
+            const {
+              data: { totalData, data },
+            } = await service.getItems(param);
+            resolve();
+            exportExcel?.(data);
+          } catch (error) {
+            reject();
+          }
+        }),
+        {
+          loading: "Exporting...",
+          success: "Export success",
+          error: "Export failed",
+        }
+      )
+      .finally(() => {
+        setIsLoad(false);
+      });
+  };
+
   const handleDelete = async (id: string) => {
     try {
       const { data } = await service.deleteItem({ id });
       if (data) {
         getDataTable();
       }
-      toast.success('Delete data success!')
+      toast.success("Delete data success!");
     } catch (error) {
-      toast.error('Delete data failed!')
+      toast.error("Delete data failed!");
       console.log("error", error);
     }
   };
@@ -137,14 +221,13 @@ export default function TableData({
   // a function to handle set query parameter and get data table
   const handleSetQuery = async () => {
     let query: any = { ...getQueryParams(), search: searchQuery || "" };
-    if (query.search === '') {
+    if (query.search === "") {
       delete query.search;
     }
-    const res = await router.replace(
-      {
-        pathname: router.pathname,
-        query: query,
-      });
+    const res = await router.replace({
+      pathname: router.pathname,
+      query: query,
+    });
     if (!isLoad && res) {
       getDataTable();
     }
@@ -152,15 +235,21 @@ export default function TableData({
 
   useEffect(() => {
     if (!isLoad) {
-      getDataTable()
+      getDataTable();
     }
-  }, [take, activePage])
+  }, [take, activePage]);
 
   useEffect(() => {
     if (debounceValue !== null && !isLoad) {
       handleSetQuery();
     }
   }, [debounceValue]);
+
+  useEffect(() => {
+    if (Object.keys(orderBy).length > 0) {
+      getDataTable();
+    }
+  }, [orderBy]);
 
   // table component
   const Table = (children: React.ReactNode) => (
@@ -205,15 +294,16 @@ export default function TableData({
             </div>
             {isActionAdd && (
               <Link href={router.pathname + "/create"}>
-                <Button color="blue">
-                  Create
-                </Button>
+                <Button color="blue">Create</Button>
               </Link>
             )}
             {filter && (
               <Fragment>
                 <Tooltip content="Filter">
-                  <IconButton variant="text" onClick={() => setModalFilter(true)}>
+                  <IconButton
+                    variant="text"
+                    onClick={() => setModalFilter(true)}
+                  >
                     <FunnelIcon className="h-5 w-5" />
                   </IconButton>
                 </Tooltip>
@@ -226,34 +316,97 @@ export default function TableData({
                     isOpen: modalFilter,
                     handler: setModalFilter,
                   }}
-                  onSubmit={getDataTable}
+                  onSubmit={() => getDataTable()}
                   onSuccess={(data) => onSuccess?.(data)}
                   isFilter={true}
                   toastMessage={{
                     success: "Filter success",
-                    error: "Filter failed"
+                    error: "Filter failed",
                   }}
                 />
               </Fragment>
             )}
           </div>
         </div>
+        <div className="flex justify-end">
+          {exportExcel && (
+            <Button
+              color="green"
+              onClick={() => exportData()}
+              className="flex items-center gap-1 px-3"
+              loading={isLoad}
+            >
+              <ArrowDownTrayIcon className="h-4 w-4 font-bold" /> Excel
+            </Button>
+          )}
+        </div>
       </CardHeader>
       <CardBody className="overflow-auto px-0 max-h-[500px]">
         <table className="w-full min-w-max text-left">
           <thead className="sticky -top-[24.5px] h-8 z-30 bg-blue-gray-50">
             <tr>
-              {tableHeader.map((head: string) => (
-                <th key={head} className="border-y border-blue-gray-100  p-4">
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal leading-none opacity-70"
+              {tableHeader.map((head: tableHeaderProps, index: number) => {
+                return (
+                  <th
+                    key={index}
+                    className={cn(
+                      "border-y border-blue-gray-100 p-4 bg-gray-50",
+                      head.style && head.style
+                    )}
                   >
-                    {head}
-                  </Typography>
-                </th>
-              ))}
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal leading-none opacity-70"
+                    >
+                      {head.label}{" "}
+                      {head.orderBy && (
+                        <IconButton
+                          className="bg-transparent shadow-none hover:shadow-none text-gray-500 px-0"
+                          color="blue-gray"
+                          size="sm"
+                          onClick={() => {
+                            const keyParam = head.orderBy as string;
+                            if (!orderBy[keyParam]) {
+                              setOrderBy((prev) => ({
+                                ...prev,
+                                [keyParam]: {
+                                  name: keyParam,
+                                  param: "asc",
+                                  time: new Date(),
+                                },
+                              }));
+                            } else {
+                              setOrderBy((prev) => ({
+                                ...prev,
+                                [keyParam]: {
+                                  name: keyParam,
+                                  param:
+                                    prev[keyParam]?.param === "neutral"
+                                      ? "asc"
+                                      : prev[keyParam]?.param === "asc"
+                                      ? "desc"
+                                      : "neutral",
+                                  time: new Date(),
+                                },
+                              }));
+                            }
+                          }}
+                        >
+                          {orderBy[head.orderBy as string]?.param === "asc" ? (
+                            <ArrowUpIcon className="h-4 w-4" />
+                          ) : orderBy[head.orderBy as string]?.param ===
+                            "desc" ? (
+                            <ArrowDownIcon className="h-4 w-4" />
+                          ) : (
+                            <ArrowsUpDownIcon className="h-5 w-4" />
+                          )}
+                        </IconButton>
+                      )}
+                    </Typography>
+                  </th>
+                );
+              })}
             </tr>
           </thead>
           <tbody className="relative">
@@ -262,7 +415,7 @@ export default function TableData({
                 long={tableHeader.length}
                 isLoading={isLoad}
                 isError={isError}
-                onRefresh={getDataTable}
+                onRefresh={() => getDataTable()}
               />
             ) : (
               children
@@ -308,13 +461,9 @@ export default function TableData({
             key={action}
             content={action[0].toUpperCase() + action.substring(1)}
           >
-            {(action === 'view' || action === 'update') ? (
+            {action === "view" || action === "update" ? (
               <Link href={router.pathname + `/${action}/` + id}>
-                <IconButton
-                  variant="text"
-                  className="cursor-pointer"
-                  size="sm"
-                >
+                <IconButton variant="text" className="cursor-pointer" size="sm">
                   {action === "update" ? (
                     <PencilSquareIcon className="h-4 w-4" />
                   ) : (
@@ -327,15 +476,13 @@ export default function TableData({
                 variant="text"
                 className="cursor-pointer"
                 size="sm"
-                onClick={
-                  action === "delete"
-                    ? () => setIsOpen(true)
-                    : onClick
-                }
+                onClick={action === "delete" ? () => setIsOpen(true) : onClick}
               >
                 {action === "delete" ? (
                   <TrashIcon className="h-4 w-4" color="red" />
-                ) : custom?.icon}
+                ) : (
+                  custom?.icon
+                )}
               </IconButton>
             )}
           </Tooltip>
@@ -349,5 +496,3 @@ export default function TableData({
     TableAction,
   };
 }
-
-

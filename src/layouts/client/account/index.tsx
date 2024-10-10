@@ -1,4 +1,5 @@
-import { accountRoutes } from '@/constants/client/AccountRoutes'
+import { accountRoutes } from '@/constants/client/accountRoutes'
+import { cn } from '@/libs/cn'
 import { Card, CardBody, CardHeader, Typography } from '@material-tailwind/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -13,16 +14,19 @@ const AccountLayout = ({ children }: { children: React.ReactNode }) => {
         <Typography variant="h4" color="black" placeholder='Blog Page' className='px-2'>
           Account Page
         </Typography>
-        <Card>
+        <Card className='shadow-none md:shadow-md'>
           <CardHeader
             floated={false}
             shadow={false}
             color="transparent"
-            className="m-0 rounded-none p-5"
+            className="m-0 rounded-none p-5 overflow-x-auto pr-6 lg:pr-0"
           >
-            <ul className='flex gap-5 lg:gap-10'>
-              {accountRoutes.map(({ label, href }) =>
-                <li key={label} className={`${pathname === href ? 'text-black' : 'text-gray-600'} hover:text-black`}>
+            <ul className='flex gap-10'>
+              {accountRoutes.map(({ label, href }, index) =>
+                <li key={label} className={cn('hover:text-black',
+                  pathname === href ? 'text-black' : 'text-gray-500',
+                  index === accountRoutes.length - 1 && 'pr-5 lg:pr-0'
+                )}>
                   <Link href={href}>
                     {label}
                   </Link>

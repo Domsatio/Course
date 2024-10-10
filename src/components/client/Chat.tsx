@@ -131,6 +131,7 @@ export function ChatPopover() {
   return (
     <div className="fixed z-10 bottom-3 right-3">
       <Popover
+        placement="top-start"
         animate={{
           mount: { scale: 1, y: 0 },
           unmount: { scale: 0, y: 25 },

@@ -138,7 +138,15 @@ export default async function handlerPost(
       }
     } else {
       try {
-        const { skip, take, search = "", category = "", published } = req.query;
+        const {
+          skip,
+          take,
+          search = "",
+          category = "",
+          published,
+          orderBy,
+        } = req.query;
+        console.log("req.query", req.query);
         if (token?.role !== "ADMIN") {
           const { totalData, data } = await getPublishedPosts(
             Number(skip),
@@ -160,7 +168,8 @@ export default async function handlerPost(
             Number(take),
             search as string,
             category as string,
-            published as any
+            published as any,
+            orderBy as string
           );
           console.info("Get posts success");
           return res.status(200).send({

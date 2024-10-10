@@ -413,7 +413,7 @@ export const FormInput = ({
       {errorFetch && (
         <ModalError onClick={() => fetchData()} />
       )}
-      <div className={cn("flex flex-row flex-wrap justify-between", { 'max-h-full overflow-y-auto px-3': asModal })}>
+      <div className={cn("flex flex-row flex-wrap justify-between", { 'h-96 lg:h-full overflow-y-auto px-3': asModal })}>
         {generateInputForm()}
       </div>
       <div className={cn("w-full flex justify-end items-center gap-2", { 'mt-5': asModal })}>

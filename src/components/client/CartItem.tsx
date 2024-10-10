@@ -93,14 +93,16 @@ export default function CartItem({
         <div className="self-start">
           <Link
             href={`/store/${cart.product.slug}`}
-            className="flex items-center gap-2"
           >
             <h2 className="font-semibold">{cart.product.name}</h2>
+            <p className="block md:hidden text-xs">
+              {quantity} X {ConvertCurrency(cart.product.finalPrice)}
+            </p>
           </Link>
         </div>
       </div>
       <div className="self-start">
-        <p className="font-semibold">
+        <p className="hidden lg:block font-semibold">
           {quantity} X {ConvertCurrency(cart.product.finalPrice)}
         </p>
       </div>

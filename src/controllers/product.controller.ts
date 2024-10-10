@@ -1,11 +1,14 @@
 import prisma from "@/libs/prisma/db";
 import { Product, UpdateProduct } from "@/types/product.type";
+import { generateOrderBy } from "@/helpers/appFunction";
 
 export const getProducts = async (
   skip: number = 0,
-  take: number = 5,
-  search: string = ""
+  take: number | 'all' = 5,
+  search: string = "",
+  orderByParam: any = { createdAt: "desc" }
 ) => {
+
   let whereCondition: any = {
     OR: [
       {
@@ -42,10 +45,8 @@ export const getProducts = async (
       const res = await tx.product.findMany({
         where: whereCondition,
         skip,
-        take,
-        orderBy: {
-          createdAt: "desc",
-        },
+        take: take === "all" ? totalData : take,
+        orderBy: generateOrderBy(orderByParam),
       });
 
       const data = res.map((item) => ({

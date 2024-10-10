@@ -1,14 +1,15 @@
 import prisma from "@/libs/prisma/db";
 import { Post, UpdatePost } from "@/types/post.type";
 import { convertStringToBoolean } from "@/helpers/appFunction";
-// Removed import for QueryMode as it is not exported by @prisma/client
+import { generateOrderBy } from "@/helpers/appFunction";
 
 export const getPosts = async (
   skip: number = 0,
   take: number = 5,
   search: string = "",
   category: string = "",
-  published: boolean | string | undefined = undefined
+  published: boolean | string | undefined = undefined,
+  orderBy: any = { createdAt: "desc" }
 ) => {
   let whereCondition: any = {
     OR: [
@@ -61,9 +62,7 @@ export const getPosts = async (
         },
         skip,
         take,
-        orderBy: {
-          createdAt: "desc",
-        },
+        orderBy: generateOrderBy(orderBy),
       });
 
       return { totalData, data };

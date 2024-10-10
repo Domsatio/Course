@@ -7,21 +7,23 @@ import { CategoryPost, GetPost } from "@/types/post.type";
 import { dateFormater } from "@/utils/date";
 import { NullProof, numberlistPagination } from "@/helpers/appFunction";
 import { FilterInputList } from "../../../../constants/admin/InputLists/inputLayoutPost";
+import { tableHeaderProps } from "@/types/table.type";
+import { cn } from "@/libs/cn";
 
-type DataProps = {
+type DataProps= {
   data: GetPost[];
   page: number;
   size: number;
 }
 
-const TABLE_HEAD = [
-  "No",
-  "Title",
-  "Body",
-  "Category(es)",
-  "Published",
-  "Date Created",
-  "Action",
+const TABLE_HEAD: tableHeaderProps[] = [
+  { label: "No.", style: "md:sticky md:left-0 md:z-10" },
+  { label: "Title", style: "md:sticky md:left-[54px] md:z-10" },
+  { label: "Body" },
+  { label: "Categories" },
+  { label: "Status" },
+  { label: "Created At", orderBy: "createdAt" },
+  { label: "Actions" },
 ];
 
 export default function Index() {
@@ -50,7 +52,8 @@ export default function Index() {
       const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
       return (
         <tr key={post.id} className="even:bg-blue-gray-50/50">
-          <td className={classes}>
+          <td className={cn(`${classes} md:sticky md:left-0 md:z-10`, 
+            index % 2 === 0 ? 'bg-white' : 'bg-gray-100')}>
             <div className="flex items-center gap-3">
               <Typography variant="small" color="blue-gray">
                 {numberlistPagination({
@@ -62,11 +65,13 @@ export default function Index() {
               </Typography>
             </div>
           </td>
-          <td className={`${classes} max-w-[250px] max-h-min`}>
+          <td className={cn(`${classes} max-w-[250px] max-h-min md:sticky md:left-[54px] md:z-10`,
+             index % 2 === 0 ? 'bg-white' : 'bg-gray-100'
+          )}>
             <div className="flex items-center gap-3">
               <p
                 color="blue-gray"
-                className="line-clamp-2"
+                className="prose font-normal line-clamp-2"
               >
                 {NullProof({ input: post, params: "title" })}
               </p>

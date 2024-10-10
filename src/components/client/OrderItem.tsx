@@ -15,6 +15,7 @@ import { EllipsisVerticalIcon, XMarkIcon } from '@heroicons/react/24/solid'
 import { Order } from '@/types/order.type'
 import { dateFormater } from '@/utils/date'
 import toast from 'react-hot-toast'
+import { cn } from '@/libs/cn'
 
 const OrderStatus = (status: string) => {
   if (status === 'pending') {
@@ -52,6 +53,11 @@ const OrderItem: FC<OrderItemProps> = ({ order, cancelTransaction }) => {
       },
     });
   }
+
+  const handleCancelTransaction = () => {
+
+  }
+
 
   return (
     <Card className='shadow-none border border-gray-300'>
@@ -100,7 +106,41 @@ const OrderItem: FC<OrderItemProps> = ({ order, cancelTransaction }) => {
                   <MenuItem onClick={() => handleCopyPaymentLink(token.redirect_url)}>
                     Copy Payment Link
                   </MenuItem>
-                  <MenuItem className='text-red-600 hover:text-red-600' onClick={() => cancelTransaction()}>
+                  <MenuItem className='text-red-600 hover:text-red-600' onClick={() => {
+                    toast((t) => (
+                      <div
+                        className={cn(`max-w-md w-full bg-white pointer-events-auto flex flex-col`,
+                          t.visible ? 'animate-fade-in-up' : 'animate-fade-out-down'
+                        )}
+                      >
+                        <div className="p-4 text-center">
+                          <Typography variant='h6' color='black'>Are you sure you want to cancel this transaction?</Typography>
+                        </div>
+                        <div className="w-full flex justify-end gap-2">
+                          <Button
+                            size='sm'
+                            onClick={() => toast.dismiss(t.id)}
+                          >
+                            Close
+                          </Button>
+                          <Button
+                            size='sm'
+                            color='red'
+                            onClick={() => {
+                              cancelTransaction();
+                              toast.dismiss(t.id);
+                            }}
+                          >
+                            Confirm
+                          </Button>
+                        </div>
+                      </div>
+                    ),
+                      {
+                        duration: 6000,
+                      }
+                    )
+                  }}>
                     Cancel Transaction
                   </MenuItem>
                 </MenuList>
