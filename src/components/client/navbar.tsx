@@ -81,7 +81,7 @@ export default function ComplexNavbar() {
         <Typography className="cursor-pointer py-1.5 font-medium">
           DomClub
         </Typography>
-        <div className="hidden min-w-min lg:border-black lg:block ">
+        <div className="hidden min-w-min lg:border-black lg:block absolute right-1/2 translate-x-1/2">
           <NavList pathname={pathname} />
         </div>
         <IconButton
