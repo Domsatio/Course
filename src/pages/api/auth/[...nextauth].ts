@@ -59,6 +59,9 @@ export const authOptions: NextAuthOptions = {
   },
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
+    async redirect({ baseUrl }) {
+      return baseUrl;
+    },
     async jwt({ token, user, account }) {
       if (account && user) {
         token.accessToken = account.access_token;

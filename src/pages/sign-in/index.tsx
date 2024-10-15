@@ -39,7 +39,6 @@ export default function SignIn() {
     if (signInData?.error) {
       toast.error(signInData.error);
     }
-    push('/')
   };
 
   return (
