@@ -10,7 +10,7 @@ const range = (start: number, end: number, step: number): number[] => {
   return Array.from({ length: (end - start) / step + 1 }, (_, i) => start + i * step);
 };
 
-const DatePickerComponent = ({onChangeDate}:{onChangeDate: (value:any) => void}) => {
+const DatePickerComponent = ({ onChangeDate }: { onChangeDate: (value: any) => void }) => {
   const [startDate, setStartDate] = useState<Date>(new Date());
   const years: number[] = range(1990, getYear(new Date()) + 1, 1);
   const months: string[] = [

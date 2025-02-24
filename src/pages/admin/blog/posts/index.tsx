@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import TableData from "@/components/admin/TableData";
-import { TableActionProps } from "@/components/admin/TableData";
+import { TableActionProps, Table, TableAction, TableCol } from "@/components/admin/TableData";
 import { Typography, Chip } from "@material-tailwind/react";
 import { postServices } from "@/services/serviceGenerator";
 import { CategoryPost, GetPost } from "@/types/post.type";
@@ -32,18 +31,18 @@ export default function Index() {
     page: 0,
     size: 0,
   });
-  const { Table, TableCol, TableAction } = TableData({
-    title: "Posts",
-    description: "List of posts",
-    tableHeader: TABLE_HEAD,
-    service: postServices,
-    realtimeTable: "Post",
-    onSuccess: (data: DataProps) => setData(data),
-    filter: FilterInputList,
-  });
 
-  return Table(
-    NullProof({
+  return (
+    <Table
+      title="Posts"
+      description="List of posts"
+      tableHeader={TABLE_HEAD}
+      service={postServices}
+      realtimeTable="Post"
+      onSuccess={(data: DataProps) => setData(data)}
+      filter={FilterInputList}
+    >
+    {NullProof({
       input: data,
       params: "data",
       isMap: true,
@@ -139,7 +138,8 @@ export default function Index() {
           </td>
         </tr>
       );
-    })
+    })}
+    </Table>
   );
 }
 

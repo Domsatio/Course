@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import TableData from "@/components/admin/TableData";
-import { TableActionProps } from "@/components/admin/TableData";
+import { TableActionProps, Table, TableAction, TableCol } from "@/components/admin/TableData";
 import { Typography, Avatar } from "@material-tailwind/react";
 import { NullProof, numberlistPagination } from "@/helpers/appFunction";
 import { productServices } from "@/services/serviceGenerator";
@@ -33,20 +32,17 @@ export default function Index() {
     size: 0,
   });
   
-  const { Table, TableCol, TableAction } = TableData({
-    title: "Products",
-    description: "List of products",
-    tableHeader: TABLE_HEAD,
-    realtimeTable: "Product",
-    exportExcel: (data) => {
-      excelLayout(data)
-    },
-    onSuccess: (data: DataProps) => setData(data),
-    service: productServices,
-  });
-
-  return Table(
-    NullProof({
+  return (
+    <Table
+      title="Products"
+      description="List of products"
+      tableHeader={TABLE_HEAD}
+      service={productServices}
+      realtimeTable="Product"
+      onSuccess={(data: DataProps) => setData(data)}
+      exportExcel={(data:any) => excelLayout(data)}
+    >
+    {NullProof({
       input: data,
       params: "data",
       isMap: true,
@@ -128,7 +124,8 @@ export default function Index() {
           </td>
         </tr>
       );
-    })
+    })}
+    </Table>
   );
 }
 

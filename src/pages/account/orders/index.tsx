@@ -63,7 +63,7 @@ const ClientAccountOrdersPage = () => {
     setLoading(false);
   };
 
-  const handleCencelOrder = async (id: string) => {
+  const handleCancelOrder = async (id: string) => {
     toast
       .promise(
         new Promise<void>(async (resolve, reject) => {
@@ -110,7 +110,7 @@ const ClientAccountOrdersPage = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
-          <DatePickerComponent onChangeDate={(value) => setFilterParam((prev) => ({...prev, date: value}))} />
+          <DatePickerComponent onChangeDate={(value) => setFilterParam((prev) => ({ ...prev, date: value }))} />
         </div>
         <div className="flex items-center gap-2">
           {OrderTab.map(({ label, value }) => (
@@ -138,26 +138,28 @@ const ClientAccountOrdersPage = () => {
           </Button>
         </div>
         <div className="space-y-5">
-          {orders.length > 0 ? (
-            orders.map((order, index: number) => (
-              <OrderItem
-                key={index}
-                order={order}
-                cencelTransaction={() => handleCencelOrder(order.id)}
-              />
-            ))
-          ) : loading ? (
+          {loading ? (
             <div className="h-32 flex items-center justify-center">
               <Typography variant="lead">Loading...</Typography>
             </div>
-          ) : (
-            <div className="h-32 flex flex-col gap-3 items-center justify-center">
-              <Typography variant="lead">No orders found</Typography>
-              <Link href="/store">
-                <Button>Shop Now</Button>
-              </Link>
-            </div>
-          )}
+          ) :
+            orders.length > 0 ? (
+              orders.map((order, index: number) => (
+                <OrderItem
+                  key={index}
+                  order={order}
+                  cancelTransaction={() => handleCancelOrder(order.id)}
+                />
+              ))
+            ) : (
+              <div className="h-32 flex flex-col gap-3 items-center justify-center">
+                <Typography variant="lead">No orders found</Typography>
+                <Link href="/store">
+                  <Button>Shop Now</Button>
+                </Link>
+              </div>
+            )
+          }
         </div>
       </div>
     </AccountLayout>

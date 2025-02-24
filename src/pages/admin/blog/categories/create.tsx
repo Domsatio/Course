@@ -2,11 +2,10 @@ import { FormInput } from "@/components/admin/FormInput";
 import { FormInputList } from "../../../../constants/admin/InputLists/inputLayoutCategory";
 import { categoryServices } from "@/services/serviceGenerator";
 import GenerateMetaData from "@/components/GenerateMetaData";
-import { Fragment } from "react";
 
 export default function Create() {
   return (
-    <Fragment>
+    <>
       <GenerateMetaData title="Create Category | Admin" desc="Create Category Page" />
       <FormInput
         inputList={FormInputList}
@@ -18,6 +17,6 @@ export default function Create() {
           error: "Failed to create category",
         }}
       />
-    </Fragment>
+    </>
   );
 }

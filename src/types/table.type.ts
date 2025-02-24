@@ -17,4 +17,5 @@ export type TableDataProps = {
   service: any;
   realtimeTable?: string;
   exportExcel?: (data: any) => void;
+  children?: any
 };

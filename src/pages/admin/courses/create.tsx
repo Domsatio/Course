@@ -5,7 +5,7 @@ import GenerateMetaData from "@/components/GenerateMetaData";
 
 export default function Create() {
   return (
-    <div>
+    <>
       <GenerateMetaData title="Create Course | Admin" desc="Create Course Page" />
       <FormInput
         inputList={FormInputList}
@@ -17,7 +17,7 @@ export default function Create() {
           error: "Failed to create course"
         }}
       />
-    </div>
+    </>
   );
 }
 

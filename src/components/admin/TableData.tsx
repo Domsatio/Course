@@ -27,6 +27,13 @@ import {
   PopoverHandler,
   PopoverContent,
 } from "@material-tailwind/react";
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  DropResult,
+  DroppableProvided,
+} from "react-beautiful-dnd";
 import TableSkeleton from "../Skeleton/table.skeleton";
 import { TableDataProps } from "@/types/table.type";
 import { FormInput } from "@/components/admin/FormInput";
@@ -40,6 +47,7 @@ import { ModalConfirmation } from "./ModalConfirmation";
 import toast from "react-hot-toast";
 import { cn } from "@/libs/cn";
 import { tableHeaderProps } from "@/types/table.type";
+import useTableStore from "@/store/tableSlice";
 
 export interface TableActionProps {
   action: "update" | "delete" | "view" | "custom";
@@ -56,26 +64,28 @@ type SortByProps = {
   time: Date;
 };
 
-// type VisibleColumnsProps = {
-//   [key: string]: boolean;
-// };
-
 type VisibleColumnsProps = {
   isVisible: boolean;
   label: string;
 };
 
-export default function TableData({
-  tableHeader = [],
-  title = "",
-  description = "",
-  onSuccess,
-  isActionAdd = true,
-  filter,
-  service,
-  realtimeTable,
-  exportExcel,
-}: TableDataProps) {
+const keyVisibleColumns = (key: string) => {
+  return key.toLowerCase().split(" ").join("") || key.toLowerCase();
+};
+
+export const Table = ({
+    tableHeader = [],
+    title = "",
+    description = "",
+    onSuccess,
+    isActionAdd = true,
+    filter,
+    service,
+    realtimeTable,
+    exportExcel,
+    children,
+  }: TableDataProps) => { 
+  const [header, setHeader] = useState<tableHeaderProps[]>(tableHeader);
   const [modalFilter, setModalFilter] = useState<boolean>(false);
   const { debounceValue, searchQuery, setSearchQuery } = SearchHook({});
   const { isLoad, isError, setIsLoad, setIsError, data, setData } =
@@ -92,9 +102,8 @@ export default function TableData({
   } = PaginationHook({});
   const router = useRouter();
 
-  const keyVisibleColumns = (key: string) => {
-    return key.toLowerCase().split(" ").join("") || key.toLowerCase();
-  };
+  const { setListVisibleColumns, setSelectedId, selectedId } = useTableStore();
+
   const initialVisibleColumns = tableHeader.reduce(
     (acc: { [key: string]: any }, head: tableHeaderProps) => {
       if (head.visible) {
@@ -108,10 +117,14 @@ export default function TableData({
     },
     {}
   );
+
   const [visibleColumns, setVisibleColumns] = useState<{
     [key: string]: VisibleColumnsProps;
   }>(initialVisibleColumns);
-  console.log(visibleColumns);
+
+  useEffect(() => {
+    setListVisibleColumns(visibleColumns);
+  }, [visibleColumns]);
 
   const filterOrderBy = (): SortByProps | null => {
     const sort = Object.entries(orderBy).filter(
@@ -156,6 +169,7 @@ export default function TableData({
       const {
         data: { totalData, data },
       } = await service.getItems(params);
+      // setData(data);
       onSuccess?.({ data: data, page: activePage, size: take });
       handleSetTotalPages(totalData);
     } catch (error) {
@@ -209,8 +223,16 @@ export default function TableData({
     } catch (error) {
       toast.error("Delete data failed!");
       console.log("error", error);
+    } finally {
+      setSelectedId("");
     }
   };
+
+  useEffect(() => {
+    if (selectedId) {
+      handleDelete(selectedId);
+    }
+  }, [selectedId]);
 
   useEffect(() => {
     const params: any = getQueryParams();
@@ -267,8 +289,17 @@ export default function TableData({
     }
   }, [orderBy]);
 
-  // table component
-  const Table = (children: React.ReactNode) => (
+  const handleDragEnd = (result: DropResult) => {
+    if (!result.destination) return;
+    console.log("result", result);
+    const reorderedColumns = Array.from(header);
+    const [movedColumn] = reorderedColumns.splice(result.source.index, 1);
+    reorderedColumns.splice(result.destination.index, 0, movedColumn);
+    console.log("reorderedColumns", reorderedColumns);
+    setHeader(reorderedColumns);
+  };
+
+    return (
     <Card className="h-full w-full overflow-auto">
       <CardHeader floated={false} shadow={false} className="rounded-none">
         <div className="mb-4 flex flex-col justify-between gap-8 md:flex-row md:items-center">
@@ -395,6 +426,7 @@ export default function TableData({
                       {visibleColumns &&
                         Object.keys(visibleColumns).map((key) => (
                           <Checkbox
+                            key={key}
                             crossOrigin={"visible column"}
                             label={visibleColumns[key].label}
                             checked={visibleColumns[key].isVisible}
@@ -432,88 +464,129 @@ export default function TableData({
         </div>
       </CardHeader>
       <CardBody className="overflow-auto px-0 max-h-[500px]">
-        <table className="w-full min-w-max text-left">
-          <thead className="sticky -top-[24.5px] h-8 z-20 bg-blue-gray-50">
-            <tr>
-              {tableHeader.map((head: tableHeaderProps, index: number) => {
-                const visibleKey = keyVisibleColumns(head.label);
-                if (head.visible && !visibleColumns[visibleKey].isVisible) return null;
-                return (
-                  <th
-                    key={index}
-                    className={cn(
-                      "border-y border-blue-gray-100 p-4 bg-gray-50",
-                      head.style && head.style
-                    )}
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <table className="w-full min-w-max text-left">
+            <thead className="sticky -top-[24.5px] h-8 z-20 bg-blue-gray-50">
+              <Droppable droppableId="columns" direction="horizontal">
+                {(provided) => (
+                  <tr 
+                    {...provided.droppableProps} 
+                    ref={provided.innerRef}
                   >
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal leading-none opacity-70"
-                    >
-                      {head.label}{" "}
-                      {head.orderBy && (
-                        <IconButton
-                          className="bg-transparent shadow-none hover:shadow-none text-gray-500 px-0"
-                          color="blue-gray"
-                          size="sm"
-                          onClick={() => {
-                            const keyParam = head.orderBy as string;
-                            if (!orderBy[keyParam]) {
-                              setOrderBy((prev) => ({
-                                ...prev,
-                                [keyParam]: {
-                                  name: keyParam,
-                                  param: "asc",
-                                  time: new Date(),
-                                },
-                              }));
-                            } else {
-                              setOrderBy((prev) => ({
-                                ...prev,
-                                [keyParam]: {
-                                  name: keyParam,
-                                  param:
-                                    prev[keyParam]?.param === "neutral"
-                                      ? "asc"
-                                      : prev[keyParam]?.param === "asc"
-                                      ? "desc"
-                                      : "neutral",
-                                  time: new Date(),
-                                },
-                              }));
-                            }
-                          }}
+                    {header.map((head: tableHeaderProps, index: number) => {
+                      const visibleKey = keyVisibleColumns(head.label);
+                      if (head.visible && !visibleColumns[visibleKey].isVisible)
+                        return null;
+                      return (
+                        <Draggable
+                          key={head.label}
+                          draggableId={head.label}
+                          index={index}
                         >
-                          {orderBy[head.orderBy as string]?.param === "asc" ? (
-                            <ArrowUpIcon className="h-4 w-4" />
-                          ) : orderBy[head.orderBy as string]?.param ===
-                            "desc" ? (
-                            <ArrowDownIcon className="h-4 w-4" />
-                          ) : (
-                            <ArrowsUpDownIcon className="h-5 w-4" />
+                          {(providedd) => (
+                            <th
+                              key={index}
+                              ref={providedd.innerRef}
+                              {...providedd.draggableProps}
+                              {...providedd.dragHandleProps}
+                              className={cn(
+                                "border-y border-blue-gray-100 p-4 bg-gray-50",
+                                head.style && head.style
+                              )}
+                            >
+                              <Typography
+                                variant="small"
+                                color="blue-gray"
+                                className="font-normal leading-none opacity-70"
+                              >
+                                {head.label}{" "}
+                                {head.orderBy && (
+                                  <IconButton
+                                    className="bg-transparent shadow-none hover:shadow-none text-gray-500 px-0"
+                                    color="blue-gray"
+                                    size="sm"
+                                    onClick={() => {
+                                      const keyParam = head.orderBy as string;
+                                      if (!orderBy[keyParam]) {
+                                        setOrderBy((prev) => ({
+                                          ...prev,
+                                          [keyParam]: {
+                                            name: keyParam,
+                                            param: "asc",
+                                            time: new Date(),
+                                          },
+                                        }));
+                                      } else {
+                                        setOrderBy((prev) => ({
+                                          ...prev,
+                                          [keyParam]: {
+                                            name: keyParam,
+                                            param:
+                                              prev[keyParam]?.param ===
+                                              "neutral"
+                                                ? "asc"
+                                                : prev[keyParam]?.param ===
+                                                  "asc"
+                                                ? "desc"
+                                                : "neutral",
+                                            time: new Date(),
+                                          },
+                                        }));
+                                      }
+                                    }}
+                                  >
+                                    {orderBy[head.orderBy as string]?.param ===
+                                    "asc" ? (
+                                      <ArrowUpIcon className="h-4 w-4" />
+                                    ) : orderBy[head.orderBy as string]
+                                        ?.param === "desc" ? (
+                                      <ArrowDownIcon className="h-4 w-4" />
+                                    ) : (
+                                      <ArrowsUpDownIcon className="h-5 w-4" />
+                                    )}
+                                  </IconButton>
+                                )}
+                              </Typography>
+                            </th>
                           )}
-                        </IconButton>
-                      )}
-                    </Typography>
-                  </th>
-                );
-              })}
-            </tr>
-          </thead>
-          <tbody className="relative">
-            {isLoad || isError || totalData === 0 ? (
-              <TableSkeleton
-                long={tableHeader.length}
-                isLoading={isLoad}
-                isError={isError}
-                onRefresh={() => getDataTable()}
-              />
-            ) : (
-              children
-            )}
-          </tbody>
-        </table>
+                        </Draggable>
+                      );
+                    })}
+                    {provided.placeholder}
+                  </tr>
+                  )}
+              </Droppable>
+            </thead>
+            <tbody className="relative">
+              {isLoad || isError || totalData === 0 ? (
+                <TableSkeleton
+                  long={tableHeader.length}
+                  isLoading={isLoad}
+                  isError={isError}
+                  onRefresh={() => getDataTable()}
+                />
+              ) : 
+                // <Droppable droppableId="columns-body" direction="horizontal">
+                //   {(provided) => (
+                //     <Fragment>
+                //       {data.map((value:any, rowIndex:number) => (
+                //         <tr key={rowIndex} className="even:bg-gray-50" {...provided.droppableProps} ref={provided.innerRef}>
+                //           {header.map((column, index) => (
+                //                 <td className="px-4 py-2">
+                //                   {value[column.label.toLowerCase()] || "-"}
+                //                 </td>
+                //           ))}
+                //         </tr>
+                //       ))}
+                //       {provided.placeholder}
+                //     </Fragment>
+                //   )}
+                // </Droppable>
+                children
+              }
+            </tbody>
+          </table>
+        </DragDropContext>
       </CardBody>
       <Pagination
         currentPage={activePage}
@@ -528,84 +601,94 @@ export default function TableData({
         }}
       />
     </Card>
-  );
+  )
+}
 
-  const TableCol = ({
-    name,
-    className,
-    children,
-  }: {
-    name: string;
-    className: string;
-    children: React.ReactNode;
-  }) => {
-    return (
-      <td
-        className={cn(className, {
-          hidden: !visibleColumns[keyVisibleColumns(name)].isVisible,
-        })}
-      >
-        {children}
-      </td>
-    );
-  };
+export const TableAction = ({
+  data,
+  id,
+}: {
+  data: TableActionProps[];
+  id: string;
+}) => {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const { setSelectedId } = useTableStore();
+  const router = useRouter();
 
-  // table action component
-  const TableAction = ({
-    data,
-    id,
-  }: {
-    data: TableActionProps[];
-    id: string;
-  }) => {
-    const [isOpen, setIsOpen] = useState<boolean>(false);
+  useEffect(() => {
+    if (!isOpen) {
+      setSelectedId("");
+    }
+  }, [isOpen]);
 
-    return (
-      <div className="flex gap-2 items-center">
-        <ModalConfirmation
-          isOpen={isOpen}
-          handler={setIsOpen}
-          onConfirm={() => handleDelete(id)}
-        />
+  return (
+    <div className="flex gap-2 items-center">
+      <ModalConfirmation
+        isOpen={isOpen}
+        handler={(value) => {
+          setSelectedId("");
+          setIsOpen(value);
+        }}
+        onConfirm={() => setSelectedId(id)}
+      />
 
-        {data.map(({ action, onClick, custom }) => (
-          <Tooltip
-            key={action}
-            content={action[0].toUpperCase() + action.substring(1)}
-          >
-            {action === "view" || action === "update" ? (
-              <Link href={router.pathname + `/${action}/` + id}>
-                <IconButton variant="text" className="cursor-pointer" size="sm">
-                  {action === "update" ? (
-                    <PencilSquareIcon className="h-4 w-4" />
-                  ) : (
-                    <EyeIcon className="h-4 w-4" />
-                  )}
-                </IconButton>
-              </Link>
-            ) : (
-              <IconButton
-                variant="text"
-                className="cursor-pointer"
-                size="sm"
-                onClick={action === "delete" ? () => setIsOpen(true) : onClick}
-              >
-                {action === "delete" ? (
-                  <TrashIcon className="h-4 w-4" color="red" />
+      {data.map(({ action, onClick, custom }) => (
+        <Tooltip
+          key={action}
+          content={action[0].toUpperCase() + action.substring(1)}
+        >
+          {action === "view" || action === "update" ? (
+            <Link href={router.pathname + `/${action}/` + id}>
+              <IconButton variant="text" className="cursor-pointer" size="sm">
+                {action === "update" ? (
+                  <PencilSquareIcon className="h-4 w-4" />
                 ) : (
-                  custom?.icon
+                  <EyeIcon className="h-4 w-4" />
                 )}
               </IconButton>
-            )}
-          </Tooltip>
-        ))}
-      </div>
-    );
-  };
+            </Link>
+          ) : (
+            <IconButton
+              variant="text"
+              className="cursor-pointer"
+              size="sm"
+              onClick={action === "delete" ? () => setIsOpen(true) : onClick}
+            >
+              {action === "delete" ? (
+                <TrashIcon className="h-4 w-4" color="red" />
+              ) : (
+                custom?.icon
+              )}
+            </IconButton>
+          )}
+        </Tooltip>
+      ))}
+    </div>
+  );
+};
 
-  return {
-    Table,
-    TableAction,
-    TableCol,
-  };
-}
+export const TableCol = ({
+  name,
+  className,
+  index,
+  rowIndex,
+  children,
+}: {
+  name: string;
+  className: string;
+  index?: number;
+  rowIndex?: number;
+  children: React.ReactNode;
+}) => {
+  const visibleColumns = useTableStore((state) => state.visibleColumns)
+  
+  return (
+    <td
+      className={cn(className, {
+        hidden: !visibleColumns[keyVisibleColumns(name)]?.isVisible,
+      })}
+    >
+      {children}
+    </td>
+  );
+};

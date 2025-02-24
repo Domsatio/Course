@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import TableData from "@/components/admin/TableData";
-import { TableActionProps } from "@/components/admin/TableData";
+import { TableActionProps, Table, TableAction, TableCol } from "@/components/admin/TableData";
 import { Chip, Typography } from "@material-tailwind/react";
 import { NullProof, numberlistPagination } from "@/helpers/appFunction";
 import { FilterInputList } from "../../../constants/admin/InputLists/inputLayoutUser";
@@ -18,10 +17,10 @@ type DataProps = {
 const TABLE_HEAD: tableHeaderProps[] = [
   { label: "No." },
   { label: "Name" },
-  { label: "Email" },
-  { label: "Subscription" },
-  { label: "Start" },
-  { label: "End" },
+  { label: "Email", visible: true },
+  { label: "Subscription", visible: true },
+  { label: "Start", visible: true },
+  { label: "End", visible: true },
   { label: "Actions" },
 ];
 
@@ -32,19 +31,17 @@ export default function Index() {
     size: 0,
   });
 
-  const { Table, TableAction } = TableData({
-    title: "Users",
-    description: "List of users",
-    tableHeader: TABLE_HEAD,
-    service: userServices,
-    realtimeTable: "User",
-    onSuccess: (data: DataProps) => setData(data),
-    filter: FilterInputList,
-    isActionAdd: false,
-  });
-
-  return Table(
-    NullProof({
+  return (
+    <Table
+      title="Users"
+      description="List of users"
+      tableHeader={TABLE_HEAD}
+      service={userServices}
+      realtimeTable="User"
+      onSuccess={(data: DataProps) => setData(data)}
+      filter={FilterInputList}
+    >
+    {NullProof({
       input: data,
       params: "data",
       isMap: true,
@@ -76,12 +73,12 @@ export default function Index() {
               </Typography>
             </div>
           </td>
-          <td className={`${classes} max-w-[370px] max-h-min`}>
+          <TableCol name='email' className={`${classes} max-w-[370px] max-h-min`}>
             <Typography variant="small" color="blue-gray" className="font-bold">
               {NullProof({ input: user, params: "email" })}
             </Typography>
-          </td>
-          <td className={`${classes} max-w-[370px] max-h-min`}>
+          </TableCol>
+          <TableCol name='Subscription' className={`${classes} max-w-[370px] max-h-min`}>
             <Typography variant="small" color="blue-gray" className="flex">
               <Chip
                 variant="ghost"
@@ -96,23 +93,24 @@ export default function Index() {
                 }
               />
             </Typography>
-          </td>
-          <td className={`${classes} max-w-[370px] max-h-min`}>
+          </TableCol>
+          <TableCol name='start' className={`${classes} max-w-[370px] max-h-min`}>
             <Typography variant="small" color="blue-gray">
               {user.subscribeStart ? dateFormater(user.subscribeStart, "short") : "-"}
             </Typography>
-          </td>
-          <td className={`${classes} max-w-[370px] max-h-min`}>
+          </TableCol>
+          <TableCol name='end' className={`${classes} max-w-[370px] max-h-min`}>
             <Typography variant="small" color="blue-gray">
               {user.subscribeEnd ? dateFormater(user.subscribeEnd, "short") : "-"}
             </Typography>
-          </td>
+          </TableCol>
           <td className={classes}>
             <TableAction data={dataAction} id={user.id} />
           </td>
         </tr>
       );
-    })
+    })}
+  </Table>
   );
 }
 

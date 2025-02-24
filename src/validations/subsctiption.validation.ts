@@ -9,6 +9,7 @@ export const createSubscriptionValidation = (payload: Subscription) => {
     paymentMethod: mixed()
     .oneOf(['credit_card', 'gopay'], "Invalid payment method selected")
     .required("Payment method is required"),
+    payload: object().required("Payload is required"),
   });
 
   try {
@@ -30,6 +31,7 @@ export const updateSubscriptionValidation = (payload: Subscription) => {
     paymentMethod: mixed()
     .oneOf(['credit_card', 'gopay'], "Invalid payment method selected")
     .required("Payment method is required"),
+    payload: object().required("Payload is required"),
   });
 
   try {

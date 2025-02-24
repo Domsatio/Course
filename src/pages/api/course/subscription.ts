@@ -24,11 +24,12 @@ export default async function handler(
 
   const id = token.id as string;
   if (req.method === "POST") {
-    const { plan, paymentMethod } = validatedData as Subscription;
+    const { plan, paymentMethod, payload } = validatedData as Subscription;
     const create_subscription = await createSubscription(
       id,
       plan,
-      paymentMethod
+      paymentMethod,
+      payload
     );
 
     if (create_subscription) {
