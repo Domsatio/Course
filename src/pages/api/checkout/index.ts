@@ -3,7 +3,7 @@ import { createCheckoutValidation } from "@/validations/checkout.validation";
 import {
   createTransaction,
   createTransactionBuyDirectly,
-  cencelTransaction
+  cancelTransaction
 } from "@/controllers/midtrans.controller";
 import { getToken } from "next-auth/jwt";
 
@@ -65,7 +65,7 @@ export default async function handler(
 
     const { id } = req.query;
     
-    const cencel_transaction = await cencelTransaction(id as string);
+    const cencel_transaction = await cancelTransaction(id as string);
     if(cencel_transaction){
       res.status(200).send({
         success: true,
