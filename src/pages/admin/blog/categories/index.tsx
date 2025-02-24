@@ -1,6 +1,5 @@
 import React, { useState, FC } from "react";
-import TableData from "@/components/admin/TableData";
-import { TableActionProps } from "@/components/admin/TableData";
+import { TableActionProps, Table, TableAction, TableCol } from "@/components/admin/TableData";
 import { Typography } from "@material-tailwind/react";
 import { GetCategory } from "@/types/category.type";
 import { categoryServices } from "@/services/serviceGenerator";
@@ -27,17 +26,17 @@ const Index: FC = () => {
     page: 0,
     size: 0,
   });
-  const { Table, TableAction } = TableData({
-    title: "Categories",
-    description: "List of categories",
-    tableHeader: TABLE_HEAD,
-    service: categoryServices,
-    realtimeTable: "Category",
-    onSuccess: (data: DataProps) => setData(data),
-  });
 
-  return Table(
-    NullProof({
+  return (
+    <Table
+      title="Categories"
+      description="List of categories"
+      tableHeader={TABLE_HEAD}
+      service={categoryServices}
+      realtimeTable="Category"
+      onSuccess={(data: DataProps) => setData(data)}
+    >
+    {NullProof({
       input: data,
       params: "data",
       isMap: true,
@@ -87,7 +86,8 @@ const Index: FC = () => {
           </td>
         </tr>
       );
-    })
+    })}
+    </Table>
   );
 };
 

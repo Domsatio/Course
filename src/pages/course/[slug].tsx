@@ -53,8 +53,8 @@ const DetailCoursePage: FC<Course> = (data) => {
         <Typography variant="h2" color="black">
           {NullProof({ input: data, params: "title" })}
         </Typography>
-        <SubscribersOnly />
-        {/* <Typography variant="paragraph">
+        {/* <SubscribersOnly /> */}
+        <Typography variant="paragraph">
           {NullProof({ input: data, params: "description" })}
         </Typography>
         <EmblaCarousel
@@ -102,7 +102,7 @@ const DetailCoursePage: FC<Course> = (data) => {
               </Link>
             </Button>
           </LabelDetailPage>
-        )} */}
+        )}
       </ContentWrapper>
     </Fragment>
   );

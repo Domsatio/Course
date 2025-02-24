@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import TableData from "@/components/admin/TableData";
-import { TableActionProps } from "@/components/admin/TableData";
+import { TableActionProps, Table, TableAction, TableCol } from "@/components/admin/TableData";
 import { Typography, Avatar } from "@material-tailwind/react";
 import { NullProof, numberlistPagination } from "@/helpers/appFunction";
 import { productServices } from "@/services/serviceGenerator";
@@ -17,12 +16,12 @@ type DataProps = {
 
 const TABLE_HEAD: tableHeaderProps[] = [
   { label: "No." },
-  { label: "Thumbnail" },
-  { label: "Name" },
-  { label: "Description" },
-  { label: "Price", orderBy: "price" },
-  { label: "Discount", orderBy: "discount" },
-  { label: "Quantity", orderBy: "quantity" },
+  { label: "Thumbnail", },
+  { label: "Name", visible: true },
+  { label: "Description", visible: true },
+  { label: "Price", orderBy: "price", visible: true },
+  { label: "Discount", orderBy: "discount", visible: true },
+  { label: "Quantity", orderBy: "quantity", visible: true },
   { label: "Actions" },
 ];
 
@@ -33,20 +32,17 @@ export default function Index() {
     size: 0,
   });
   
-  const { Table, TableAction } = TableData({
-    title: "Products",
-    description: "List of products",
-    tableHeader: TABLE_HEAD,
-    realtimeTable: "Product",
-    exportExcel: (data) => {
-      excelLayout(data)
-    },
-    onSuccess: (data: DataProps) => setData(data),
-    service: productServices,
-  });
-
-  return Table(
-    NullProof({
+  return (
+    <Table
+      title="Products"
+      description="List of products"
+      tableHeader={TABLE_HEAD}
+      service={productServices}
+      realtimeTable="Product"
+      onSuccess={(data: DataProps) => setData(data)}
+      exportExcel={(data:any) => excelLayout(data)}
+    >
+    {NullProof({
       input: data,
       params: "data",
       isMap: true,
@@ -79,20 +75,20 @@ export default function Index() {
               className="border border-blue-gray-50 bg-blue-gray-50/50 object-contain p-1"
             />
           </td>
-          <td className={classes}>
+          <TableCol name='name' className={classes}>
             <Typography variant="small" color="blue-gray" className="font-bold">
               {NullProof({ input: product, params: "name" })}
             </Typography>
-          </td>
-          <td className={`${classes} max-w-sm`}>
+          </TableCol>
+          <TableCol name='description' className={`${classes} max-w-sm`}>
             <p
               color="blue-gray"
               className="font-normal line-clamp-2 text-sm"
             >
               {NullProof({ input: product, params: "description" })}
             </p>
-          </td>
-          <td className={classes}>
+          </TableCol>
+          <TableCol name='price' className={classes}>
             <Typography
               variant="small"
               color="blue-gray"
@@ -104,8 +100,8 @@ export default function Index() {
                 type: "currency",
               })}
             </Typography>
-          </td>
-          <td className={classes}>
+          </TableCol>
+          <TableCol name='discount' className={classes}>
             <Typography
               variant="small"
               color="blue-gray"
@@ -113,8 +109,8 @@ export default function Index() {
             >
               {product.discount > 0 ? product.discount + "%" : '-'}
             </Typography>
-          </td>
-          <td className={classes}>
+          </TableCol>
+          <TableCol name='quantity' className={classes}>
             <Typography
               variant="small"
               color="blue-gray"
@@ -122,13 +118,14 @@ export default function Index() {
             >
               {NullProof({ input: product, params: "quantity" })}
             </Typography>
-          </td>
+          </TableCol>
           <td className={classes}>
             <TableAction data={dataAction} id={product.id} />
           </td>
         </tr>
       );
-    })
+    })}
+    </Table>
   );
 }
 

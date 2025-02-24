@@ -199,7 +199,8 @@ export const cancelTransaction = async (orderId: string) => {
 export const createSubscription = async (
   userId: string,
   duration: "monthly" | "annually",
-  paymentMethod: "credit_card" | "gopay"
+  paymentMethod: "credit_card" | "gopay",
+  payload: any
 ) => {
   const user = await prisma.user.findUnique({
     where: { id: userId },
@@ -213,6 +214,7 @@ export const createSubscription = async (
   }
   let token = "";
 
+
   if (paymentMethod === "credit_card") {
     token = await coreApi.createToken({
       card_number: "4811111111111114",
@@ -222,9 +224,17 @@ export const createSubscription = async (
       client_key: process.env.MIDTRANS_CLIENT_KEY,
     });
   } else {
-    token = await coreApi.getPaymentAccount("088985977908");
+    const parameter = {
+      payment_type: "gopay",
+      gopay_partner: {
+        phone_number: 88985977908,
+        country_code: 62,
+        redirect_url: "https://www.gojek.com"
+      }
+    };
+    token = await coreApi.linkPaymentAccount(parameter)
   }
-  console.log(token, "tpkennnnnnnnnnnnnnnnnnnnnnnnn");
+  console.log(token, "tpkennnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn");
   const params = {
     name: `Domsat ${duration} Subscription`,
     amount: duration === "monthly" ? 49999 : 529999,

@@ -4,6 +4,7 @@ export type tableHeaderProps = {
   label: string;
   style?: string;
   orderBy?: string;
+  visible?: boolean;
 };
 
 export type TableDataProps = {
@@ -16,4 +17,5 @@ export type TableDataProps = {
   service: any;
   realtimeTable?: string;
   exportExcel?: (data: any) => void;
+  children?: any
 };

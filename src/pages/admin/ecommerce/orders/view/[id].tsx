@@ -113,6 +113,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const { id } = context.query;
   try {
     const { data: { data } } = await orderServices.getItem({ id });
+    console.log(data, 'fffffffffffffffffffffffffffffff');
+    
     return {
       props: data
     };

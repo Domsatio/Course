@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Order } from "@/types/order.type";
-import TableData, { TableActionProps } from "@/components/admin/TableData";
+import { TableActionProps, Table, TableAction, TableCol } from "@/components/admin/TableData";
 import { orderServices } from "@/services/serviceGenerator";
 import { ConvertCurrency, NullProof } from "@/helpers/appFunction";
 import { tableHeaderProps } from "@/types/table.type";
@@ -14,12 +14,12 @@ type DataProps = {
 }
 
 const TABLE_HEAD: tableHeaderProps[] = [
-  { label: "Date" },
+  { label: "Date", orderBy: "transactionTime" },
   { label: "Product" },
-  { label: "Quantity" },
-  { label: "Price" },
-  { label: "User" },
-  { label: "Status" },
+  { label: "Quantity", orderBy: "totalQuantityProduct", visible: true },
+  { label: "Price", orderBy: "grossAmount", visible: true },
+  { label: "User", visible: true },
+  { label: "Status", visible: true },
   { label: "Actions" },
 ];
 
@@ -28,19 +28,19 @@ export default function Index() {
     data: [],
     page: 0,
     size: 0,
-  });
-  const { Table, TableAction } = TableData({
-    title: "Orders",
-    description: "List of orders",
-    tableHeader: TABLE_HEAD,
-    realtimeTable: "Order",
-    onSuccess: (data: DataProps) => setData(data),
-    service: orderServices,
-    isActionAdd: false
-  });
-
-  return Table(
-    NullProof({
+  })
+  
+  return (
+    <Table
+      title="Orders"
+      description="List of orders"
+      tableHeader={TABLE_HEAD}
+      service={orderServices}
+      realtimeTable="Order"
+      onSuccess={(data: DataProps) => setData(data)}
+      isActionAdd={false}
+    >
+    {NullProof({
       input: data,
       params: "data",
       isMap: true,
@@ -65,10 +65,19 @@ export default function Index() {
               color="blue-gray"
               className="font-normal"
             >
-              {totalItems > 1 ? `${totalItems} items` : `${totalItems} item`}
+              {order.products.map((product) => product.name).join(", ")}
             </Typography>
           </td>
-          <td className={classes}>
+          <TableCol name='quantity' className={classes}>
+            <Typography
+              variant="small"
+              color="blue-gray"
+              className="font-normal"
+            >
+              {totalItems > 1 ? `${totalItems} items` : `${totalItems} item`}
+            </Typography>
+          </TableCol>
+          <TableCol name='price' className={classes}>
             <Typography
               variant="small"
               color="blue-gray"
@@ -76,8 +85,8 @@ export default function Index() {
             >
               {ConvertCurrency(order.grossAmount)}
             </Typography>
-          </td>
-          <td className={classes}>
+          </TableCol>
+          <TableCol name='user' className={classes}>
             <Typography
               variant="small"
               color="blue-gray"
@@ -85,8 +94,8 @@ export default function Index() {
             >
               {`${order.customerDetails.first_name} ${order.customerDetails.last_name} (${order.customerDetails.email})`}
             </Typography>
-          </td>
-          <td className={classes}>
+          </TableCol>
+          <TableCol name='status' className={classes}>
             <Typography
               variant="small"
               color="blue-gray"
@@ -104,13 +113,14 @@ export default function Index() {
                 }
               />
             </Typography>
-          </td>
+          </TableCol>
           <td className={classes}>
             <TableAction data={dataAction} id={order.id} />
           </td>
         </tr>
       );
-    })
+    })}
+  </Table>
   );
 }
 
